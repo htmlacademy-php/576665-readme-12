@@ -38,7 +38,22 @@ $popular_posts = [
         'user_name' => 'Владик',
         'user_pic' => 'userpic.jpg'
     ]
-]
+];
+
+function cut_text ($text, $excerpt_length = 300) {
+    $text_length = mb_strlen($text);
+    if ($text_length > $excerpt_length) {
+        //cut string
+        $text = mb_substr($text, 0, $excerpt_length);
+        //cut to last space
+        $text = mb_substr($text, 0, mb_strrpos($text,' '));
+        //add '...' and link to full post
+        $text = '<p>' . $text . '...' . '</p>' . '<a class="post-text__more-link" href="#">Читать далее</a>';
+    } else {
+        $text = '<p>' . $text . '</p>';
+    }
+    return  $text;
+}
 
 ?>
 <!DOCTYPE html>
@@ -288,7 +303,7 @@ $popular_posts = [
                         </div>
                     <?php elseif ($item['post_type'] == 'post-text'): ?>
                     <!--содержимое для поста-текста-->
-                    <p><?=$item['content'];?></p>
+                    <?php echo cut_text($item['content']); ?>
                 <?php endif ?>
                 </div>
                 <footer class="post__footer">
