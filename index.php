@@ -38,6 +38,11 @@ function cut_text ($text, $excerpt_length = 300) {
     return  $text;
 }
 
+function esc ($str) {
+    $text = htmlspecialchars($str);
+    return $text;
+}
+
 $popular_posts = [
     [
         'title' => 'Цитата',

@@ -87,13 +87,13 @@
             <?php foreach ($popular_posts as $key => $item): ?>
                 <article class="popular__post post <?=$item['post_type'];?>">
                     <header class="post__header">
-                        <h2><?=$item['title'];?></h2>
+                        <h2><?=esc($item['title']);?></h2>
                     </header>
                     <div class="post__main">
                         <?php if ($item['post_type'] == 'post-quote'): ?>
                             <!--содержимое для поста-цитаты-->
                             <blockquote>
-                                <p><?=$item['content'];?></p>
+                                <p><?=esc($item['content']);?></p>
                                 <cite>Неизвестный Автор</cite>
                             </blockquote>
                         <?php elseif ($item['post_type'] == 'post-link'): ?>
@@ -105,10 +105,10 @@
                                             <img src="https://www.google.com/s2/favicons?domain=vitadental.ru" alt="Иконка">
                                         </div>
                                         <div class="post-link__info">
-                                            <h3><?=$item['title'];?></h3>
+                                            <h3><?=esc($item['title']);?></h3>
                                         </div>
                                     </div>
-                                    <span><?=$item['content'];?></span>
+                                    <span><?=esc($item['content']);?></span>
                                 </a>
                             </div>
                         <?php elseif ($item['post_type'] == 'post-photo'): ?>
@@ -132,7 +132,7 @@
                             </div>
                         <?php elseif ($item['post_type'] == 'post-text'): ?>
                             <!--содержимое для поста-текста-->
-                            <?php echo cut_text($item['content']); ?>
+                            <?php echo cut_text(esc($item['content'])); ?>
                         <?php endif ?>
                     </div>
                     <footer class="post__footer">
@@ -143,7 +143,7 @@
                                     <img class="post__author-avatar" src="img/<?=$item['user_pic'];?>" alt="Аватар пользователя">
                                 </div>
                                 <div class="post__info">
-                                    <b class="post__author-name"><?=$item['user_name'];?></b>
+                                    <b class="post__author-name"><?=esc($item['user_name']);?></b>
                                     <time class="post__time" datetime="">дата</time>
                                 </div>
                             </a>
