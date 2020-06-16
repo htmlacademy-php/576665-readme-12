@@ -144,7 +144,8 @@
                                 </div>
                                 <div class="post__info">
                                     <b class="post__author-name"><?=esc($item['user_name']);?></b>
-                                    <time class="post__time" datetime="">дата</time>
+                                    <?php $post_date = generate_random_date($key); ?>
+                                    <time class="post__time" title="<?=date('d.m.Y H:i', strtotime($post_date));?>" datetime="<?=$post_date;?>"><?php relative_date($post_date); ?></time>
                                 </div>
                             </a>
                         </div>
