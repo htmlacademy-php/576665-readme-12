@@ -55,14 +55,14 @@ date_default_timezone_set('Europe/Moscow');
 function generate_random_date($index)
 {
     $deltas = [['minutes' => 59], ['hours' => 23], ['days' => 6], ['weeks' => 4], ['months' => 11]];
-    $dcnt = count($deltas);
+    $deltas_count = count($deltas);
 
     if ($index < 0) {
         $index = 0;
     }
 
-    if ($index >= $dcnt) {
-        $index = $dcnt - 1;
+    if ($index >= $deltas_count) {
+        $index = $deltas_count - 1;
     }
 
     $delta = $deltas[$index];
