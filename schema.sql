@@ -67,6 +67,12 @@ CREATE TABLE post_types (
     class VARCHAR(10) UNIQUE
 );
 
+CREATE TABLE post_tag (
+post_id INT REFERENCES posts (id),
+tag_id INT REFERENCES tags (id),
+primary key (post_id, tag_id)
+);
+
 CREATE INDEX view_count ON posts (view_count);
 
 CREATE INDEX date ON posts (date);
