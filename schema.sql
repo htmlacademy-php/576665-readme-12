@@ -10,7 +10,7 @@ CREATE TABLE users (
     email VARCHAR (320) UNIQUE,
     login VARCHAR (60) UNIQUE,
     password VARCHAR(60),
-    picture CHAR
+    picture VARCHAR (320)
 );
 
 CREATE TABLE posts (
@@ -19,10 +19,10 @@ CREATE TABLE posts (
     title VARCHAR(60),
     content TEXT,
     author_quote VARCHAR(60),
-    img CHAR,
-    video CHAR,
-    link CHAR,
-    view_count INT,
+    img VARCHAR(160),
+    video VARCHAR(160),
+    link VARCHAR(160),
+    view_count INT DEFAULT 0,
     user_id INT REFERENCES users (id),
     post_type_id INT REFERENCES post_types (id),
     tag_id INT REFERENCES tags (id)
