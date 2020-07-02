@@ -149,6 +149,22 @@ function relative_date ($post_date) {
     }
 }
 
+require_once 'init.php';
+
+if (!$link) {
+    print ('error' . mysqli_connect_error());
+} else {
+    $sql = 'SELECT `name`, `class` FROM post_types';
+    $result = mysqli_query($link, $sql);
+    if ($result) {
+        $post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        var_dump($post_types);
+    } else {
+        print ('error ' . mysqli_error($link));
+
+    }
+}
+
 $popular_posts = [
     [
         'title' => 'Цитата',
@@ -187,7 +203,10 @@ $popular_posts = [
     ]
 ];
 
-$page_content = include_template('main.php', ['popular_posts' => $popular_posts]);
+$page_content = include_template('main.php', [
+    'popular_posts' => $popular_posts,
+    'post_types' => $post_types
+]);
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'title' => 'readme: популярное',
