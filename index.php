@@ -168,49 +168,10 @@ if (!$link) {
     $result = mysqli_query($link, $sql);
     if ($result) {
         $popular_posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        var_dump($popular_posts);
     } else {
         print ('error' . mysqli_error($link));
     }
 }
-
-//$popular_posts = [
-//    [
-//        'title' => 'Цитата',
-//        'post_type' => 'post-quote',
-//        'content' => 'Мы в жизни любим только раз, а после ищем лишь похожих',
-//        'user_name' => 'Лариса',
-//        'user_pic' => 'userpic-larisa-small.jpg'
-//    ],
-//    [
-//        'title' => 'Игра престолов',
-//        'post_type' => 'post-text',
-//        'content' => 'Не могу дождаться начала финального сезона своего любимого сериала!',
-//        'user_name' => 'Владик',
-//        'user_pic' => 'userpic.jpg'
-//    ],
-//    [
-//        'title' => 'Наконец, обработал фотки!',
-//        'post_type' => 'post-photo',
-//        'content' => 'rock-medium.jpg',
-//        'user_name' => 'Виктор',
-//        'user_pic' => 'userpic-mark.jpg'
-//    ],
-//    [
-//        'title' => 'Моя мечта',
-//        'post_type' => 'post-photo',
-//        'content' => 'coast-medium.jpg',
-//        'user_name' => 'Лариса	',
-//        'user_pic' => 'userpic-larisa-small.jpg'
-//    ],
-//    [
-//        'title' => 'Лучшие курсы',
-//        'post_type' => 'post-link',
-//        'content' => 'www.htmlacademy.ru',
-//        'user_name' => 'Владик',
-//        'user_pic' => 'userpic.jpg'
-//    ]
-//];
 
 $page_content = include_template('main.php', [
     'popular_posts' => $popular_posts,

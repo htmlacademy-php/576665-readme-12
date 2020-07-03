@@ -55,7 +55,7 @@
         </div>
         <div class="popular__posts">
             <?php foreach ($popular_posts as $key => $item): ?>
-                <article class="popular__post post <?=$item['post_type'];?>">
+                <article class="popular__post post <?=$item['class'];?>">
                     <header class="post__header">
                         <h2><?=esc($item['title']);?></h2>
                     </header>
@@ -66,7 +66,7 @@
                                 <p><?=esc($item['content']);?></p>
                                 <cite><?=esc($item['author_quote']);?></cite>
                             </blockquote>
-                        <?php elseif ($item['post_type'] == 'post-link'): ?>
+                        <?php elseif ($item['class'] == 'link'): ?>
                             <!--содержимое для поста-ссылки-->
                             <div class="post-link__wrapper">
                                 <a class="post-link__external" href="http://" title="Перейти по ссылке">
@@ -78,19 +78,19 @@
                                             <h3><?=esc($item['title']);?></h3>
                                         </div>
                                     </div>
-                                    <span><?=esc($item['content']);?></span>
+                                    <span><?=esc($item['link']);?></span>
                                 </a>
                             </div>
                         <?php elseif ($item['class'] == 'photo'): ?>
                             <!--содержимое для поста-фото-->
                             <div class="post-photo__image-wrapper">
-                                <img src="<?=$item['img'];?>" alt="Фото от пользователя" width="360" height="240">
+                                <img src="<?=esc($item['img']);?>" alt="Фото от пользователя" width="360" height="240">
                             </div>
                         <?php elseif ($item['class'] == 'video'): ?>
                             <!--содержимое для поста-видео-->
                             <div class="post-video__block">
                                 <div class="post-video__preview">
-                                    <?=embed_youtube_cover(/* вставьте ссылку на видео */); ?>
+                                    <?=embed_youtube_cover(esc($item['video'])); ?>
                                     <img src="img/coast-medium.jpg" alt="Превью к видео" width="360" height="188">
                                 </div>
                                 <a href="post-details.html" class="post-video__play-big button">
