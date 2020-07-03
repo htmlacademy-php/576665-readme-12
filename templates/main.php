@@ -60,11 +60,11 @@
                         <h2><?=esc($item['title']);?></h2>
                     </header>
                     <div class="post__main">
-                        <?php if ($item['post_type'] == 'post-quote'): ?>
+                        <?php if ($item['class'] == 'quote'): ?>
                             <!--содержимое для поста-цитаты-->
                             <blockquote>
                                 <p><?=esc($item['content']);?></p>
-                                <cite>Неизвестный Автор</cite>
+                                <cite><?=esc($item['author_quote']);?></cite>
                             </blockquote>
                         <?php elseif ($item['post_type'] == 'post-link'): ?>
                             <!--содержимое для поста-ссылки-->
@@ -81,12 +81,12 @@
                                     <span><?=esc($item['content']);?></span>
                                 </a>
                             </div>
-                        <?php elseif ($item['post_type'] == 'post-photo'): ?>
+                        <?php elseif ($item['class'] == 'photo'): ?>
                             <!--содержимое для поста-фото-->
                             <div class="post-photo__image-wrapper">
-                                <img src="img/<?=$item['content'];?>" alt="Фото от пользователя" width="360" height="240">
+                                <img src="<?=$item['img'];?>" alt="Фото от пользователя" width="360" height="240">
                             </div>
-                        <?php elseif ($item['post_type'] == 'post-video'): ?>
+                        <?php elseif ($item['class'] == 'video'): ?>
                             <!--содержимое для поста-видео-->
                             <div class="post-video__block">
                                 <div class="post-video__preview">
@@ -100,7 +100,7 @@
                                     <span class="visually-hidden">Запустить проигрыватель</span>
                                 </a>
                             </div>
-                        <?php elseif ($item['post_type'] == 'post-text'): ?>
+                        <?php elseif ($item['class'] == 'text'): ?>
                             <!--содержимое для поста-текста-->
                             <?php echo cut_text(esc($item['content'])); ?>
                         <?php endif ?>
@@ -110,10 +110,10 @@
                             <a class="post__author-link" href="#" title="Автор">
                                 <div class="post__avatar-wrapper">
                                     <!--укажите путь к файлу аватара-->
-                                    <img class="post__author-avatar" src="img/<?=$item['user_pic'];?>" alt="Аватар пользователя">
+                                    <img class="post__author-avatar" src="<?=$item['picture'];?>" alt="Аватар пользователя">
                                 </div>
                                 <div class="post__info">
-                                    <b class="post__author-name"><?=esc($item['user_name']);?></b>
+                                    <b class="post__author-name"><?=esc($item['login']);?></b>
                                     <?php $post_date = generate_random_date($key); ?>
                                     <time class="post__time" title="<?=date('d.m.Y H:i', strtotime($post_date));?>" datetime="<?=$post_date;?>"><?php relative_date($post_date); ?></time>
                                 </div>

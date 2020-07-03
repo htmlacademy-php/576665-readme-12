@@ -18,7 +18,7 @@ CREATE TABLE posts (
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     title VARCHAR(60),
     content TEXT,
-    author_quote VARCHAR(60),
+    author_quote VARCHAR(160),
     img VARCHAR(160),
     video VARCHAR(160),
     link VARCHAR(160),
