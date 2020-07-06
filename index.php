@@ -149,45 +149,34 @@ function relative_date ($post_date) {
     }
 }
 
-$popular_posts = [
-    [
-        'title' => 'Цитата',
-        'post_type' => 'post-quote',
-        'content' => 'Мы в жизни любим только раз, а после ищем лишь похожих',
-        'user_name' => 'Лариса',
-        'user_pic' => 'userpic-larisa-small.jpg'
-    ],
-    [
-        'title' => 'Игра престолов',
-        'post_type' => 'post-text',
-        'content' => 'Не могу дождаться начала финального сезона своего любимого сериала!',
-        'user_name' => 'Владик',
-        'user_pic' => 'userpic.jpg'
-    ],
-    [
-        'title' => 'Наконец, обработал фотки!',
-        'post_type' => 'post-photo',
-        'content' => 'rock-medium.jpg',
-        'user_name' => 'Виктор',
-        'user_pic' => 'userpic-mark.jpg'
-    ],
-    [
-        'title' => 'Моя мечта',
-        'post_type' => 'post-photo',
-        'content' => 'coast-medium.jpg',
-        'user_name' => 'Лариса	',
-        'user_pic' => 'userpic-larisa-small.jpg'
-    ],
-    [
-        'title' => 'Лучшие курсы',
-        'post_type' => 'post-link',
-        'content' => 'www.htmlacademy.ru',
-        'user_name' => 'Владик',
-        'user_pic' => 'userpic.jpg'
-    ]
-];
+require_once 'init.php';
 
-$page_content = include_template('main.php', ['popular_posts' => $popular_posts]);
+if (!$link) {
+    print ('error' . mysqli_connect_error());
+} else {
+    $sql = 'SELECT name, class FROM post_types';
+    $result = mysqli_query($link, $sql);
+    if ($result) {
+        $post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    } else {
+        print ('error ' . mysqli_error($link));
+    }
+    $sql = 'SELECT * , users.id, post_types.class FROM posts'
+        . ' JOIN users ON posts.user_id = users.id'
+        . ' JOIN post_types ON posts.post_type_id = post_types.id'
+        . ' ORDER BY view_count DESC LIMIT 6';
+    $result = mysqli_query($link, $sql);
+    if ($result) {
+        $popular_posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    } else {
+        print ('error' . mysqli_error($link));
+    }
+}
+
+$page_content = include_template('main.php', [
+    'popular_posts' => $popular_posts,
+    'post_types' => $post_types
+]);
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'title' => 'readme: популярное',
