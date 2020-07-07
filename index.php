@@ -163,20 +163,25 @@ if (!$link) {
     }
 
     $param_type = '';
-    $query_string = '';
+    $sort = 'view_count';
 
     $query_type = filter_input(INPUT_GET, 'post_type');
 
     if ($query_type) {
         $param_type = $query_type;
-        $query_string = " WHERE posts.post_type_id =" . $param_type;
     }
 
     $sql = 'SELECT * , users.id, post_types.class FROM posts'
         . ' JOIN users ON posts.user_id = users.id'
-        . ' JOIN post_types ON posts.post_type_id = post_types.id'
-        .  $query_string
-        . ' ORDER BY view_count DESC LIMIT 6';
+        . ' JOIN post_types ON posts.post_type_id = post_types.id';
+
+    if ($param_type) {
+        $sql .= " WHERE posts.post_type_id =" . $param_type;
+    }
+
+    if ($sort) {
+        $sql .= " ORDER BY " . $sort . " DESC LIMIT 6 ";
+    }
 
 
     $result = mysqli_query($link, $sql);
@@ -192,6 +197,7 @@ $page_content = include_template('main.php', [
     'post_types' => $post_types,
     'param_type' => $param_type
 ]);
+
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'title' => 'readme: популярное',
