@@ -154,17 +154,31 @@ require_once 'init.php';
 if (!$link) {
     print ('error' . mysqli_connect_error());
 } else {
-    $sql = 'SELECT name, class FROM post_types';
+    $sql = 'SELECT id, name, class FROM post_types';
     $result = mysqli_query($link, $sql);
     if ($result) {
         $post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
     } else {
         print ('error ' . mysqli_error($link));
     }
+
+    $param_type = '';
+    $query_string = '';
+
+    $query_type = filter_input(INPUT_GET, 'post_type');
+
+    if ($query_type) {
+        $param_type = $query_type;
+        $query_string = " WHERE posts.post_type_id =" . $param_type;
+    }
+
     $sql = 'SELECT * , users.id, post_types.class FROM posts'
         . ' JOIN users ON posts.user_id = users.id'
         . ' JOIN post_types ON posts.post_type_id = post_types.id'
+        .  $query_string
         . ' ORDER BY view_count DESC LIMIT 6';
+
+
     $result = mysqli_query($link, $sql);
     if ($result) {
         $popular_posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -175,7 +189,8 @@ if (!$link) {
 
 $page_content = include_template('main.php', [
     'popular_posts' => $popular_posts,
-    'post_types' => $post_types
+    'post_types' => $post_types,
+    'param_type' => $param_type
 ]);
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
