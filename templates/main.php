@@ -55,7 +55,6 @@
         </div>
         <div class="popular__posts">
             <?php foreach ($popular_posts as $key => $item): ?>
-<!--            --><?php //var_dump($item); ?>
                 <article class="popular__post post <?=$item['class'];?>">
                     <header class="post__header">
                         <h2>

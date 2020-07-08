@@ -118,12 +118,20 @@
                     </div>
                     <div class="post-details__rating user__rating">
                         <p class="post-details__rating-item user__rating-item user__rating-item--subscribers">
-                            <span class="post-details__rating-amount user__rating-amount">1856</span>
-                            <span class="post-details__rating-text user__rating-text">подписчиков</span>
+                            <span class="post-details__rating-amount user__rating-amount">
+                                <?=$subscriptions_count?>
+                            </span>
+                            <span class="post-details__rating-text user__rating-text">
+                                <?php echo get_noun_plural_form($subscriptions_count, 'подписчик', 'подписчика', 'подписчиков');?>
+                            </span>
                         </p>
                         <p class="post-details__rating-item user__rating-item user__rating-item--publications">
-                            <span class="post-details__rating-amount user__rating-amount">556</span>
-                            <span class="post-details__rating-text user__rating-text">публикаций</span>
+                            <span class="post-details__rating-amount user__rating-amount">
+                                <?=$posts_count?>
+                            </span>
+                            <span class="post-details__rating-text user__rating-text">
+                                <?php echo get_noun_plural_form($posts_count, 'публикация', 'публикации', 'публикаций');?>
+                            </span>
                         </p>
                     </div>
                     <div class="post-details__user-buttons user__buttons">

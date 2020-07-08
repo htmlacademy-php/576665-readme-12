@@ -88,37 +88,36 @@ if (empty($link)) {
 
     if ($result) {
         $post = mysqli_fetch_assoc($result);
-    } else {
-        print ('error' . mysqli_error($link));
+    }
+
+    $sql = 'SELECT * FROM subscriptions'
+        . ' WHERE subscriptions.author_id = ' . $post['user_id'];
+    $result = mysqli_query($link, $sql);
+    if ($result) {
+        $subscriptions_count = mysqli_num_rows($result);
+    }
+
+    $sql = 'SELECT * FROM posts'
+        . ' WHERE posts.user_id = ' . $post['user_id'];
+    $result = mysqli_query($link, $sql);
+    if($result) {
+        $posts_count = mysqli_num_rows($result);
     }
 }
 
 if (empty($post)) {
     print ('error 404. Page not found');
-} else {
-    $sql = 'SELECT * FROM subscriptions'
-        . ' WHERE post_id =' . $param_id;
-
-    $result = mysqli_query($link, $sql);
-    if ($result) {
-        $subscription_count = mysqli_fetch_assoc($result)['count'];
-    }
 }
-var_dump($subscription_count);
 
-$post_class = $post['class'];
-
-echo '<pre>';
-var_dump($post);
-echo '</pre>';
-
-$post_content = include_template("post-$post_class.php", [
+$post_content = include_template("post-{$post['class']}.php", [
     'post' => $post
 ]);
 
 $page_content = include_template('post.php', [
     'post' => $post,
-    'post_content' => $post_content
+    'post_content' => $post_content,
+    'subscriptions_count' => $subscriptions_count,
+    'posts_count' => $posts_count
 ]);
 
 $layout_content = include_template('layout.php', [
