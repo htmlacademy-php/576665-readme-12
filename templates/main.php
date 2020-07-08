@@ -55,11 +55,11 @@
         </div>
         <div class="popular__posts">
             <?php foreach ($popular_posts as $key => $item): ?>
-            <?php var_dump($item); ?>
+<!--            --><?php //var_dump($item); ?>
                 <article class="popular__post post <?=$item['class'];?>">
                     <header class="post__header">
                         <h2>
-                            <a href="post.php/?post_id=<?=$item['id']?>">
+                            <a href="../post.php/?post_id=<?=$item['post_id']?>">
                                 <?=esc($item['title']);?>
                             </a>
                         </h2>
@@ -77,7 +77,7 @@
                                 <a class="post-link__external" href="http://" title="Перейти по ссылке">
                                     <div class="post-link__info-wrapper">
                                         <div class="post-link__icon-wrapper">
-                                            <img src="https://www.google.com/s2/favicons?domain=vitadental.ru" alt="Иконка">
+                                            <img src="https://www.google.com/s2/favicons?domain=<?=esc($item['link'])?>" alt="Иконка">
                                         </div>
                                         <div class="post-link__info">
                                             <h3><?=esc($item['title']);?></h3>

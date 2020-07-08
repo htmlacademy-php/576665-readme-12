@@ -163,7 +163,7 @@ if (!$link) {
     }
 
     $param_type = '';
-    $sort = 'view_count';
+    $param_sort = 'view_count';
 
     $query_type = filter_input(INPUT_GET, 'post_type');
 
@@ -179,12 +179,12 @@ if (!$link) {
         $sql .= " WHERE posts.post_type_id =" . $param_type;
     }
 
-    if ($sort) {
-        $sql .= " ORDER BY " . $sort . " DESC LIMIT 6 ";
+    if ($param_sort) {
+        $sql .= " ORDER BY " . $param_sort . " DESC LIMIT 6 ";
     }
 
-
     $result = mysqli_query($link, $sql);
+
     if ($result) {
         $popular_posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
     } else {
@@ -195,7 +195,8 @@ if (!$link) {
 $page_content = include_template('main.php', [
     'popular_posts' => $popular_posts,
     'post_types' => $post_types,
-    'param_type' => $param_type
+    'param_type' => $param_type,
+    'param_sort' => $param_sort
 ]);
 
 $layout_content = include_template('layout.php', [
