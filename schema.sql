@@ -33,19 +33,19 @@ CREATE TABLE comments (
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     content TEXT,
     user_id INT REFERENCES users (id),
-    post_id INT REFERENCES posts (id)
+    post_id INT REFERENCES posts (post_id)
 );
 
 CREATE TABLE likes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT REFERENCES users (id),
-    post_id INT REFERENCES posts (id)
+    post_id INT REFERENCES posts (post_id)
 );
 
 CREATE TABLE subscriptions (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT REFERENCES users (id),
-    post_id INT REFERENCES posts (id)
+    author_id INT REFERENCES users (id),
+    follower_id INT REFERENCES users (id)
 );
 
 CREATE TABLE massages (
@@ -68,7 +68,7 @@ CREATE TABLE post_types (
 );
 
 CREATE TABLE post_tag (
-post_id INT REFERENCES posts (id),
+post_id INT REFERENCES posts (post_id),
 tag_id INT REFERENCES tags (id),
 primary key (post_id, tag_id)
 );

@@ -25,11 +25,10 @@ VALUES
 ('2020-06-09 21:11', 'Моя мечта', '', '', 'img/coast-medium.jpg', '', '', 1, 1, 2),
 ('2020-02-23 21:11', 'Лучшие курсы', '', '', '', '', 'www.htmlacademy.ru', 1, 2, 5);
 
-INSERT INTO subscriptions (user_id, post_id)
+INSERT INTO subscriptions (author_id, follower_id)
 VALUES
-(1, 4),
-(2, 4),
-(3, 4);
+(1, 2),
+(1, 3);
 
 SELECT p.*, u.login, pt.name
 FROM posts p
