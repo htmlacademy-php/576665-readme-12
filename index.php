@@ -171,7 +171,7 @@ if (!$link) {
         $param_type = $query_type;
     }
 
-    $sql = 'SELECT * , users.id, post_types.class FROM posts'
+    $sql = 'SELECT * , users.id, post_types.id FROM posts'
         . ' JOIN users ON posts.user_id = users.id'
         . ' JOIN post_types ON posts.post_type_id = post_types.id';
 

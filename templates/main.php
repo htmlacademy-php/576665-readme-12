@@ -55,9 +55,14 @@
         </div>
         <div class="popular__posts">
             <?php foreach ($popular_posts as $key => $item): ?>
+            <?php var_dump($item); ?>
                 <article class="popular__post post <?=$item['class'];?>">
                     <header class="post__header">
-                        <h2><?=esc($item['title']);?></h2>
+                        <h2>
+                            <a href="post.php/?post_id=<?=$item['id']?>">
+                                <?=esc($item['title']);?>
+                            </a>
+                        </h2>
                     </header>
                     <div class="post__main">
                         <?php if ($item['class'] == 'quote'): ?>
