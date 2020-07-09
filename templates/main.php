@@ -58,7 +58,7 @@
                 <article class="popular__post post post-<?=$item['class'];?>">
                     <header class="post__header">
                         <h2>
-                            <a href="../post.php/?post_id=<?=$item['post_id']?>">
+                            <a href="/post.php/?post_id=<?=$item['post_id']?>">
                                 <?=esc($item['title']);?>
                             </a>
                         </h2>
@@ -97,7 +97,7 @@
                                     <?=embed_youtube_cover(esc($item['video'])); ?>
 <!--                                    <img src="/img/coast-medium.jpg" alt="Превью к видео" width="360" height="188">-->
                                 </div>
-                                <a href="/post-details.html" class="post-video__play-big button">
+                                <a href="/post.php/?post_id=<?=$item['post_id']?>" class="post-video__play-big button">
                                     <svg class="post-video__play-big-icon" width="14" height="14">
                                         <use xlink:href="#icon-video-play-big"></use>
                                     </svg>
