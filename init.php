@@ -7,3 +7,5 @@ if (file_exists('config.php')) {
     exit('The file config.php does not exist. Use the sample file named config.sample.php, create a config.php file and editing it as required');
 }
 
+/*set the default timezone*/
+date_default_timezone_set('Europe/Moscow');
