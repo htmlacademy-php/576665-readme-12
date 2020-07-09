@@ -55,7 +55,7 @@
         </div>
         <div class="popular__posts">
             <?php foreach ($popular_posts as $key => $item): ?>
-                <article class="popular__post post <?=$item['class'];?>">
+                <article class="popular__post post post-<?=$item['class'];?>">
                     <header class="post__header">
                         <h2>
                             <a href="../post.php/?post_id=<?=$item['post_id']?>">
