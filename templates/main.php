@@ -36,13 +36,13 @@
                 <b class="popular__filters-caption filters__caption">Тип контента:</b>
                 <ul class="popular__filters-list filters__list">
                     <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
-                        <a class="filters__button filters__button--ellipse filters__button--all filters__button--active" href="#">
+                        <a class="filters__button filters__button--ellipse filters__button--all <?php if (!$param_type): echo 'filters__button--active'; endif;?>" href="/">
                             <span>Все</span>
                         </a>
                     </li>
                     <?php foreach ($post_types as $post_type): ?>
                         <li class="popular__filters-item filters__item">
-                            <a class="filters__button filters__button--<?=$post_type['class']?> button" href="#">
+                            <a class="filters__button filters__button--<?=$post_type['class']?> <?php if ($param_type == $post_type['id']): echo 'filters__button--active'; endif;?> button" href="/?post_type=<?=$post_type['id']?>">
                                 <span class="visually-hidden"><?=$post_type['name']?></span>
                                 <svg class="filters__icon" width="22" height="18">
                                     <use xlink:href="#icon-filter-<?=$post_type['class']?>"></use>
@@ -55,9 +55,13 @@
         </div>
         <div class="popular__posts">
             <?php foreach ($popular_posts as $key => $item): ?>
-                <article class="popular__post post <?=$item['class'];?>">
+                <article class="popular__post post post-<?=$item['class'];?>">
                     <header class="post__header">
-                        <h2><?=esc($item['title']);?></h2>
+                        <h2>
+                            <a href="/post.php/?post_id=<?=$item['post_id']?>">
+                                <?=esc($item['title']);?>
+                            </a>
+                        </h2>
                     </header>
                     <div class="post__main">
                         <?php if ($item['class'] == 'quote'): ?>
@@ -72,7 +76,7 @@
                                 <a class="post-link__external" href="http://" title="Перейти по ссылке">
                                     <div class="post-link__info-wrapper">
                                         <div class="post-link__icon-wrapper">
-                                            <img src="https://www.google.com/s2/favicons?domain=vitadental.ru" alt="Иконка">
+                                            <img src="https://www.google.com/s2/favicons?domain=<?=esc($item['link'])?>" alt="Иконка">
                                         </div>
                                         <div class="post-link__info">
                                             <h3><?=esc($item['title']);?></h3>
@@ -91,9 +95,9 @@
                             <div class="post-video__block">
                                 <div class="post-video__preview">
                                     <?=embed_youtube_cover(esc($item['video'])); ?>
-                                    <img src="img/coast-medium.jpg" alt="Превью к видео" width="360" height="188">
+<!--                                    <img src="/img/coast-medium.jpg" alt="Превью к видео" width="360" height="188">-->
                                 </div>
-                                <a href="post-details.html" class="post-video__play-big button">
+                                <a href="/post.php/?post_id=<?=$item['post_id']?>" class="post-video__play-big button">
                                     <svg class="post-video__play-big-icon" width="14" height="14">
                                         <use xlink:href="#icon-video-play-big"></use>
                                     </svg>
