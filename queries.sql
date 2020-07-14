@@ -5,7 +5,7 @@ VALUES
 ('Видео', 'video'),
 ('Цитата', 'quote'),
 ('Ссылка', 'link');
-
+# TODO change name for 'photo'
 INSERT INTO users (email, login, password, picture)
 VALUES
 ('lara@mail.com', 'Лариса', 'lara', 'img/userpic-larisa-small.jpg'),
