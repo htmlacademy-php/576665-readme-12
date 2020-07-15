@@ -15,12 +15,13 @@ if (!$link) {
 }
 
 $active_post_type = filter_input (INPUT_GET, 'post_type', FILTER_VALIDATE_INT);
-$index = ($active_post_type - 1);
+$array_index = ($active_post_type - 1);
 var_dump($active_post_type);
-echo '<pre>';
-var_dump($post_types);
+var_dump($array_index);
+echo '<br>массив $post_types <pre>';
+var_dump( $post_types);
 echo '</pre>';
-var_dump($post_types[$index]['class']);
+var_dump($post_types[$array_index]['class']);
 
 
 if ($_SERVER['REQUEST_METHOD' == 'POST']) {
@@ -28,13 +29,17 @@ if ($_SERVER['REQUEST_METHOD' == 'POST']) {
 
 }
 
-$adding_post_content = include_template('adding-post-link.php');
+$adding_post_content = include_template("adding-post-{$post_types[$array_index]['class']}.php", [
+    'post_types' => $post_types,
+    'array_index' => $array_index
+]);
 
 
 $page_content = include_template('adding-post.php', [
     'post_types' => $post_types,
     'active_post_type' => $active_post_type,
-    'adding_post_content' => $adding_post_content
+    'adding_post_content' => $adding_post_content,
+    'array_index' => $array_index
 
 ]);
 
