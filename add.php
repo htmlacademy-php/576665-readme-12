@@ -15,19 +15,23 @@ if (!$link) {
 }
 
 $active_post_type = filter_input (INPUT_GET, 'post_type', FILTER_VALIDATE_INT);
+
 $array_index = ($active_post_type - 1);
-var_dump($active_post_type);
-var_dump($array_index);
-echo '<br>массив $post_types <pre>';
-var_dump( $post_types);
-echo '</pre>';
-var_dump($post_types[$array_index]['class']);
 
-
-if ($_SERVER['REQUEST_METHOD' == 'POST']) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $new_post = $_POST;
 
+    $file_name = uniqid() . '.img';
+    $new_post['path'] = $file_name;
+    $path = 'uploads/' . $file_name;
+    move_uploaded_file($_FILES['upload_photo']['tmp_name'], 'uploads/' . $file_name);
+
 }
+echo '<pre>';
+var_dump($new_post);
+var_dump($path);
+var_dump($_FILES);
+echo '</pre>';
 
 $adding_post_content = include_template("adding-post-{$post_types[$array_index]['class']}.php", [
     'post_types' => $post_types,
