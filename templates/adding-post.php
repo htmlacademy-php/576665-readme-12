@@ -39,7 +39,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <input type="hidden" name="post-type" value="<?=$post_types[$array_index]['class']?>">
+                                    <input type="hidden" name="post_type" value="<?=$post_types[$array_index]['class']?>">
                                    <?=$adding_post_content ?>
                                     <div class="adding-post__input-wrapper form__input-wrapper">
                                         <label class="adding-post__label form__label" for="cite-tags">Теги</label>

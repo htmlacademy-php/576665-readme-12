@@ -3,6 +3,38 @@
 require_once 'init.php';
 require_once 'helpers.php';
 
+function link_validate ($link_value)
+{
+    $link_errors = [];
+    if (empty($link_value)) {
+
+        $link_errors[] = "Поле должно быть заполнено";
+    }
+    if (!filter_var($link_value, FILTER_VALIDATE_URL)) {
+        $link_errors[] = "Значение не является ссылкой";
+    }
+    return ($link_errors);
+}
+
+function tags_validate ($tags)
+{
+    $tag_errors = [];
+    $tags_array = explode(' ', $tags);
+    $tags_count = count($tags_array);
+    var_dump($tags_array);
+}
+
+function post_validate ($new_post)
+{
+    $errors = [];
+    if(empty($new_post['text-heading'])) {
+        $errors['text-heading'] = 'Это поле должно быть заполнено';
+    }
+    tags_validate($new_post['tags']);
+    var_dump($errors);
+
+}
+
 if (!$link) {
     print 'error' . mysqli_connect_error();
 } else {
@@ -20,16 +52,19 @@ $array_index = ($active_post_type - 1);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $new_post = $_POST;
+    post_validate($new_post);
 
     $file_name = uniqid() . '.img';
     $new_post['path'] = $file_name;
     $path = 'uploads/' . $file_name;
     move_uploaded_file($_FILES['upload_photo']['tmp_name'], 'uploads/' . $file_name);
-
 }
+
+
+
 echo '<pre>';
 var_dump($new_post);
-var_dump($path);
+var_dump($new_post['post_link']);
 var_dump($_FILES);
 echo '</pre>';
 
