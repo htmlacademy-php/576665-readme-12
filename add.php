@@ -3,36 +3,75 @@
 require_once 'init.php';
 require_once 'helpers.php';
 
+function esc ($str)
+{
+    $text = null;
+    $text = htmlspecialchars($str);
+    return $text;
+}
+
 function link_validate ($link_value)
 {
-    $link_errors = [];
-    if (empty($link_value)) {
-
-        $link_errors[] = "Поле должно быть заполнено";
-    }
+    $link_error = null;
     if (!filter_var($link_value, FILTER_VALIDATE_URL)) {
-        $link_errors[] = "Значение не является ссылкой";
+        $link_error = "Значение не является ссылкой";
     }
-    return ($link_errors);
+    return ($link_error);
 }
 
-function tags_validate ($tags)
+function tags_validate ($tags_value)
 {
-    $tag_errors = [];
-    $tags_array = explode(' ', $tags);
-    $tags_count = count($tags_array);
+    $tag_error = [];
+    $tags_array = explode(' ', $tags_value);
     var_dump($tags_array);
+    foreach ($tags_array as $tag) {
+        if (!preg_match('/^[a-zA-Zа-яА-Я0-9]+$/', $tag)) {
+            $tag_error[] = 'Введенный тег "' . $tag . '" не корректен';
+        }
+    }
+    return ($tag_error);
 }
+
 
 function post_validate ($new_post)
 {
     $errors = [];
-    if(empty($new_post['text-heading'])) {
-        $errors['text-heading'] = 'Это поле должно быть заполнено';
+    $new_post['text_heading'] = htmlspecialchars($new_post['text_heading']);
+    print ($new_post['text_heading']);
+    if(empty($new_post['text_heading'])) {
+        $errors['text_heading'] = 'Это поле должно быть заполнено';
     }
-    tags_validate($new_post['tags']);
+    if(!empty($new_post['tags'])) {
+        $errors['tags'] = tags_validate($new_post['tags']);
+    }
+    if ($new_post['post_type'] === 'text') {
+        if (empty($new_post['post_text'])) {
+            $errors['post_text'] = 'Это поле должно быть заполнено';
+        }
+    }
+    if($new_post['post_type'] === 'video') {
+        if (empty($new_post['video_heading'])) {
+            $errors['video_heading'] = 'Это поле должно быть заполнено';
+        }
+    }
+    if ($new_post['post_type'] === 'quote') {
+        if(empty($new_post['quote_text'])) {
+            $errors['quote_text'] = 'Это поле должно быть заполнено';
+        }
+        if(empty($new_post['quote_author'])) {
+            $errors['quote_author'] = 'Это поле должно быть заполнено';
+        }
+    }
+    if($new_post['post_type'] === 'link') {
+        if (empty($new_post['post_link'])) {
+            $errors['post_link'] = 'Это поле должно быть заполнено';
+        } else {
+            $errors['post_link'] = link_validate($new_post['link']);
+        }
+    }
+    echo '<pre>';
     var_dump($errors);
-
+    echo '</pre>';
 }
 
 if (!$link) {
@@ -64,8 +103,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 echo '<pre>';
 var_dump($new_post);
-var_dump($new_post['post_link']);
-var_dump($_FILES);
 echo '</pre>';
 
 $adding_post_content = include_template("adding-post-{$post_types[$array_index]['class']}.php", [
