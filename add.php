@@ -128,13 +128,34 @@ function post_validate ($new_post)
                 $upload_photo['path'] = $filename;
             }
         }
+        if (!empty($new_post['photo_heading'])) {
+            $photo_url = $new_post['photo_heading'];
+            if (link_validate($photo_url) !== true) {
+                $errors['photo_heading'] = link_validate($photo_url);
+            } else {
+                $get_headers = get_headers($photo_url);
+                echo '<pre>';
+                var_dump($get_headers);
+                echo '</pre>';
+                if ($get_headers[0] !== 'HTTP/1.1 200 OK') {
+                    $errors['photo_heading'] = "Страница не отвечает";
+                }
+            }
 
+
+                $data = file_get_contents($photo_url);
+                $filename = uniqid();
+                $path = 'uploads/' . $filename;
+                file_put_contents($path, $data);
+//                print '<a href="/uploads/' . $filename . '">File downloaded!</a>';
+            }
+        }
     }
     echo '<pre>';
     print 'errors_';
     var_dump ($errors);
     echo '</pre>';
-}
+
 
 if (!$link) {
     print 'error' . mysqli_connect_error();
