@@ -29,9 +29,9 @@
                             <div class="form__text-inputs-wrapper">
                                 <div class="form__text-inputs">
                                     <div class="adding-post__input-wrapper form__input-wrapper">
-                                        <label class="adding-post__label form__label" for="<?=$post_types[$array_index]['class']?>-heading">Заголовок <span class="form__input-required">*</span></label>
+                                        <label class="adding-post__label form__label" for="<?=$post_types[$active_post_type]['class']?>-heading">Заголовок <span class="form__input-required">*</span></label>
                                         <div class="form__input-section">
-                                            <input class="adding-post__input form__input" id="<?=$post_types[$array_index]['class']?>-heading" type="text" name="text_heading" placeholder="Введите заголовок">
+                                            <input class="adding-post__input form__input" id="<?=$post_types[$active_post_type]['class']?>-heading" type="text" name="text_heading" placeholder="Введите заголовок">
                                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                                             <div class="form__error-text">
                                                 <h3 class="form__error-title">Заголовок сообщения</h3>
@@ -39,7 +39,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <input type="hidden" name="post_type" value="<?=$post_types[$array_index]['class']?>">
+                                    <input type="hidden" name="post_type" value="<?=$post_types[$active_post_type]['class']?>">
                                    <?=$adding_post_content ?>
                                     <div class="adding-post__input-wrapper form__input-wrapper">
                                         <label class="adding-post__label form__label" for="cite-tags">Теги</label>

@@ -110,26 +110,26 @@ function post_validate ($new_post)
         }
     }
     if ($new_post['post_type'] === 'photo') {
-        if (empty($_FILES['upload_photo']['name']) and empty($new_post['photo_heading'])) {
+        $photo_url = $new_post['photo_heading'];
+        $upload_photo = $_FILES['upload_photo'];
+        if (empty($upload_photo['name']) and empty($new_post['photo_heading'])) {
             $errors['post_photo'] = 'Поле "ссылка" должно быть заполнено или выбрана фотография для загрузки.';
         }
-        if (!empty($_FILES['upload_photo']['name'])) {
-            $tmp_name = $_FILES['upload_photo']['tmp_name'];
-            $path = $_FILES['upload_photo']['name'];
+        if (!empty($upload_photo['name'])) {
+            $tmp_name = $upload_photo['tmp_name'];
+            $name = $upload_photo['name'];
             $file_info = finfo_open(FILEINFO_MIME_TYPE);
             $file_type = finfo_file($file_info, $tmp_name);
-            $filename = uniqid() . '.' . $file_type;
-            echo ($file_type);
             if (check_img_type($file_type) !== true) {
                 $errors['file_type'] =  check_img_type($file_type);
             }
             else {
-                move_uploaded_file($tmp_name, 'uploads/' . $path);
-                $upload_photo['path'] = $filename;
+                move_uploaded_file($tmp_name, 'uploads/' . $name);
+                $upload_photo['path'] = 'uploads/' . $name;
             }
         }
         if (!empty($new_post['photo_heading'])) {
-            $photo_url = $new_post['photo_heading'];
+
             if (link_validate($photo_url) !== true) {
                 $errors['photo_heading'] = link_validate($photo_url);
             } else {
@@ -137,12 +137,14 @@ function post_validate ($new_post)
                 echo '<pre>';
                 var_dump($get_headers);
                 echo '</pre>';
-                if ($get_headers[0] !== 'HTTP/1.1 200 OK') {
+                if (!strpos($get_headers[0], '200')) {
                     $errors['photo_heading'] = "Страница не отвечает";
                 }
+                if (check_img_type($get_headers[2]) !== true) {
+                    $errors['photo_heading'] = "Ссылка на недопустимый тип файла";
+//                    TODO check image type
+                }
             }
-
-
                 $data = file_get_contents($photo_url);
                 $filename = uniqid();
                 $path = 'uploads/' . $filename;
@@ -163,41 +165,65 @@ if (!$link) {
     $sql = 'SELECT * from post_types';
     $result = mysqli_query($link, $sql);
     if ($result) {
-        $post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $post_types_array = mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
+}
+
+$post_types=[];
+foreach ($post_types_array as $item) {
+    $post_types[$item['id']] = $item;
 }
 
 $active_post_type = filter_input (INPUT_GET, 'post_type', FILTER_VALIDATE_INT);
 
-$array_index = ($active_post_type - 1);
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $new_post = $_POST;
-    echo '<pre>';
-    var_dump ($_FILES);
-    echo '</pre>';
+
+    $new_post = filter_input_array(INPUT_POST, [
+        'title' => FILTER_DEFAULT,
+        'content' => FILTER_DEFAULT,
+        'author_quote' => FILTER_DEFAULT,
+        'img' => FILTER_DEFAULT,
+        'video' => FILTER_DEFAULT,
+        'link' => FILTER_DEFAULT,
+        'user_id' => FILTER_DEFAULT,
+        'post_type_id' => FILTER_DEFAULT
+    ], true);
     post_validate($new_post);
-    header("Location: http://576665-readme-12/add.php/?post_type=" . $active_post_type);
 }
-
-
+echo '<pre>';
+print 'post_';
+var_dump($_POST);
+echo '</pre>';
 
 echo '<pre>';
 print 'post_';
 var_dump($new_post);
 echo '</pre>';
 
-$adding_post_content = include_template("adding-post-{$post_types[$array_index]['class']}.php", [
+if (count($errors)) {
+
+} else {
+    $sql = 'INSERT INTO posts (date, title, content, author_quote, img, video, link, user_id, post_type_id)
+    VALUE (NOW(), ?, ?, ?, ?, ?, ?, 1, ?)';
+    $stmt = db_get_prepare_stmt($link, $sql, $new_post);
+    $res = mysqli_stmt_execute($stmt);
+}
+
+if ($res) {
+    $post_id = mysqli_insert_id($link);
+    header('Location: post.php?post_id=' . $post_id);
+}
+
+$adding_post_content = include_template("adding-post-{$post_types[$active_post_type]['class']}.php", [
     'post_types' => $post_types,
-    'array_index' => $array_index
+    'active_post_type' => $active_post_type
 ]);
 
 
 $page_content = include_template('adding-post.php', [
     'post_types' => $post_types,
     'active_post_type' => $active_post_type,
-    'adding_post_content' => $adding_post_content,
-    'array_index' => $array_index
+    'adding_post_content' => $adding_post_content
 
 ]);
 
