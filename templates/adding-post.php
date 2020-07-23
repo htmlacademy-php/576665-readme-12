@@ -12,7 +12,7 @@
                     <ul class="adding-post__tabs-list filters__list tabs__list">
                         <?php foreach ($post_types as $post_type): ?>
                             <li class="adding-post__tabs-item filters__item">
-                                <a class="adding-post__tabs-link filters__button filters__button--<?=$post_type['class']?> tabs__item <?php if ($active_post_type == $post_type['id']): echo 'filters__button--active tabs__item--active'; endif;?> button" href="/add.php/?post_type=<?=$post_type['id']?>">
+                                <a class="adding-post__tabs-link filters__button filters__button--<?=$post_type['class']?> tabs__item <?php if ($active_post_type == $post_type['id']): echo 'filters__button--active tabs__item--active'; endif;?> button" href="/add.php?post_type=<?=$post_type['id']?>">
                                     <svg class="filters__icon" width="22" height="18">
                                         <use xlink:href="#icon-filter-<?=$post_type['class']?>"></use>
                                     </svg>

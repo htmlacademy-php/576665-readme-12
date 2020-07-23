@@ -229,6 +229,8 @@ $active_post_type = filter_input (INPUT_GET, 'post_type', FILTER_VALIDATE_INT);
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $errors = [];
 
+//    $new_post = $_POST;
+
     $new_post = filter_input_array(INPUT_POST, [
         'title' => FILTER_DEFAULT,
         'content' => FILTER_DEFAULT,
@@ -238,7 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'link' => FILTER_DEFAULT,
         'user_id' => '1',
         'post_type' => FILTER_DEFAULT,
-        'tags' => FILTER_DEFAULT
+        'tag_id' => '1'
     ], true);
 
     $rules = rules($new_post['post_type'], $new_post['tags']);
@@ -269,19 +271,17 @@ echo '</pre>';
 
 
 
-//if (count($errors)) {
-//
-//} else {
-//    $sql = 'INSERT INTO posts (date, title, content, author_quote, img, video, link, user_id, post_type_id)
-//    VALUE (NOW(), ?, ?, ?, ?, ?, ?, 1, ?)';
-//    $stmt = db_get_prepare_stmt($link, $sql, $new_post);
-//    $res = mysqli_stmt_execute($stmt);
-//}
-//
-//if ($res) {
-//    $post_id = mysqli_insert_id($link);
-//    header('Location: post.php?post_id=' . $post_id);
-//}
+
+    $sql = 'INSERT INTO posts (title, content, author_quote, img, video, link, user_id, post_type_id, tag_id)
+    VALUE (?, ?, ?, ?, ?, ?, 1, 2, 1)';
+    $stmt = db_get_prepare_stmt($link, $sql, $new_post);
+    $res = mysqli_stmt_execute($stmt);
+
+
+if ($res) {
+    $post_id = mysqli_insert_id($link);
+    header('Location: post.php?post_id=' . $post_id);
+}
 
 $adding_post_content = include_template("adding-post-{$post_types[$active_post_type]['class']}.php", [
     'post_types' => $post_types,
