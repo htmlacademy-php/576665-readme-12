@@ -73,7 +73,7 @@ function youtube_url_validation ($url_value)
 
 function check_img_type ($file_type)
 {
-    $required_types = ['image/jpg', 'image/png', 'image/gif'];
+    $required_types = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
     if (!in_array($file_type, $required_types)) {
         return 'Загрузите картинку в одном из допустимых форматов: JPG PNG GIF';
     }
@@ -95,16 +95,16 @@ function photo_validate ($upload_photo)
 function photo_link_validate ($photo_link)
 {
     $error = '';
-    if (link_validate($photo_link) !== true) {
-        $error = link_validate($photo_link);
+
+    if (!filter_var($photo_link, FILTER_VALIDATE_URL)) {
+        $error =  "Значение не является ссылкой";
     } else {
-        $get_headers = get_headers($photo_link);
+        $get_headers = get_headers($photo_link, 1);
+        var_dump($get_headers);
         if (!strpos($get_headers[0], '200')) {
             $error = "Страница не отвечает";
-        }
-        if (check_img_type($get_headers[2]) !== true) {
+        } elseif (check_img_type($get_headers['Content-Type']) !== true) {
             $error = "Ссылка на недопустимый тип файла";
-//                    TODO check image type
         }
     }
     return $error;
@@ -149,7 +149,7 @@ function rules ($post_type, $tags)
             break;
         }
         case 'photo' : {
-            if (!empty($_FILES['upload_photo'])) {
+            if (!empty($_FILES['upload_photo']['name'])) {
                 $rules['photo'] = function ($value) {
                     return photo_validate($value);
                 };} else {
@@ -218,16 +218,24 @@ if (!$link) {
         $post_types_array = mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 }
-
+var_dump($post_types_array);
 $post_types=[];
 foreach ($post_types_array as $item) {
     $post_types[$item['id']] = $item;
 }
 
-$active_post_type = filter_input (INPUT_GET, 'post_type', FILTER_VALIDATE_INT);
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    $active_post_type = filter_input (INPUT_GET, 'post_type', FILTER_VALIDATE_INT);
+}
+
+//$current_path = pathinfo(__FILE__, PATHINFO_BASENAME);
+//$query = http_build_query($params);
+//$url = "/" . $current_path . "?" . $query;
+//echo $url;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $errors = [];
+    $active_post_type = 5;
 
 //    $new_post = $_POST;
 
@@ -243,6 +251,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'tag_id' => '1'
     ], true);
 
+    echo '<pre>';
+    var_dump($_FILES['upload_photo']);
+    echo '</pre>';
+
+    if ($new_post['post_type'] == 'photo') {
+        if (empty($new_post['img']) and empty($_FILES['upload_photo']['name'])) {
+            $errors['photo_post'] = 'Загрузите файл или заполните поле "ссылка"';
+        }
+    }
+
     $rules = rules($new_post['post_type'], $new_post['tags']);
 
     foreach ($new_post as $key => $value) {
@@ -250,6 +268,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $rule = $rules[$key];
             $errors[$key] = $rule($value);
         }
+    }
+    $errors = array_filter($errors);
+
+    if (!count($errors)) {
+        $sql = 'INSERT INTO posts (date, title, content, author_quote, img, video, link, user_id, post_type_id, tag_id)
+    VALUE (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        $stmt = db_get_prepare_stmt($link, $sql, $new_post);
+        $res = mysqli_stmt_execute($stmt);
+        var_dump($res);
+
+        if ($res) {
+            $post_id = mysqli_insert_id($link);
+            header('Location: post.php?post_id=' . $post_id);
+        }
+
     }
 
 }
@@ -270,29 +303,21 @@ var_dump($errors);
 echo '</pre>';
 
 
-
-
-    $sql = 'INSERT INTO posts (title, content, author_quote, img, video, link, user_id, post_type_id, tag_id)
-    VALUE (?, ?, ?, ?, ?, ?, 1, 2, 1)';
-    $stmt = db_get_prepare_stmt($link, $sql, $new_post);
-    $res = mysqli_stmt_execute($stmt);
-
-
-if ($res) {
-    $post_id = mysqli_insert_id($link);
-    header('Location: post.php?post_id=' . $post_id);
-}
-
 $adding_post_content = include_template("adding-post-{$post_types[$active_post_type]['class']}.php", [
     'post_types' => $post_types,
-    'active_post_type' => $active_post_type
+    'active_post_type' => $active_post_type,
+    'active_post_type_id' => $active_post_type_id,
+    'new_post' => $new_post,
+    'errors' => $errors
 ]);
 
 
 $page_content = include_template('adding-post.php', [
     'post_types' => $post_types,
     'active_post_type' => $active_post_type,
-    'adding_post_content' => $adding_post_content
+    'active_post_type_id' => $active_post_type_id,
+    'adding_post_content' => $adding_post_content,
+    'new_post' => $new_post
 
 ]);
 
