@@ -51,7 +51,7 @@ if ($result) {
     $posts_count = mysqli_num_rows($result);
 }
 
-$post_content = include_template("post-{$post['class']}.php", [
+$post_content = include_template("post/post-{$post['class']}.php", [
     'post' => $post
 ]);
 

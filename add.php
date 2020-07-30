@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 file_put_contents($path, $data);
             }
 
-        $sql = 'INSERT INTO posts (date, title, content, author_quote, img, video, link, view_count, user_id, post_type_id, tag_id)
+        $sql = 'INSERT INTO post (date, title, content, author_quote, img, video, link, view_count, user_id, post_type_id, tag_id)
     VALUE (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
         $stmt = db_get_prepare_stmt($link, $sql, [
             $new_post['title'],
