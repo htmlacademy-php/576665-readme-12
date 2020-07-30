@@ -89,8 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!count($errors)) {
         if ($new_post['post_type'] == 'photo' and !empty($new_post['photo']['name'])) {
                 $new_post['img'] = upload_photo($new_post['photo']);
-            }
-            if ($new_post['post_type'] == 'photo' and !empty($new_post['img'])) {
+            } elseif ($new_post['post_type'] == 'photo' and !empty($new_post['img'])) {
                 $date = file_get_contents($new_post['img']);
                 $headers = get_headers($new_post['img'], 1);
                 $type = $headers['Content-Type'];
@@ -100,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 file_put_contents($path, $data);
             }
 
-        $sql = 'INSERT INTO post (date, title, content, author_quote, img, video, link, view_count, user_id, post_type_id, tag_id)
+        $sql = 'INSERT INTO posts (date, title, content, author_quote, img, video, link, view_count, user_id, post_type_id, tag_id)
     VALUE (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
         $stmt = db_get_prepare_stmt($link, $sql, [
             $new_post['title'],
