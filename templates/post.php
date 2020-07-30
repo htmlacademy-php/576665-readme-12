@@ -37,7 +37,7 @@
                         </div>
                         <span class="post__view">
                             <?=$post['view_count']; ?>
-                            <?php echo get_noun_plural_form(1, 'просмотр', 'просмотра', 'просмотров');?>
+                            <?= get_noun_plural_form(1, 'просмотр', 'просмотра', 'просмотров');?>
                         </span>
                     </div>
                     <div class="comments">
@@ -122,7 +122,7 @@
                                 <?=$subscriptions_count?>
                             </span>
                             <span class="post-details__rating-text user__rating-text">
-                                <?php echo get_noun_plural_form($subscriptions_count, 'подписчик', 'подписчика', 'подписчиков');?>
+                                <?= get_noun_plural_form($subscriptions_count, 'подписчик', 'подписчика', 'подписчиков');?>
                             </span>
                         </p>
                         <p class="post-details__rating-item user__rating-item user__rating-item--publications">
@@ -130,7 +130,7 @@
                                 <?=$posts_count?>
                             </span>
                             <span class="post-details__rating-text user__rating-text">
-                                <?php echo get_noun_plural_form($posts_count, 'публикация', 'публикации', 'публикаций');?>
+                                <?= get_noun_plural_form($posts_count, 'публикация', 'публикации', 'публикаций');?>
                             </span>
                         </p>
                     </div>
