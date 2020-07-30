@@ -5,9 +5,7 @@ require_once 'helpers.php';
 
 function esc (string $str)
 {
-    $text = null;
-    $text = htmlspecialchars($str);
-    return $text;
+    return htmlspecialchars($str, ENT_QUOTES);
 }
 
 function clean(string $value) {
