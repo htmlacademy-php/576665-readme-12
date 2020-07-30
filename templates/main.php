@@ -36,13 +36,13 @@
                 <b class="popular__filters-caption filters__caption">Тип контента:</b>
                 <ul class="popular__filters-list filters__list">
                     <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
-                        <a class="filters__button filters__button--ellipse filters__button--all <?php if (!$param_type): echo 'filters__button--active'; endif;?>" href="/">
+                        <a class="filters__button filters__button--ellipse filters__button--all <?= empty($param_type) ? 'filters__button--active' : ''?>" href="/">
                             <span>Все</span>
                         </a>
                     </li>
                     <?php foreach ($post_types as $post_type): ?>
                         <li class="popular__filters-item filters__item">
-                            <a class="filters__button filters__button--<?=$post_type['class']?> <?php if ($param_type == $post_type['id']): echo 'filters__button--active'; endif;?> button" href="/?post_type=<?=$post_type['id']?>">
+                            <a class="filters__button filters__button--<?=$post_type['class']?> <?= $param_type == $post_type['id'] ? 'filters__button--active' : ''?> button" href="/?post_type=<?=$post_type['id']?>">
                                 <span class="visually-hidden"><?=$post_type['name']?></span>
                                 <svg class="filters__icon" width="22" height="18">
                                     <use xlink:href="#icon-filter-<?=$post_type['class']?>"></use>
