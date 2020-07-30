@@ -58,7 +58,7 @@
                 <article class="popular__post post post-<?=$item['class'];?>">
                     <header class="post__header">
                         <h2>
-                            <a href="/post.php/?post_id=<?=$item['post_id']?>">
+                            <a href="/post.php?post_id=<?=$item['post_id']?>">
                                 <?=esc($item['title']);?>
                             </a>
                         </h2>

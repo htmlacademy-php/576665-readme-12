@@ -37,7 +37,7 @@
                         </div>
                         <span class="post__view">
                             <?=$post['view_count']; ?>
-                            <?php echo get_noun_plural_form($post['view_count'], 'просмотр', 'просмотра', 'просмотров');?>
+                            <?php echo get_noun_plural_form(1, 'просмотр', 'просмотра', 'просмотров');?>
                         </span>
                     </div>
                     <div class="comments">
