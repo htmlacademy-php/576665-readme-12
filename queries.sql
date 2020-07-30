@@ -49,5 +49,5 @@ WHERE post_id = 1;
 INSERT INTO likes (user_id, post_id)
 VALUES (1, 2);
 
-INSERT INTO subscriptions (user_id, post_id)
+INSERT INTO subscriptions (author_id, follower_id)
 VALUES (1, 2);
