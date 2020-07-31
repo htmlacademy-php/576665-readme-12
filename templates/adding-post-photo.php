@@ -8,7 +8,6 @@
         <div class="form__error-text">
             <h3 class="form__error-title">Заголовок сообщения</h3>
             <p class="form__error-desc"><?= !empty($errors['img']) ? $errors['img'] : '' ?></p>
-            <p class="form__error-desc"><?= !empty($errors['img']) ? $errors['img'] : '' ?></p>
         </div>
     </div>
 </div>

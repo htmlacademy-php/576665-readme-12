@@ -46,6 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'tags' => FILTER_DEFAULT
     ], true);
 
+    foreach ($new_post as $key => $value) {
+        !empty($value) ? $new_post[$key] = clean($value) : $new_post[$key] = '';
+    }
+
     $active_post_type = $new_post['post_type_id'];
     $new_post['post_type'] = $post_types[$active_post_type]['class'];
     $new_post['user_id'] = 1;
@@ -90,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($new_post['post_type'] == 'photo' and !empty($new_post['photo']['name'])) {
                 $new_post['img'] = upload_photo($new_post['photo']);
             } elseif ($new_post['post_type'] == 'photo' and !empty($new_post['img'])) {
-                $date = file_get_contents($new_post['img']);
+                $data = file_get_contents($new_post['img']);
                 $headers = get_headers($new_post['img'], 1);
                 $type = $headers['Content-Type'];
                 $extension = substr($type, strpos($type, '/') + 1);
