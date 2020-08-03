@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     ], true);
 
     foreach ($new_post as $key => $value) {
-        !empty($value) ? $new_post[$key] = clean($value) : $new_post[$key] = '';
+        !empty($value) ? $new_post[$key] = trim($value) : $new_post[$key] = '';
     }
 
     $active_post_type = $new_post['post_type_id'];

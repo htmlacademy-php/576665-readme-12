@@ -40,26 +40,17 @@ function relative_date ($post_date)
     } elseif ($diff->y == 0 && $diff->m == 0 && $diff->d < 7) {
         $diff_d = $diff->d;
         echo $diff_d . ' ' . get_noun_plural_form($diff_d, 'день', 'дня', 'дней') . ' ' . 'назад';
-    } elseif ($diff->y == 0 && $diff->m == 0 && $diff->d >=7 && $diff->d < 35) {
-        $diff_weeks = $diff->d/7;
+    } elseif ($diff->y == 0 && $diff->m == 0 && $diff->d >= 7 && $diff->d < 35) {
+        $diff_weeks = $diff->d / 7;
         echo $diff_weeks . ' ' . get_noun_plural_form($diff_weeks, 'неделя', 'недели', 'недель') . ' ' . 'назад';
     } else {
-        $diff_m = $diff->y*12 + $diff->m;
+        $diff_m = $diff->y * 12 + $diff->m;
         echo $diff_m . ' ' . get_noun_plural_form($diff_m, 'месяц', 'месяца', 'месяцев') . ' ' . 'назад';
     }
 }
 
-function clean (string $value)
-{
-    $value = trim($value);
-    $value = stripslashes($value);
-    $value = strip_tags($value);
-    $value = htmlspecialchars($value);
 
-    return $value;
-}
-
-function check_text (string $value)
+function check_text(string $value)
 {
     $error = '';
     if (empty($value)) {
@@ -68,7 +59,7 @@ function check_text (string $value)
     return $error;
 }
 
-function check_youtube_domain (string $value)
+function check_youtube_domain(string $value)
 {
     $domain = parse_url($value, PHP_URL_HOST);
     if (strpos($domain, 'youtube.com') == false) {
@@ -77,7 +68,7 @@ function check_youtube_domain (string $value)
     return '';
 }
 
-function link_validate (string $link_value)
+function link_validate(string $link_value)
 {
     $error = '';
     if (empty($link_value)) {
@@ -88,7 +79,7 @@ function link_validate (string $link_value)
     return $error;
 }
 
-function tags_validate (string $tags_value)
+function tags_validate(string $tags_value)
 {
     $invalid_tags = [];
     $tags_array = explode(' ', $tags_value);
@@ -101,14 +92,16 @@ function tags_validate (string $tags_value)
 
         if (!empty($invalid_tags)) {
             $count_invalid_tags = count($invalid_tags);
-            $tag_error = get_noun_plural_form($count_invalid_tags, 'Тег ', 'Теги ', 'Теги ') . implode(', ', $invalid_tags) . get_noun_plural_form($count_invalid_tags, ' не корректен', ' не корректны', ' не корректны');
+            $tag_error = get_noun_plural_form($count_invalid_tags, 'Тег ', 'Теги ', 'Теги ') . implode(', ',
+                    $invalid_tags) . get_noun_plural_form($count_invalid_tags, ' не корректен', ' не корректны',
+                    ' не корректны');
         }
 
     }
     return $tag_error;
 }
 
-function youtube_url_validation (string $url_value)
+function youtube_url_validation(string $url_value)
 {
     $error = '';
     if (link_validate($url_value)) {
@@ -121,7 +114,7 @@ function youtube_url_validation (string $url_value)
     return $error;
 }
 
-function check_img_type (string $file_type)
+function check_img_type(string $file_type)
 {
     $required_types = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
     if (!in_array($file_type, $required_types)) {
@@ -130,7 +123,7 @@ function check_img_type (string $file_type)
     return true;
 }
 
-function photo_validate (array $upload_photo)
+function photo_validate(array $upload_photo)
 {
     $error = '';
     $tmp_name = $upload_photo['tmp_name'];
@@ -142,7 +135,7 @@ function photo_validate (array $upload_photo)
     return $error;
 }
 
-function photo_link_validate (string $photo_link)
+function photo_link_validate(string $photo_link)
 {
     $error = '';
     if (!empty($photo_link)) {
@@ -160,7 +153,7 @@ function photo_link_validate (string $photo_link)
     return $error;
 }
 
-function upload_photo (array $upload_photo)
+function upload_photo(array $upload_photo)
 {
     $tmp_name = $upload_photo['tmp_name'];
     $path = $upload_photo['name'];
@@ -169,31 +162,33 @@ function upload_photo (array $upload_photo)
     return $filename;
 }
 
-function get_tag_id ($link, string $tag, array $tags)
+function get_tag_id($link, string $tag, array $tags)
 {
     foreach ($tags as $item) {
         if ($item['tag'] === $tag) {
             return $item['id'];
         }
     }
-        $sql = 'INSERT INTO tags (tag) VALUE (?)';
-        $stmt = db_get_prepare_stmt($link, $sql, [$tag]);
-        $result = mysqli_stmt_execute($stmt);
-        if ($result) {
-            return mysqli_insert_id($link);
-        }
+    $sql = 'INSERT INTO tags (tag) VALUE (?)';
+    $stmt = db_get_prepare_stmt($link, $sql, [$tag]);
+    $result = mysqli_stmt_execute($stmt);
+    if ($result) {
+        return mysqli_insert_id($link);
+    }
     return false;
 }
 
-function create_post_tag_sql ($link, int $post_id, array $array_id)
+function create_post_tag_sql($link, int $post_id, array $array_id)
 {
     foreach ($array_id as $item) {
         $request_values[] = '(' . $post_id . ', ' . $item . ')';
     }
     $request_string = implode(', ', $request_values);
+
     $sql = 'INSERT INTO post_tag (post_id, tag_id) VALUES'
         . $request_string;
     $result = mysqli_query($link, $sql);
+
     if ($result) {
         return true;
     } else {
@@ -201,7 +196,7 @@ function create_post_tag_sql ($link, int $post_id, array $array_id)
     }
 }
 
-function rules ($post_type, $tags)
+function rules($post_type, $tags)
 {
     $rules = [];
     $rules['title'] = function ($value) {
