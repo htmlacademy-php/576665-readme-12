@@ -49,7 +49,7 @@ function relative_date ($post_date)
     }
 }
 
-function clean(string $value)
+function clean (string $value)
 {
     $value = trim($value);
     $value = stripslashes($value);
@@ -59,7 +59,7 @@ function clean(string $value)
     return $value;
 }
 
-function check_text(string $value)
+function check_text (string $value)
 {
     $error = '';
     if (empty($value)) {
@@ -90,7 +90,7 @@ function link_validate (string $link_value)
 
 function tags_validate (string $tags_value)
 {
-    $tags_error = [];
+    $invalid_tags = [];
     $tags_array = explode(' ', $tags_value);
 
     foreach ($tags_array as $tag) {
@@ -169,29 +169,39 @@ function upload_photo (array $upload_photo)
     return $filename;
 }
 
-function is_new_tag (string $tag, array $tags)
+function get_tag_id ($link, string $tag, array $tags)
 {
     foreach ($tags as $item) {
         if ($item['tag'] === $tag) {
-             return false;
+            return $item['id'];
         }
     }
-    return true;
+        $sql = 'INSERT INTO tags (tag) VALUE (?)';
+        $stmt = db_get_prepare_stmt($link, $sql, [$tag]);
+        $result = mysqli_stmt_execute($stmt);
+        if ($result) {
+            return mysqli_insert_id($link);
+        }
+    return false;
 }
 
-function add_new_tag ($link, $tag)
+function create_post_tag_sql ($link, int $post_id, array $array_id)
 {
-    $sql = 'INSERT INTO tags (tag) VALUE (?)';
-    $stmt = db_get_prepare_stmt($link, $sql, [$tag]);
-    $result = mysqli_stmt_execute($stmt);
+    foreach ($array_id as $item) {
+        $request_values[] = '(' . $post_id . ', ' . $item . ')';
+    }
+    $request_string = implode(', ', $request_values);
+    $sql = 'INSERT INTO post_tag (post_id, tag_id) VALUES'
+        . $request_string;
+    $result = mysqli_query($link, $sql);
     if ($result) {
         return true;
     } else {
-        return 'Не удалось добавить тег' . mysqli_error($link);
+        print ('error' . mysqli_error($link));
     }
 }
 
-function rules($post_type, $tags)
+function rules ($post_type, $tags)
 {
     $rules = [];
     $rules['title'] = function ($value) {

@@ -75,54 +75,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'tags' => 'Теги'
     ];
 
-    if (!empty($new_post['tags'])) {
-        $all_tags = [];
-        $new_tags = [];
-        $exists_tags = [];
-        $tags = explode(' ',$new_post['tags']);
-        $tags = array_unique($tags);
-
-        $sql = 'SELECT tag from tags';
-        $result = mysqli_query($link, $sql);
-        if ($result) {
-            $all_tags = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        } else {
-            print ('error' . mysqli_error($link));
-        }
-
-        foreach ($tags as $tag) {
-            if (is_new_tag($tag, $all_tags)) {
-                $new_tags[] = $tag;
-            } else {
-                $exists_tags[] = $tag;
-            }
-        }
-
-        if (!empty($new_tags)) {
-            echo 'INSERT';
-            foreach ($new_tags as $tag) {
-                add_new_tag($link, $tag);
-            }
-
-        }
-    }
-
     if (!count($errors)) {
         if ($new_post['post_type'] == 'photo' && !empty($new_post['photo']['name'])) {
-                $new_post['img'] = upload_photo($new_post['photo']);
-            } elseif ($new_post['post_type'] == 'photo' and !empty($new_post['img'])) {
-                $data = file_get_contents($new_post['img']);
-                $headers = get_headers($new_post['img'], 1);
-                $type = $headers['Content-Type'];
-                $extension = substr($type, strpos($type, '/') + 1);
-                $path = 'uploads/' . uniqid() . '.' . $extension;
-                $new_post['img'] = $path;
-                file_put_contents($path, $data);
+            $new_post['img'] = upload_photo($new_post['photo']);
+        } elseif ($new_post['post_type'] == 'photo' and !empty($new_post['img'])) {
+            $data = file_get_contents($new_post['img']);
+            $headers = get_headers($new_post['img'], 1);
+            $type = $headers['Content-Type'];
+            $extension = substr($type, strpos($type, '/') + 1);
+            $path = 'uploads/' . uniqid() . '.' . $extension;
+            $new_post['img'] = $path;
+            file_put_contents($path, $data);
+        }
+
+        if (!empty($new_post['tags'])) {
+            $exists_tags = [];
+            $new_tags = array_unique(explode(' ', $new_post['tags']));
+
+            $sql = 'SELECT id, tag from tags';
+            $result = mysqli_query($link, $sql);
+            if ($result) {
+                $exists_tags = mysqli_fetch_all($result, MYSQLI_ASSOC);
+            } else {
+                print ('error' . mysqli_error($link));
             }
 
+            foreach ($new_tags as $tag) {
+                $tags_id[] = get_tag_id($link, $tag, $exists_tags);
+            }
+        }
 
-
-        $sql = 'INSERT INTO posts (date, title, content, author_quote, img, video, link, view_count, user_id, post_type_id, tag_id)
+    $sql = 'INSERT INTO posts (date, title, content, author_quote, img, video, link, view_count, user_id, post_type_id)
     VALUE (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)';
         $stmt = db_get_prepare_stmt($link, $sql, [
             $new_post['title'],
@@ -140,6 +123,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($result) {
             $post_id = mysqli_insert_id($link);
+
+            if (!empty($tags_id)) {
+                create_post_tag_sql($link, $post_id, $tags_id);
+            }
+
             header('Location: /post.php?post_id=' . $post_id);
         } else {
             print ('error' . mysqli_error($link));
