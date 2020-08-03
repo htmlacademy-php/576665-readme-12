@@ -75,6 +75,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'tags' => 'Теги'
     ];
 
+    if (!empty($new_post['tags'])) {
+        $all_tags = [];
+        $new_tags = [];
+        $exists_tags = [];
+        $tags = explode(' ',$new_post['tags']);
+        $tags = array_unique($tags);
+
+        $sql = 'SELECT tag from tags';
+        $result = mysqli_query($link, $sql);
+        if ($result) {
+            $all_tags = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        } else {
+            print ('error' . mysqli_error($link));
+        }
+
+        foreach ($tags as $tag) {
+            if (is_new_tag($tag, $all_tags)) {
+                $new_tags[] = $tag;
+            } else {
+                $exists_tags[] = $tag;
+            }
+        }
+
+        if (!empty($new_tags)) {
+            echo 'INSERT';
+            foreach ($new_tags as $tag) {
+                add_new_tag($link, $tag);
+            }
+
+        }
+    }
+
     if (!count($errors)) {
         if ($new_post['post_type'] == 'photo' && !empty($new_post['photo']['name'])) {
                 $new_post['img'] = upload_photo($new_post['photo']);
@@ -88,46 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 file_put_contents($path, $data);
             }
 
-        if (!empty($new_post['tags'])) {
-            $new_tags = [];
-            $new_post['tag_id'] = [];
-            $tags = explode(' ',$new_post['tags']);
-            $tags = array_unique($tags);
-            $sql = 'SELECT tag from tags';
-            $result = mysqli_query($link, $sql);
-            if ($result) {
-                $exists_tags = mysqli_fetch_all($result, MYSQLI_ASSOC);
-            } else {
-                print ('error' . mysqli_error($link));
-            }
-            foreach ($tags as $tag) {
-                if (is_new_tag($tag, $exists_tags)) {
-                    $new_tags[] = $tag;
-                } else {
-                    $sql = 'SELECT id FROM tags WHERE tag=' . $tag;
-                    $result = mysqli_query($link, $sql);
-                    if ($result) {
-                        $new_post['tag_id'][] = mysqli_fetch_assoc($result);
-                    }
-                }
-            }
-            if (!empty($new_tags)) {
-                echo 'INSERT';
-                $sql = 'INSERT INTO tags (tag) VALUE (?)';
-                foreach ($new_tags as $tag) {
-                    $stmt = db_get_prepare_stmt($link, $sql, [
-                        $tag
-                    ]);
-                    $result = mysqli_stmt_execute($stmt);
-                    if ($ressult) {
-                        $new_post['tag_id'][] = mysqli_insert_id($link);
-                    } else {
-                        print ('error' . mysqli_error($link));
-                    }
-                }
 
-            }
-        }
 
         $sql = 'INSERT INTO posts (date, title, content, author_quote, img, video, link, view_count, user_id, post_type_id, tag_id)
     VALUE (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)';

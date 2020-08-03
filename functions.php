@@ -171,7 +171,24 @@ function upload_photo (array $upload_photo)
 
 function is_new_tag (string $tag, array $tags)
 {
-    return !(in_array($tag, $tags));
+    foreach ($tags as $item) {
+        if ($item['tag'] === $tag) {
+             return false;
+        }
+    }
+    return true;
+}
+
+function add_new_tag ($link, $tag)
+{
+    $sql = 'INSERT INTO tags (tag) VALUE (?)';
+    $stmt = db_get_prepare_stmt($link, $sql, [$tag]);
+    $result = mysqli_stmt_execute($stmt);
+    if ($result) {
+        return true;
+    } else {
+        return 'Не удалось добавить тег' . mysqli_error($link);
+    }
 }
 
 function rules($post_type, $tags)
