@@ -19,15 +19,6 @@ foreach ($post_types_array as $item) {
     $post_types[$item['id']] = $item;
 }
 
-$error_titles = [
-    'title' => 'Заголовок',
-    'content' => $post_type['class'] == 'text' ? 'Текст поста' : 'Текст цитаты',
-    'author_quote' => 'Автор',
-    'img' => 'Ссылка из интернета',
-    'video' => 'Ссылка на YOUTUBE',
-    'link' => 'Ссылка',
-    ];
-
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $active_post_type = filter_input (INPUT_GET, 'post_type', FILTER_VALIDATE_INT);
 }
@@ -54,22 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $new_post['post_type'] = $post_types[$active_post_type]['class'];
     $new_post['user_id'] = 1;
     $new_post['view_count'] = 0;
-    $new_post['tag_id'] = 1;
-
-    if (!empty($new_post['tags'])) {
-        $tags = explode(' ',$new_post['tags']);
-        $sql = 'SELECT tag from tags';
-        $result = mysqli_query($link, $sql);
-        if ($result) {
-            $tags_array = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        }
-
-        foreach ($tags as $tag) {
-            if (is_new_tag($tag, $tags_array)) {
-                print_r ($tag);
-            }
-        }
-    }
 
     if ($new_post['post_type'] == 'photo') {
         if (empty($new_post['img']) and empty($_FILES['upload_photo']['name'])) {
@@ -90,8 +65,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $errors = array_filter($errors);
 
+    $error_titles = [
+        'title' => 'Заголовок',
+        'content' => $new_post['post_type'] == 'text' ? 'Текст поста' : 'Текст цитаты',
+        'author_quote' => 'Автор',
+        'img' => 'Ссылка из интернета',
+        'video' => 'Ссылка на YOUTUBE',
+        'link' => 'Ссылка',
+        'tags' => 'Теги'
+    ];
+
     if (!count($errors)) {
-        if ($new_post['post_type'] == 'photo' and !empty($new_post['photo']['name'])) {
+        if ($new_post['post_type'] == 'photo' && !empty($new_post['photo']['name'])) {
                 $new_post['img'] = upload_photo($new_post['photo']);
             } elseif ($new_post['post_type'] == 'photo' and !empty($new_post['img'])) {
                 $data = file_get_contents($new_post['img']);
@@ -103,8 +88,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 file_put_contents($path, $data);
             }
 
+        if (!empty($new_post['tags'])) {
+            $new_tags = [];
+            $new_post['tag_id'] = [];
+            $tags = explode(' ',$new_post['tags']);
+            $tags = array_unique($tags);
+            $sql = 'SELECT tag from tags';
+            $result = mysqli_query($link, $sql);
+            if ($result) {
+                $exists_tags = mysqli_fetch_all($result, MYSQLI_ASSOC);
+            } else {
+                print ('error' . mysqli_error($link));
+            }
+            foreach ($tags as $tag) {
+                if (is_new_tag($tag, $exists_tags)) {
+                    $new_tags[] = $tag;
+                } else {
+                    $sql = 'SELECT id FROM tags WHERE tag=' . $tag;
+                    $result = mysqli_query($link, $sql);
+                    if ($result) {
+                        $new_post['tag_id'][] = mysqli_fetch_assoc($result);
+                    }
+                }
+            }
+            if (!empty($new_tags)) {
+                echo 'INSERT';
+                $sql = 'INSERT INTO tags (tag) VALUE (?)';
+                foreach ($new_tags as $tag) {
+                    $stmt = db_get_prepare_stmt($link, $sql, [
+                        $tag
+                    ]);
+                    $result = mysqli_stmt_execute($stmt);
+                    if ($ressult) {
+                        $new_post['tag_id'][] = mysqli_insert_id($link);
+                    } else {
+                        print ('error' . mysqli_error($link));
+                    }
+                }
+
+            }
+        }
+
         $sql = 'INSERT INTO posts (date, title, content, author_quote, img, video, link, view_count, user_id, post_type_id, tag_id)
-    VALUE (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    VALUE (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)';
         $stmt = db_get_prepare_stmt($link, $sql, [
             $new_post['title'],
             $new_post ['content'],
@@ -114,15 +140,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $new_post['link'],
             $new_post['view_count'],
             $new_post['user_id'],
-            $new_post['post_type_id'],
-            $new_post['tag_id']
+            $new_post['post_type_id']
         ]);
 
-        $res = mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_execute($stmt);
 
-        if ($res) {
+        if ($result) {
             $post_id = mysqli_insert_id($link);
             header('Location: /post.php?post_id=' . $post_id);
+        } else {
+            print ('error' . mysqli_error($link));
         }
     }
 }
@@ -142,7 +169,7 @@ $page_content = include_template('adding-post.php', [
     'adding_post_content' => $adding_post_content,
     'new_post' => $new_post,
     'errors' => $errors,
-    'errors_title' => $errors_title
+    'error_titles' => $error_titles
 
 ]);
 

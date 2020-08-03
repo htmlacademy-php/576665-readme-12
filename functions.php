@@ -88,7 +88,7 @@ function link_validate (string $link_value)
     return $error;
 }
 
-function tags_validate (array $tags_value)
+function tags_validate (string $tags_value)
 {
     $tags_error = [];
     $tags_array = explode(' ', $tags_value);
@@ -96,12 +96,12 @@ function tags_validate (array $tags_value)
     foreach ($tags_array as $tag) {
 
         if (!preg_match('/^[a-zA-Zа-яА-Я0-9]+$/', $tag)) {
-            $tags_error[] = $tag;
+            $invalid_tags[] = $tag;
         }
 
-        if (!empty($tags_error)) {
-            $count_error_tags = count($tags_error);
-            $tag_error = get_noun_plural_form($count_error_tags, 'Значение ', 'Значения ', 'Значения ') . implode(', ', $tags_error) . get_noun_plural_form($count_error_tags, ' не корректно', ' не корректны', ' не корректны');
+        if (!empty($invalid_tags)) {
+            $count_invalid_tags = count($invalid_tags);
+            $tag_error = get_noun_plural_form($count_invalid_tags, 'Тег ', 'Теги ', 'Теги ') . implode(', ', $invalid_tags) . get_noun_plural_form($count_invalid_tags, ' не корректен', ' не корректны', ' не корректны');
         }
 
     }
@@ -169,9 +169,9 @@ function upload_photo (array $upload_photo)
     return $filename;
 }
 
-function is_new_tag (string $tag, array $existing_tags)
+function is_new_tag (string $tag, array $tags)
 {
-    return !(in_array($tag, $existing_tags));
+    return !(in_array($tag, $tags));
 }
 
 function rules($post_type, $tags)
