@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-$adding_post_content = include_template("adding-post-{$post_types[$active_post_type]['class']}.php", [
+$adding_post_content = include_template("/adding-post/adding-post-{$post_types[$active_post_type]['class']}.php", [
     'post_types' => $post_types,
     'active_post_type' => $active_post_type,
     'active_post_type_id' => $active_post_type_id,
