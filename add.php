@@ -102,8 +102,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-    $sql = 'INSERT INTO posts (date, title, content, author_quote, img, video, link, view_count, user_id, post_type_id)
-    VALUE (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    $sql = 'INSERT INTO posts (title, content, author_quote, img, video, link, view_count, user_id, post_type_id)
+    VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?)';
         $stmt = db_get_prepare_stmt($link, $sql, [
             $new_post['title'],
             $new_post ['content'],
