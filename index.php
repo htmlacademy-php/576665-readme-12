@@ -9,7 +9,7 @@ $result = mysqli_query($link, $sql);
 if ($result) {
     $post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
 } else {
-    print ('error ' . mysqli_error($link));
+    exit ('error ' . mysqli_error($link));
 }
 
 $param_type = '';
@@ -38,7 +38,7 @@ $result = mysqli_query($link, $sql);
 if ($result) {
     $popular_posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 } else {
-    print ('error' . mysqli_error($link));
+    exit ('error' . mysqli_error($link));
 }
 
 $page_content = include_template('main.php', [

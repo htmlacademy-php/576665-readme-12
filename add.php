@@ -16,11 +16,11 @@ foreach ($post_types_array as $item) {
     $post_types[$item['id']] = $item;
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $active_post_type = filter_input (INPUT_GET, 'post_type', FILTER_VALIDATE_INT);
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = [];
 
     $new_post = filter_input_array(INPUT_POST, [
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $new_post['user_id'] = 1;
     $new_post['view_count'] = 0;
 
-    if ($new_post['post_type'] == 'photo') {
+    if ($new_post['post_type'] === 'photo') {
         if (empty($new_post['img']) and empty($_FILES['upload_photo']['name'])) {
             $errors['photo_post'] = 'Загрузите файл или заполните поле "ссылка из интернета"';
         } elseif (!empty($_FILES['upload_photo'])) {
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $error_titles = [
         'title' => 'Заголовок',
-        'content' => $new_post['post_type'] == 'text' ? 'Текст поста' : 'Текст цитаты',
+        'content' => $new_post['post_type'] === 'text' ? 'Текст поста' : 'Текст цитаты',
         'author_quote' => 'Автор',
         'img' => 'Ссылка из интернета',
         'video' => 'Ссылка на YOUTUBE',
@@ -73,9 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     ];
 
     if (!count($errors)) {
-        if ($new_post['post_type'] == 'photo' && !empty($new_post['photo']['name'])) {
+        if ($new_post['post_type'] === 'photo' && !empty($new_post['photo']['name'])) {
             $new_post['img'] = upload_photo($new_post['photo']);
-        } elseif ($new_post['post_type'] == 'photo' and !empty($new_post['img'])) {
+        } elseif ($new_post['post_type'] === 'photo' and !empty($new_post['img'])) {
             $data = file_get_contents($new_post['img']);
             $headers = get_headers($new_post['img'], 1);
             $type = $headers['Content-Type'];
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($result) {
                 $exists_tags = mysqli_fetch_all($result, MYSQLI_ASSOC);
             } else {
-                print ('error' . mysqli_error($link));
+                exit ('error' . mysqli_error($link));
             }
 
             foreach ($new_tags as $tag) {
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             header('Location: /post.php?post_id=' . $post_id);
         } else {
-            print ('error' . mysqli_error($link));
+            exit ('error' . mysqli_error($link));
         }
     }
 }
