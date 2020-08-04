@@ -4,14 +4,11 @@ require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
 
-if (!$link) {
-    print 'error' . mysqli_connect_error();
-} else {
-    $sql = 'SELECT * from post_types';
-    $result = mysqli_query($link, $sql);
-    if ($result) {
-        $post_types_array = mysqli_fetch_all($result, MYSQLI_ASSOC);
-    }
+
+$sql = 'SELECT * from post_types';
+$result = mysqli_query($link, $sql);
+if ($result) {
+    $post_types_array = mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
 $post_types=[];

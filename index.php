@@ -4,45 +4,41 @@ require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
 
-if (!$link) {
-    print ('error' . mysqli_connect_error());
+$sql = 'SELECT id, name, class FROM post_types';
+$result = mysqli_query($link, $sql);
+if ($result) {
+    $post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
 } else {
-    $sql = 'SELECT id, name, class FROM post_types';
-    $result = mysqli_query($link, $sql);
-    if ($result) {
-        $post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
-    } else {
-        print ('error ' . mysqli_error($link));
-    }
+    print ('error ' . mysqli_error($link));
+}
 
-    $param_type = '';
-    $param_sort = 'view_count';
+$param_type = '';
+$param_sort = 'view_count';
 
-    $query_type = filter_input(INPUT_GET, 'post_type');
+$query_type = filter_input(INPUT_GET, 'post_type');
 
-    if ($query_type) {
-        $param_type = $query_type;
-    }
+if ($query_type) {
+    $param_type = $query_type;
+}
 
-    $sql = 'SELECT * , users.id, post_types.id FROM posts'
-        . ' JOIN users ON posts.user_id = users.id'
-        . ' JOIN post_types ON posts.post_type_id = post_types.id';
+$sql = 'SELECT * , users.id, post_types.id FROM posts'
+    . ' JOIN users ON posts.user_id = users.id'
+    . ' JOIN post_types ON posts.post_type_id = post_types.id';
 
-    if ($param_type) {
-        $sql .= " WHERE posts.post_type_id =" . $param_type;
-    }
+if ($param_type) {
+    $sql .= " WHERE posts.post_type_id =" . $param_type;
+}
 
-    if ($param_sort) {
-        $sql .= " ORDER BY " . $param_sort . " DESC LIMIT 6 ";
-    }
+if ($param_sort) {
+    $sql .= " ORDER BY " . $param_sort . " DESC LIMIT 6 ";
+}
 
-    $result = mysqli_query($link, $sql);
+$result = mysqli_query($link, $sql);
 
-    if ($result) {
-        $popular_posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
-    } else {
-        print ('error' . mysqli_error($link));
-    }
+if ($result) {
+    $popular_posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
+} else {
+    print ('error' . mysqli_error($link));
 }
 
 $page_content = include_template('main.php', [

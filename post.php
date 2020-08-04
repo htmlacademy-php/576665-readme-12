@@ -3,28 +3,24 @@
 require_once 'init.php';
 require_once 'helpers.php';
 
-if (!$link) {
-    print ('error' . mysqli_connect_error());
-} else {
-    if (isset($_GET['post_id'])) {
-        $param_id = filter_input(INPUT_GET, 'post_id');
-        $post = '';
+if (isset($_GET['post_id'])) {
+    $param_id = filter_input(INPUT_GET, 'post_id');
+    $post = '';
 
-        $sql = 'SELECT * , users.id, post_types.id FROM posts'
-            .' JOIN users ON posts.user_id = users.id'
-            .' JOIN post_types ON posts.post_type_id = post_types.id'
-            .' WHERE post_id ='.' ?';
+    $sql = 'SELECT * , users.id, post_types.id FROM posts'
+        . ' JOIN users ON posts.user_id = users.id'
+        . ' JOIN post_types ON posts.post_type_id = post_types.id'
+        . ' WHERE post_id =' . ' ?';
 
-        $stmt = db_get_prepare_stmt($link, $sql, [
-            'i' => $param_id
-        ]);
+    $stmt = db_get_prepare_stmt($link, $sql, [
+        'i' => $param_id
+    ]);
 
-        mysqli_stmt_execute($stmt);
+    mysqli_stmt_execute($stmt);
 
-        $res = mysqli_stmt_get_result($stmt);
+    $res = mysqli_stmt_get_result($stmt);
 
-        $post = mysqli_fetch_assoc($res);
-    }
+    $post = mysqli_fetch_assoc($res);
 }
 
 if (empty($post)) {
