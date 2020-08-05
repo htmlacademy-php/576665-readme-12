@@ -1,27 +1,27 @@
 <?php
 
-function esc (string $str)
+function esc(string $str)
 {
     return htmlspecialchars($str, ENT_QUOTES);
 }
 
-function cut_text ($text, $excerpt_length = 300)
+function cut_text($text, $excerpt_length = 300)
 {
     $text_length = mb_strlen($text);
     if ($text_length > $excerpt_length) {
         //cut string
         $text = mb_substr($text, 0, $excerpt_length);
         //cut to last space
-        $text = mb_substr($text, 0, mb_strrpos($text,' '));
+        $text = mb_substr($text, 0, mb_strrpos($text, ' '));
         //add '...' and link to full post
         $text = '<p>' . $text . '...' . '</p>' . '<a class="post-text__more-link" href="#">Читать далее</a>';
     } else {
         $text = '<p>' . $text . '</p>';
     }
-    return  $text;
+    return $text;
 }
 
-function relative_date ($post_date)
+function relative_date($post_date)
 {
 
     $publish_date = date_create($post_date);
@@ -52,31 +52,22 @@ function relative_date ($post_date)
 
 function check_text(string $value)
 {
-    $error = '';
-    if (empty($value)) {
-        $error = 'Это поле должно быть заполнено';
-    }
-    return $error;
+    return empty($value) ? 'Это поле должно быть заполнено' : '';
 }
 
 function check_youtube_domain(string $value)
 {
     $domain = parse_url($value, PHP_URL_HOST);
-    if (strpos($domain, 'youtube.com') == false) {
-        return 'Введите ссылку на видео из YOUTUBE';
-    }
-    return '';
+    return strpos($domain, 'youtube.com') === false ? 'Введите ссылку на видео из YOUTUBE' : '';
 }
 
 function link_validate(string $link_value)
 {
-    $error = '';
     if (empty($link_value)) {
-        $error = "Это поле должно быть заполнено";
+        return "Это поле должно быть заполнено";
     } elseif (!filter_var($link_value, FILTER_VALIDATE_URL)) {
-        $error = "Значение не является ссылкой";
+        return "Значение не является ссылкой";
     }
-    return $error;
 }
 
 function tags_validate(string $tags_value)
@@ -86,7 +77,7 @@ function tags_validate(string $tags_value)
 
     foreach ($tags_array as $tag) {
 
-        if (!preg_match('/^[a-zA-Zа-яА-Я0-9]+$/', $tag)) {
+        if (!preg_match('/^[a-zA-Zа-яёА-ЯЁ0-9]+$/', $tag)) {
             $invalid_tags[] = $tag;
         }
 
@@ -125,14 +116,10 @@ function check_img_type(string $file_type)
 
 function photo_validate(array $upload_photo)
 {
-    $error = '';
     $tmp_name = $upload_photo['tmp_name'];
     $file_info = finfo_open(FILEINFO_MIME_TYPE);
     $file_type = finfo_file($file_info, $tmp_name);
-    if (check_img_type($file_type) !== true) {
-        $error = check_img_type($file_type);
-    }
-    return $error;
+    return check_img_type($file_type) !== true ? check_img_type($file_type) : '';
 }
 
 function photo_link_validate(string $photo_link)
@@ -172,10 +159,7 @@ function get_tag_id($link, string $tag, array $tags)
     $sql = 'INSERT INTO tags (tag) VALUE (?)';
     $stmt = db_get_prepare_stmt($link, $sql, [$tag]);
     $result = mysqli_stmt_execute($stmt);
-    if ($result) {
-        return mysqli_insert_id($link);
-    }
-    return false;
+    return $result ? mysqli_insert_id($link) : false;
 }
 
 function create_post_tag_sql($link, int $post_id, array $array_id)
@@ -189,11 +173,7 @@ function create_post_tag_sql($link, int $post_id, array $array_id)
         . $request_string;
     $result = mysqli_query($link, $sql);
 
-    if ($result) {
-        return true;
-    } else {
-        print ('error' . mysqli_error($link));
-    }
+    return $result ? true : exit('error' . mysqli_error($link));
 }
 
 function rules($post_type, $tags)
