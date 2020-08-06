@@ -6,13 +6,14 @@ require_once 'functions.php';
 
 $sql = 'SELECT id, name, class FROM post_types';
 $result = mysqli_query($link, $sql);
-if ($result) {
-    $post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
-} else {
-    exit ('error ' . mysqli_error($link));
+if (!$result) {
+    exit ('error '.mysqli_error($link));
 }
 
+$post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
 $param_type = '';
+
 $param_sort = 'view_count';
 
 $query_type = filter_input(INPUT_GET, 'post_type');
@@ -35,11 +36,11 @@ if ($param_sort) {
 
 $result = mysqli_query($link, $sql);
 
-if ($result) {
-    $popular_posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
-} else {
+if (!$result) {
     exit ('error' . mysqli_error($link));
 }
+
+$popular_posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 $page_content = include_template('main.php', [
     'popular_posts' => $popular_posts,

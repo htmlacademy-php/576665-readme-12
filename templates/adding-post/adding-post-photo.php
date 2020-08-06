@@ -2,7 +2,7 @@
     <label class="adding-post__label form__label" for="photo-url">Ссылка из интернета</label>
     <div class="form__input-section <?= !empty($errors['img']) ? 'form__input-section--error' : '' ?>">
         <input class="adding-post__input form__input" id="photo-url" type="text" name="img"
-               placeholder="Введите ссылку" value="<?= !empty($new_post['img']) ? $new_post['img'] : '' ?>">
+               placeholder="Введите ссылку" value="<?= !empty($new_post['img']) ? esc($new_post['img']) : '' ?>">
         <button class="form__error-button button" type="button">!<span
                 class="visually-hidden">Информация об ошибке</span></button>
         <div class="form__error-text">

@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 
 require_once 'init.php';
 require_once 'helpers.php';
@@ -8,17 +8,16 @@ require_once 'functions.php';
 $sql = 'SELECT * from post_types';
 $result = mysqli_query($link, $sql);
 if ($result) {
-    $post_types_array = mysqli_fetch_all($result, MYSQLI_ASSOC);
-}
-
-$post_types=[];
-foreach ($post_types_array as $item) {
-    $post_types[$item['id']] = $item;
+    $post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $active_post_type = filter_input (INPUT_GET, 'post_type', FILTER_VALIDATE_INT);
+    $active_post_type_id = filter_input(INPUT_GET, 'post_type', FILTER_VALIDATE_INT);
+    $active_post_type = get_active_post_type($post_types, $active_post_type_id);
+
 }
+
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = [];
@@ -30,16 +29,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'img' => FILTER_DEFAULT,
         'video' => FILTER_DEFAULT,
         'link' => FILTER_DEFAULT,
-        'post_type_id' => FILTER_DEFAULT,
+        'post_type_id' =>FILTER_VALIDATE_INT,
         'tags' => FILTER_DEFAULT
     ], true);
 
     foreach ($new_post as $key => $value) {
         !empty($value) ? $new_post[$key] = trim($value) : $new_post[$key] = '';
     }
-
-    $active_post_type = $new_post['post_type_id'];
-    $new_post['post_type'] = $post_types[$active_post_type]['class'];
+    $active_post_type_id = $new_post['post_type_id'];
+    $active_post_type = get_active_post_type($post_types, $new_post['post_type_id']);
+    $new_post['post_type'] = $active_post_type;
     $new_post['user_id'] = 1;
     $new_post['view_count'] = 0;
 
@@ -51,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $rules = rules($new_post['post_type'], $new_post['tags']);
+    $rules = validate_post_rules($new_post['post_type'], $new_post['tags']);
 
     foreach ($new_post as $key => $value) {
         if (isset($rules[$key])) {
@@ -132,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$adding_post_content = include_template("/adding-post/adding-post-{$post_types[$active_post_type]['class']}.php", [
+$adding_post_content = include_template("/adding-post/adding-post-{$active_post_type}.php", [
     'post_types' => $post_types,
     'active_post_type' => $active_post_type,
     'active_post_type_id' => $active_post_type_id,
@@ -148,12 +147,13 @@ $page_content = include_template('adding-post.php', [
     'new_post' => $new_post,
     'errors' => $errors,
     'error_titles' => $error_titles
-
 ]);
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
-    'title' => 'readme: добавление публикации'
+    'title' => 'readme: добавление публикации',
+    'user_name' => 'Nadiia',
+    'is_auth' => rand(0, 1)
 
 ]);
 

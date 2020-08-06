@@ -1,6 +1,3 @@
-<?php
-
-?>
 <main class="page__main page__main--adding-post">
     <div class="page__main-section">
         <div class="container">
@@ -12,7 +9,7 @@
                     <ul class="adding-post__tabs-list filters__list tabs__list">
                         <?php foreach ($post_types as $post_type): ?>
                             <li class="adding-post__tabs-item filters__item">
-                                <a class="adding-post__tabs-link filters__button filters__button--<?=$post_type['class']?> tabs__item <?php if ($active_post_type == $post_type['id']): echo 'filters__button--active tabs__item--active'; endif;?> button" href="/add.php?post_type=<?=$post_type['id']?>">
+                                <a class="adding-post__tabs-link filters__button filters__button--<?=$post_type['class']?> tabs__item <?= $active_post_type_id === (int)$post_type['id'] ? 'filters__button--active tabs__item--active' : ''?> button" href="/add.php?post_type=<?=$post_type['id']?>">
                                     <svg class="filters__icon" width="22" height="18">
                                         <use xlink:href="#icon-filter-<?=$post_type['class']?>"></use>
                                     </svg>
@@ -25,13 +22,13 @@
                 <div class="adding-post__tab-content">
                     <section class="adding-post__quote tabs__content tabs__content--active">
                         <h2 class="visually-hidden">Форма добавления</h2>
-                        <form class="adding-post__form form" action="/add.php?post_type=<?= $active_post_type ?>" method="post" enctype="multipart/form-data">
+                        <form class="adding-post__form form" action="/add.php?post_type=<?= $active_post_type_id ?>" method="post" enctype="multipart/form-data">
                             <div class="form__text-inputs-wrapper">
                                 <div class="form__text-inputs">
                                     <div class="adding-post__input-wrapper form__input-wrapper">
-                                        <label class="adding-post__label form__label" for="<?=$post_types[$active_post_type]['class']?>-heading">Заголовок <span class="form__input-required">*</span></label>
+                                        <label class="adding-post__label form__label" for="<?= $active_post_type?>-heading">Заголовок <span class="form__input-required">*</span></label>
                                         <div class="form__input-section <?= !empty($errors['title']) ? 'form__input-section--error' : '' ?>">
-                                            <input class="adding-post__input form__input" id="<?=$post_types[$active_post_type]['class']?>-heading" type="text" name="title" placeholder="Введите заголовок" value="<?= !empty($new_post['title']) ? $new_post['title'] : '' ?>">
+                                            <input class="adding-post__input form__input" id="<?= $active_post_type?>-heading" type="text" name="title" placeholder="Введите заголовок" value="<?= !empty($new_post['title']) ? esc($new_post['title']) : '' ?>">
                                             <button class="form__error-button button" type="button">!<span class="visually-hidden">Информация об ошибке</span></button>
                                             <div class="form__error-text">
                                                 <h3 class="form__error-title">Заголовок</h3>
@@ -39,7 +36,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <input type="hidden" name="post_type_id" value="<?=$post_types[$active_post_type]['id']?>">
+                                    <input type="hidden" name="post_type_id" value="<?=$active_post_type_id?>">
                                    <?=$adding_post_content ?>
                                     <div class="adding-post__input-wrapper form__input-wrapper">
                                         <label class="adding-post__label form__label" for="cite-tags">Теги</label>

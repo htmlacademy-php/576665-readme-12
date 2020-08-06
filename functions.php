@@ -49,6 +49,15 @@ function relative_date($post_date)
     }
 }
 
+function get_active_post_type(array $array, int $id)
+{
+    foreach ($array as $key => $value) {
+        if ((int)$value['id'] === $id) {
+            return $value['class'];
+        }
+    }
+    return null;
+}
 
 function check_text(string $value)
 {
@@ -176,7 +185,7 @@ function create_post_tag_sql($link, int $post_id, array $array_id)
     return $result ? true : exit('error' . mysqli_error($link));
 }
 
-function rules($post_type, $tags)
+function validate_post_rules($post_type, $tags)
 {
     $rules = [];
     $rules['title'] = function ($value) {
