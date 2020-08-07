@@ -1,23 +1,26 @@
-<?php /** @noinspection ALL */
+<?php
 
 require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
 
-
 $sql = 'SELECT * from post_types';
 $result = mysqli_query($link, $sql);
-if ($result) {
-    $post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
+if (!$result) {
+    exit ('error '.mysqli_error($link));
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $active_post_type_id = filter_input(INPUT_GET, 'post_type');
-    $active_post_type = get_active_post_type($post_types, $active_post_type_id);
+$post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$active_post_type_id = isset($_GET['post_type'])
+    ? filter_input(INPUT_GET, 'post_type', FILTER_DEFAULT)
+    : filter_input(INPUT_POST, 'post_type_id', FILTER_DEFAULT);
 
+$active_post_type = get_active_post_type($post_types, $active_post_type_id);
+
+if (is_null($active_post_type)) {
+    header("HTTP/1.0 404 Not Found");
+    exit ('PAGE NOT FOUND');
 }
-
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = [];
@@ -36,12 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($new_post as $key => $value) {
         !empty($value) ? $new_post[$key] = trim($value) : $new_post[$key] = '';
     }
-    $active_post_type_id = $new_post['post_type_id'];
-    $active_post_type = get_active_post_type($post_types, $new_post['post_type_id']);
     $new_post['post_type'] = $active_post_type;
     $new_post['user_id'] = 1;
     $new_post['view_count'] = 0;
-    print_r($active_post_type_id);
 
     if ($new_post['post_type'] === 'photo') {
         if (empty($new_post['img']) and empty($_FILES['upload_photo']['name'])) {
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!count($errors)) {
         if ($new_post['post_type'] === 'photo' && !empty($new_post['photo']['name'])) {
             $new_post['img'] = upload_photo($new_post['photo']);
-        } elseif ($new_post['post_type'] === 'photo' and !empty($new_post['img'])) {
+        } elseif ($new_post['post_type'] === 'photo' && !empty($new_post['img'])) {
             $data = file_get_contents($new_post['img']);
             $headers = get_headers($new_post['img'], 1);
             $type = $headers['Content-Type'];

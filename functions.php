@@ -82,6 +82,7 @@ function link_validate(string $link_value)
 function tags_validate(string $tags_value)
 {
     $invalid_tags = [];
+    $tag_error = '';
     $tags_array = explode(' ', $tags_value);
     if (!empty($tags_value)) {
         foreach ($tags_array as $tag) {
