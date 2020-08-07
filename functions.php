@@ -1,19 +1,31 @@
 <?php
 
+/*
+ * Convert special characters to HTML entities
+ * @param string $str
+ *
+ * @return string The converted string
+ */
 function esc(string $str)
 {
     return htmlspecialchars($str, ENT_QUOTES);
 }
 
-function cut_text($text, $excerpt_length = 300)
+/*
+ * Сut string to a character length, the default is 80,
+ * adds "..." and link to full post at the end of excerpt
+ * @param string $text
+ * @param int $excerpt_length  maximum allowed length length
+ *
+ * @return string The original string if its length is less than
+ * maximum allowed length or excerpt
+ */
+function cut_text(string $text, int $excerpt_length = 300)
 {
     $text_length = mb_strlen($text);
     if ($text_length > $excerpt_length) {
-        //cut string
         $text = mb_substr($text, 0, $excerpt_length);
-        //cut to last space
         $text = mb_substr($text, 0, mb_strrpos($text, ' '));
-        //add '...' and link to full post
         $text = '<p>' . $text . '...' . '</p>' . '<a class="post-text__more-link" href="#">Читать далее</a>';
     } else {
         $text = '<p>' . $text . '</p>';
@@ -23,7 +35,6 @@ function cut_text($text, $excerpt_length = 300)
 
 function relative_date($post_date)
 {
-
     $publish_date = date_create($post_date);
     $cur_date = date_create('now');
     $diff = date_diff($cur_date, $publish_date);
