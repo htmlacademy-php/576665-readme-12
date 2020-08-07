@@ -12,7 +12,7 @@ if ($result) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $active_post_type_id = filter_input(INPUT_GET, 'post_type', FILTER_VALIDATE_INT);
+    $active_post_type_id = filter_input(INPUT_GET, 'post_type');
     $active_post_type = get_active_post_type($post_types, $active_post_type_id);
 
 }
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'img' => FILTER_DEFAULT,
         'video' => FILTER_DEFAULT,
         'link' => FILTER_DEFAULT,
-        'post_type_id' =>FILTER_VALIDATE_INT,
+        'post_type_id' =>FILTER_DEFAULT,
         'tags' => FILTER_DEFAULT
     ], true);
 
@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_post['post_type'] = $active_post_type;
     $new_post['user_id'] = 1;
     $new_post['view_count'] = 0;
+    print_r($active_post_type_id);
 
     if ($new_post['post_type'] === 'photo') {
         if (empty($new_post['img']) and empty($_FILES['upload_photo']['name'])) {
@@ -96,9 +97,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit ('error' . mysqli_error($link));
             }
 
-            foreach ($new_tags as $tag) {
-                $tags_id[] = get_tag_id($link, $tag, $exists_tags);
+            if (!empty($new_tags)) {
+                foreach ($new_tags as $tag) {
+                    $tags_id[] = get_tag_id($link, $tag, $exists_tags);
+                }
             }
+
         }
 
     $sql = 'INSERT INTO posts (title, content, author_quote, img, video, link, view_count, user_id, post_type_id)
@@ -133,10 +137,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $adding_post_content = include_template("/adding-post/adding-post-{$active_post_type}.php", [
     'post_types' => $post_types,
-    'active_post_type' => $active_post_type,
-    'active_post_type_id' => $active_post_type_id,
-    'new_post' => $new_post,
-    'errors' => $errors
+    'new_post' => !empty($new_post) ? $new_post : '',
+    'errors' => !empty($errors) ? $errors : ''
 ]);
 
 $page_content = include_template('adding-post.php', [
@@ -144,9 +146,9 @@ $page_content = include_template('adding-post.php', [
     'active_post_type' => $active_post_type,
     'active_post_type_id' => $active_post_type_id,
     'adding_post_content' => $adding_post_content,
-    'new_post' => $new_post,
-    'errors' => $errors,
-    'error_titles' => $error_titles
+    'new_post' => !empty($new_post) ? $new_post : '',
+    'errors' => !empty($errors) ? $errors : '',
+    'error_titles' => !empty($error_titles) ? $error_titles : ''
 ]);
 
 $layout_content = include_template('layout.php', [

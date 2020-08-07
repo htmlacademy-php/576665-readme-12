@@ -42,7 +42,7 @@
                     </li>
                     <?php foreach ($post_types as $post_type): ?>
                         <li class="popular__filters-item filters__item">
-                            <a class="filters__button filters__button--<?=$post_type['class']?> <?= $param_type == $post_type['id'] ? 'filters__button--active' : ''?> button" href="/?post_type=<?=$post_type['id']?>">
+                            <a class="filters__button filters__button--<?=$post_type['class']?> <?= $param_type === $post_type['id'] ? 'filters__button--active' : ''?> button" href="/?post_type=<?=$post_type['id']?>">
                                 <span class="visually-hidden"><?=$post_type['name']?></span>
                                 <svg class="filters__icon" width="22" height="18">
                                     <use xlink:href="#icon-filter-<?=$post_type['class']?>"></use>
@@ -64,13 +64,13 @@
                         </h2>
                     </header>
                     <div class="post__main">
-                        <?php if ($item['class'] == 'quote'): ?>
+                        <?php if ($item['class'] === 'quote'): ?>
                             <!--содержимое для поста-цитаты-->
                             <blockquote>
                                 <p><?=esc($item['content']);?></p>
                                 <cite><?=esc($item['author_quote']);?></cite>
                             </blockquote>
-                        <?php elseif ($item['class'] == 'link'): ?>
+                        <?php elseif ($item['class'] === 'link'): ?>
                             <!--содержимое для поста-ссылки-->
                             <div class="post-link__wrapper">
                                 <a class="post-link__external" href="http://" title="Перейти по ссылке">
@@ -85,12 +85,12 @@
                                     <span><?=esc($item['link']);?></span>
                                 </a>
                             </div>
-                        <?php elseif ($item['class'] == 'photo'): ?>
+                        <?php elseif ($item['class'] === 'photo'): ?>
                             <!--содержимое для поста-фото-->
                             <div class="post-photo__image-wrapper">
                                 <img src="<?=esc($item['img']);?>" alt="Фото от пользователя" width="360" height="240">
                             </div>
-                        <?php elseif ($item['class'] == 'video'): ?>
+                        <?php elseif ($item['class'] === 'video'): ?>
                             <!--содержимое для поста-видео-->
                             <div class="post-video__block">
                                 <div class="post-video__preview">
@@ -104,7 +104,7 @@
                                     <span class="visually-hidden">Запустить проигрыватель</span>
                                 </a>
                             </div>
-                        <?php elseif ($item['class'] == 'text'): ?>
+                        <?php elseif ($item['class'] === 'text'): ?>
                             <!--содержимое для поста-текста-->
                             <?php echo cut_text(esc($item['content'])); ?>
                         <?php endif ?>

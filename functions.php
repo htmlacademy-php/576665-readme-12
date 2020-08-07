@@ -49,10 +49,10 @@ function relative_date($post_date)
     }
 }
 
-function get_active_post_type(array $array, int $id)
+function get_active_post_type(array $array, string $id)
 {
     foreach ($array as $key => $value) {
-        if ((int)$value['id'] === $id) {
+        if ($value['id'] === $id) {
             return $value['class'];
         }
     }
@@ -83,20 +83,21 @@ function tags_validate(string $tags_value)
 {
     $invalid_tags = [];
     $tags_array = explode(' ', $tags_value);
+    if (!empty($tags_value)) {
+        foreach ($tags_array as $tag) {
 
-    foreach ($tags_array as $tag) {
+            if (!preg_match('/^[a-zA-Zа-яёА-ЯЁ0-9]+$/', $tag)) {
+                $invalid_tags[] = $tag;
+            }
 
-        if (!preg_match('/^[a-zA-Zа-яёА-ЯЁ0-9]+$/', $tag)) {
-            $invalid_tags[] = $tag;
+            if (!empty($invalid_tags)) {
+                $count_invalid_tags = count($invalid_tags);
+                $tag_error = get_noun_plural_form($count_invalid_tags, 'Тег ', 'Теги ', 'Теги ') . implode(', ',
+                        $invalid_tags) . get_noun_plural_form($count_invalid_tags, ' не корректен', ' не корректны',
+                        ' не корректны');
+            }
+
         }
-
-        if (!empty($invalid_tags)) {
-            $count_invalid_tags = count($invalid_tags);
-            $tag_error = get_noun_plural_form($count_invalid_tags, 'Тег ', 'Теги ', 'Теги ') . implode(', ',
-                    $invalid_tags) . get_noun_plural_form($count_invalid_tags, ' не корректен', ' не корректны',
-                    ' не корректны');
-        }
-
     }
     return $tag_error;
 }
