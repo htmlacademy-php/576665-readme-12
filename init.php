@@ -15,3 +15,9 @@ if (!$link) {
 
 /*set the default timezone*/
 date_default_timezone_set('Europe/Moscow');
+
+define("PHOTO", 'photo');
+define("VIDEO", 'video');
+define("TEXT", 'text');
+define("QUOTE", 'quote');
+define("LINK", 'link');

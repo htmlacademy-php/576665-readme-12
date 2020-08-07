@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_post['user_id'] = 1;
     $new_post['view_count'] = 0;
 
-    if ($new_post['post_type'] === 'photo') {
+    if ($new_post['post_type'] === PHOTO) {
         if (empty($new_post['img']) and empty($_FILES['upload_photo']['name'])) {
             $errors['photo_post'] = 'Загрузите файл или заполните поле "ссылка из интернета"';
         } elseif (!empty($_FILES['upload_photo'])) {
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $error_titles = [
         'title' => 'Заголовок',
-        'content' => $new_post['post_type'] === 'text' ? 'Текст поста' : 'Текст цитаты',
+        'content' => $new_post['post_type'] === TEXT ? 'Текст поста' : 'Текст цитаты',
         'author_quote' => 'Автор',
         'img' => 'Ссылка из интернета',
         'video' => 'Ссылка на YOUTUBE',
@@ -73,9 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
 
     if (!count($errors)) {
-        if ($new_post['post_type'] === 'photo' && !empty($new_post['photo']['name'])) {
+        if ($new_post['post_type'] === PHOTO && !empty($new_post['photo']['name'])) {
             $new_post['img'] = upload_photo($new_post['photo']);
-        } elseif ($new_post['post_type'] === 'photo' && !empty($new_post['img'])) {
+        } elseif ($new_post['post_type'] === PHOTO && !empty($new_post['img'])) {
             $data = file_get_contents($new_post['img']);
             $headers = get_headers($new_post['img'], 1);
             $type = $headers['Content-Type'];
