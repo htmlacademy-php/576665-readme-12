@@ -61,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $errors = array_filter($errors);
-    var_dump($errors);
 
     $error_titles = [
         'title' => 'Заголовок',

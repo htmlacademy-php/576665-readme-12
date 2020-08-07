@@ -15,7 +15,7 @@ function esc(string $str)
  * Сut string to a character length, the default is 80,
  * adds "..." and link to full post at the end of excerpt
  * @param string $text
- * @param int $excerpt_length  maximum allowed length length
+ * @param int $excerpt_length  maximum allowed length
  *
  * @return string The original string if its length is less than
  * maximum allowed length or excerpt
