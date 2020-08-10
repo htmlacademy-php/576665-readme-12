@@ -41,31 +41,32 @@ function cut_text(string $text, int $excerpt_length = 300)
  *
  * @return string The date in relative terms
  */
-function relative_date( string $post_date)
+function relative_date(string $post_date)
 {
     $publish_date = date_create($post_date);
     $cur_date = date_create('now');
     $diff = date_diff($cur_date, $publish_date);
-
-    if ($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h == 0 && $diff->i == 0 && $diff->s > 0) {
-        $diff_s = $diff->s;
-        echo $diff_s . ' ' . get_noun_plural_form($diff_s, 'секунда', 'секунды', 'секунд') . ' ' . 'назад';
-    } elseif ($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h == 0 && $diff->i > 0) {
-        $diff_min = $diff->i;
-        echo $diff_min . ' ' . get_noun_plural_form($diff_min, 'минута', 'минуты', 'минут') . ' ' . 'назад';
-    } elseif ($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h > 0) {
-        $diff_h = $diff->h;
-        echo $diff_h . ' ' . get_noun_plural_form($diff_h, 'час', 'часа', 'часов') . ' ' . 'назад';
-    } elseif ($diff->y == 0 && $diff->m == 0 && $diff->d < 7) {
-        $diff_d = $diff->d;
-        echo $diff_d . ' ' . get_noun_plural_form($diff_d, 'день', 'дня', 'дней') . ' ' . 'назад';
-    } elseif ($diff->y == 0 && $diff->m == 0 && $diff->d >= 7 && $diff->d < 35) {
-        $diff_weeks = $diff->d / 7;
-        echo $diff_weeks . ' ' . get_noun_plural_form($diff_weeks, 'неделя', 'недели', 'недель') . ' ' . 'назад';
-    } else {
-        $diff_m = $diff->y * 12 + $diff->m;
-        echo $diff_m . ' ' . get_noun_plural_form($diff_m, 'месяц', 'месяца', 'месяцев') . ' ' . 'назад';
+    if ($diff->m >= 1) {
+        $diff_months = $diff->m;
+        return "$diff_months " . get_noun_plural_form($diff_months, 'месяц', 'месяца', 'месяцев') . ' назад';
     }
+    if ($diff->d >= 7) {
+        $diff_weeks = floor(($diff->d) / 7);
+        return "$diff_weeks " . get_noun_plural_form($diff_weeks, 'неделя', 'недели', 'недель') . ' назад';
+    }
+    if ($diff->d < 7 && $diff->d >= 1) {
+        $diff_days = $diff->d;
+        return "$diff_days " . get_noun_plural_form($diff_days, 'день', 'дня', 'дней') . ' назад';
+    }
+    if ($diff->h >= 1) {
+        $diff_hours = $diff->h;
+        return "$diff_hours " . get_noun_plural_form($diff_hours, 'час', 'часа', 'часов') . ' назад';
+    }
+    if ($diff->i >= 1) {
+        $diff_minutes = $diff->i;
+        return "$diff_minutes " . get_noun_plural_form($diff_minutes, 'минута', 'минуты', 'минут') . ' назад';
+    }
+    return 'меньше минуты назад';
 }
 
 /**
