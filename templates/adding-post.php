@@ -55,7 +55,7 @@
                                         <b class="form__invalid-slogan">Пожалуйста, исправьте следующие ошибки:</b>
                                         <ul class="form__invalid-list">
                                             <?php foreach ($errors as $key => $value) : ?>
-                                                <li class="form__invalid-item"><?= !empty($error_titles[$key]) ? "{$error_titles[$key]}." : '' ?><?= $value ?></li>
+                                                <li class="form__invalid-item"><?= !empty($error_titles[$key]) ? "{$error_titles[$key]}. " : '' ?><?= $value ?></li>
                                             <?php endforeach; ?>
                                         </ul>
                                     </div>

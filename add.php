@@ -62,15 +62,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $errors = array_filter($errors);
 
-    $error_titles = [
-        'title' => 'Заголовок',
-        'content' => $new_post['post_type'] === TEXT ? 'Текст поста' : 'Текст цитаты',
-        'author_quote' => 'Автор',
-        'img' => 'Ссылка из интернета',
-        'video' => 'Ссылка на YOUTUBE',
-        'link' => 'Ссылка',
-        'tags' => 'Теги'
-    ];
+    if (!empty($errors)) {
+        $error_titles = [
+            'title' => 'Заголовок',
+            'content' => $new_post['post_type'] === TEXT ? 'Текст поста' : 'Текст цитаты',
+            'author_quote' => 'Автор',
+            'img' => 'Ссылка из интернета',
+            'video' => 'Ссылка на YOUTUBE',
+            'link' => 'Ссылка',
+            'tags' => 'Теги'
+        ];
+    }
 
     if (!count($errors)) {
         if ($new_post['post_type'] === PHOTO && !empty($new_post['photo']['name'])) {
