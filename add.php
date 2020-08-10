@@ -37,14 +37,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ], true);
 
     foreach ($new_post as $key => $value) {
-        !empty($value) ? $new_post[$key] = trim($value) : $new_post[$key] = '';
+        $new_post[$key] = !empty($value) ? trim($value) : '';
     }
     $new_post['post_type'] = $active_post_type;
     $new_post['user_id'] = 1;
     $new_post['view_count'] = 0;
 
     if ($new_post['post_type'] === PHOTO) {
-        if (empty($new_post['img']) and empty($_FILES['upload_photo']['name'])) {
+        if (empty($new_post['img']) && empty($_FILES['upload_photo']['name'])) {
             $errors['photo_post'] = 'Загрузите файл или заполните поле "ссылка из интернета"';
         } elseif (!empty($_FILES['upload_photo'])) {
             $new_post['photo'] = $_FILES['upload_photo'];
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $headers = get_headers($new_post['img'], 1);
             $type = $headers['Content-Type'];
             $extension = substr($type, strpos($type, '/') + 1);
-            $path = 'uploads/' . uniqid() . '.' . $extension;
+            $path = 'uploads/' . uniqid() . ".{$extension}";
             $new_post['img'] = $path;
             file_put_contents($path, $data);
         }
@@ -89,14 +89,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exists_tags = [];
             $new_tags = array_unique(explode(' ', $new_post['tags']));
 
-            $sql = 'SELECT id, tag from tags';
-            $result = mysqli_query($link, $sql);
-            if ($result) {
-                $exists_tags = mysqli_fetch_all($result, MYSQLI_ASSOC);
-            } else {
-                exit ('error' . mysqli_error($link));
+            $result = mysqli_query($link, 'SELECT id, tag from tags');
+            if (!$result) {
+                exit ('error'.mysqli_error($link));
             }
-
+            $exists_tags = mysqli_fetch_all($result, MYSQLI_ASSOC);
             if (!empty($new_tags)) {
                 foreach ($new_tags as $tag) {
                     $tags_id[] = get_tag_id($link, $tag, $exists_tags);
@@ -121,17 +118,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $result = mysqli_stmt_execute($stmt);
 
-        if ($result) {
-            $post_id = mysqli_insert_id($link);
-
-            if (!empty($tags_id)) {
-                create_post_tag_sql($link, $post_id, $tags_id);
-            }
-
-            header('Location: /post.php?post_id=' . $post_id);
-        } else {
+        if (!$result) {
             exit ('error' . mysqli_error($link));
         }
+        $post_id = mysqli_insert_id($link);
+
+        if (!empty($tags_id)) {
+            create_post_tag_sql($link, $post_id, $tags_id);
+        }
+        header('Location: /post.php?post_id=' . $post_id);
     }
 }
 
