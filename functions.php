@@ -1,7 +1,7 @@
 <?php
 
-/*
- * Convert special characters to HTML entities
+/**
+ * Converts special characters to HTML entities
  * @param string $str
  *
  * @return string The converted string
@@ -11,11 +11,11 @@ function esc(string $str)
     return htmlspecialchars($str, ENT_QUOTES);
 }
 
-/*
+/**
  * Сut string to a character length, the default is 80,
  * adds "..." and link to full post at the end of excerpt
  * @param string $text
- * @param int $excerpt_length  maximum allowed length
+ * @param int $excerpt_length Maximum allowed length
  *
  * @return string The original string if its length is less than
  * maximum allowed length or excerpt
@@ -26,14 +26,22 @@ function cut_text(string $text, int $excerpt_length = 300)
     if ($text_length > $excerpt_length) {
         $text = mb_substr($text, 0, $excerpt_length);
         $text = mb_substr($text, 0, mb_strrpos($text, ' '));
-        $text = '<p>' . $text . '...' . '</p>' . '<a class="post-text__more-link" href="#">Читать далее</a>';
+        $text = '<p>'.$text.'...'.'</p>'.'<a class="post-text__more-link" href="#">Читать далее</a>';
     } else {
-        $text = '<p>' . $text . '</p>';
+        $text = '<p>'.$text.'</p>';
     }
+
     return $text;
 }
 
-function relative_date($post_date)
+/**
+ * Returns a single number of years, months, days, hours, minutes or seconds
+ * between the current date and the post publication date
+ * @param string $post_date Date in 'Y-m-d H:i:s' format
+ *
+ * @return string The date in relative terms
+ */
+function relative_date( string $post_date)
 {
     $publish_date = date_create($post_date);
     $cur_date = date_create('now');
@@ -60,6 +68,13 @@ function relative_date($post_date)
     }
 }
 
+/**
+ * Returns class-name of post type by id
+ * @param array $array  Existing posts types array
+ * @param string $id Active post type ID
+ *
+ * @return string | null The post type class-name or null if ID is not exist
+ */
 function get_active_post_type(array $array, string $id)
 {
     foreach ($array as $key => $value) {
@@ -70,6 +85,10 @@ function get_active_post_type(array $array, string $id)
     return null;
 }
 
+/**
+ * @param string $value
+ * @return string
+ */
 function check_text(string $value)
 {
     return empty($value) ? 'Это поле должно быть заполнено' : '';
@@ -184,10 +203,10 @@ function get_tag_id($link, string $tag, array $tags)
     return $result ? mysqli_insert_id($link) : false;
 }
 
-function create_post_tag_sql($link, int $post_id, array $array_id)
+function create_post_tag_sql($link, int $post_id, array $tags_id)
 {
-    foreach ($array_id as $item) {
-        $request_values[] = '(' . $post_id . ', ' . $item . ')';
+    foreach ($tags_id as $item) {
+        $request_values[] = "({$post_id}, {$item})";
     }
     $request_string = implode(', ', $request_values);
 
