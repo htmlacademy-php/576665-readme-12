@@ -98,7 +98,7 @@ function tags_validate(string $tags_value)
     if (!empty($tags_value)) {
         foreach ($tags_array as $tag) {
 
-            if (!preg_match('/^[a-zA-Zа-яёА-ЯЁ0-9]+$/', $tag)) {
+            if (!preg_match('/^[a-zA-Zа-яёА-ЯЁ0-9]+$/u', $tag)) {
                 $invalid_tags[] = $tag;
             }
 
