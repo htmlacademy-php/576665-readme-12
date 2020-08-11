@@ -20,14 +20,12 @@ function esc(string $str)
  * @return string The original string if its length is less than
  * maximum allowed length or excerpt
  */
-function cut_text(string $text, int $excerpt_length = 300)
+function cut_text(string $text, int $excerpt_length = 80)
 {
     $text_length = mb_strlen($text);
     if ($text_length > $excerpt_length) {
         $text = mb_substr($text, 0, $excerpt_length);
-        $text = mb_substr($text, 0, mb_strrpos($text, ' '));
-        $text = '<p>' . $text . '...' . '</p>' . '<a class="post-text__more-link" href="#">Читать далее</a>';
-//        TODO function return excerpt only
+        $text = mb_substr($text, 0, mb_strrpos($text, ' ')) . '...';
     }
     return $text;
 }

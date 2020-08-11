@@ -110,7 +110,11 @@
                         </div>
                     <?php elseif ($item['class'] === 'text'): ?>
                         <!--содержимое для поста-текста-->
-                        <?php echo cut_text(esc($item['content'])); ?>
+                        <?php $post_content = cut_text(esc($item['content'])) ?>
+                        <p><?= $post_content ?></p>
+                        <?php if ($post_content !== esc($item['content'])) : ?>
+                            <a class="post-text__more-link" href="/post.php?post_id=<?= $item['post_id'] ?>">Читать далее</a>
+                        <?php endif; ?>
                     <?php endif ?>
                 </div>
                 <footer class="post__footer">
