@@ -13,7 +13,7 @@ function esc(string $str)
 
 /**
  * Сut string to a character length, the default is 80,
- * adds "..." and link to full post at the end of excerpt
+ * adds "..." at the end of excerpt
  * @param string $text
  * @param int $excerpt_length Maximum allowed length
  *
@@ -26,20 +26,19 @@ function cut_text(string $text, int $excerpt_length = 300)
     if ($text_length > $excerpt_length) {
         $text = mb_substr($text, 0, $excerpt_length);
         $text = mb_substr($text, 0, mb_strrpos($text, ' '));
-        $text = '<p>'.$text.'...'.'</p>'.'<a class="post-text__more-link" href="#">Читать далее</a>';
-    } else {
-        $text = '<p>'.$text.'</p>';
+        $text = '<p>' . $text . '...' . '</p>' . '<a class="post-text__more-link" href="#">Читать далее</a>';
+//        TODO function return excerpt only
     }
-
     return $text;
 }
 
 /**
- * Returns a single number of years, months, days, hours, minutes or seconds
+ * Returns a single number of months, days, weeks, hours, minutes
  * between the current date and the post publication date
  * @param string $post_date Date in 'Y-m-d H:i:s' format
  *
- * @return string The date in relative terms
+ * @return string The date in relative terms or string 'меньше минуты назад'
+ * if post was created less then 60 seconds ago
  */
 function relative_date(string $post_date)
 {
@@ -72,7 +71,7 @@ function relative_date(string $post_date)
 /**
  * Returns class-name of post type by id
  * @param array $array  Existing posts types array
- * @param string $id Active post type ID
+ * @param string $id Post type ID
  *
  * @return string | null The post type class-name or null if ID is not exist
  */
@@ -87,20 +86,34 @@ function get_active_post_type(array $array, string $id)
 }
 
 /**
+ * Returns error message if string is empty
  * @param string $value
- * @return string
+ *
+ * @return string Error message or empty string
  */
 function check_text(string $value)
 {
     return empty($value) ? 'Это поле должно быть заполнено' : '';
 }
 
+/**
+ * Checks whether a string is a link to a Youtube video
+ * @param string $value video url
+ *
+ * @return string Error message or empty string if url is correct
+ */
 function check_youtube_domain(string $value)
 {
     $domain = parse_url($value, PHP_URL_HOST);
     return strpos($domain, 'youtube.com') === false ? 'Введите ссылку на видео из YOUTUBE' : '';
 }
 
+/**
+ * Checks whether a string is a correct link
+ * @param string $link_value
+ *
+ * @return string Error message or empty string if link is correct
+ */
 function link_validate(string $link_value)
 {
     if (empty($link_value)) {
@@ -110,6 +123,12 @@ function link_validate(string $link_value)
     }
 }
 
+/**
+ * Validates a string contains tags
+ * @param string $tags_value
+ *
+ * @return string Error massage or empty string if string contains correct tags
+ */
 function tags_validate(string $tags_value)
 {
     $invalid_tags = [];
@@ -134,6 +153,12 @@ function tags_validate(string $tags_value)
     return $tag_error;
 }
 
+/**
+ * Validates link to a video
+ * @param string $url_value
+ *
+ * @return string Error message or empty string if link is correct
+ */
 function youtube_url_validation(string $url_value)
 {
     $error = '';
@@ -147,6 +172,12 @@ function youtube_url_validation(string $url_value)
     return $error;
 }
 
+/**
+ * Checks image's MIME-type
+ * @param string $file_type File's MIME-type
+ *
+ * @return bool|string Error message or true if MIME-type is correct
+ */
 function check_img_type(string $file_type)
 {
     $required_types = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
@@ -156,6 +187,12 @@ function check_img_type(string $file_type)
     return true;
 }
 
+/**
+ * Validates uploaded file
+ * @param array $upload_photo Array $_FILE
+ *
+ * @return bool|string Error message or true if file is correct
+ */
 function photo_validate(array $upload_photo)
 {
     $tmp_name = $upload_photo['tmp_name'];
@@ -164,6 +201,12 @@ function photo_validate(array $upload_photo)
     return check_img_type($file_type) !== true ? check_img_type($file_type) : '';
 }
 
+/**
+ * Validates link to uploaded file
+ * @param string $photo_link The link to image files
+ *
+ * @return string Error massage or empty string if uploaded file is validate
+ */
 function photo_link_validate(string $photo_link)
 {
     $error = '';
@@ -182,6 +225,12 @@ function photo_link_validate(string $photo_link)
     return $error;
 }
 
+/**
+ * Uploads file
+ * @param array $upload_photo Array $_FILE
+ *
+ * @return string Path to uploaded file
+ */
 function upload_photo(array $upload_photo)
 {
     $tmp_name = $upload_photo['tmp_name'];
@@ -191,6 +240,14 @@ function upload_photo(array $upload_photo)
     return $filename;
 }
 
+/**
+ * Returns tag's ID
+ * @param mysqli $link The MySQL connection.
+ * @param string $tag The string contains tags
+ * @param array $tags The array of exist tags
+ *
+ * @return bool|int false if ID is not exist or tag's ID
+ */
 function get_tag_id($link, string $tag, array $tags)
 {
     foreach ($tags as $item) {
@@ -204,6 +261,14 @@ function get_tag_id($link, string $tag, array $tags)
     return $result ? mysqli_insert_id($link) : false;
 }
 
+/**
+ * Inserts a new rows post_tag into the database
+ * @param mysqli $link The MySQL connection.
+ * @param int $post_id Current post ID
+ * @param array $tags_id Tags ID array for current post
+ *
+ * @return bool|string true if tags added or error massage
+ */
 function create_post_tag_sql($link, int $post_id, array $tags_id)
 {
     foreach ($tags_id as $item) {
@@ -215,9 +280,16 @@ function create_post_tag_sql($link, int $post_id, array $tags_id)
         . $request_string;
     $result = mysqli_query($link, $sql);
 
-    return $result ? true : exit('error' . mysqli_error($link));
+    return $result ? true : ('Не удалось добавить новый тег' . mysqli_error($link));
 }
 
+/**
+ * Prepares validation rules for the new post
+ * @param string $post_type The class-name of post type
+ * @param string $tags The string contains tags
+ *
+ * @return array The array of validation rules
+ */
 function validate_post_rules($post_type, $tags)
 {
     $rules = [];
