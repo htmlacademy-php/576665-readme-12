@@ -24,8 +24,7 @@ CREATE TABLE posts (
     link VARCHAR(160),
     view_count INT DEFAULT 0,
     user_id INT REFERENCES users (id),
-    post_type_id INT REFERENCES post_types (id),
-    tag_id INT REFERENCES tags (id)
+    post_type_id INT REFERENCES post_types (id)
 );
 
 CREATE TABLE comments (

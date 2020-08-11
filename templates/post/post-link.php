@@ -7,8 +7,8 @@
                     <img src="https://www.google.com/s2/favicons?domain=<?=$post['link'];?>" alt="Иконка">
                 </div>
                 <div class="post-link__info">
-                    <h3><?=$post['title'];?></h3>
-                    <span><?=$post['link']; ?></span>
+                    <h3><?=esc($post['title']);?></h3>
+                    <span><?=esc($post['link']); ?></span>
                 </div>
             </div>
         </a>

@@ -4,9 +4,9 @@
     <div class="post__main">
         <blockquote>
             <p>
-                <?=$post['content'] ?>
+                <?= esc($post['content']) ?>
             </p>
-            <cite><?=$post['author_quote']?></cite>
+            <cite><?= esc($post['author_quote']) ?></cite>
         </blockquote>
     </div>
 </div>

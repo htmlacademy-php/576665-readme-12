@@ -2,6 +2,7 @@
 
 require_once 'init.php';
 require_once 'helpers.php';
+require_once 'functions.php';
 
 if (isset($_GET['post_id'])) {
     $param_id = filter_input(INPUT_GET, 'post_id');
@@ -18,15 +19,18 @@ if (isset($_GET['post_id'])) {
 
     mysqli_stmt_execute($stmt);
 
-    $res = mysqli_stmt_get_result($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-    $post = mysqli_fetch_assoc($res);
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+
+    $post = mysqli_fetch_assoc($result);
 }
 
 if (empty($post)) {
     header("HTTP/1.0 404 Not Found");
-    $error_msg = 'PAGE NOT FOUND: ' . mysqli_error($link);
-    print ($error_msg);
+    print ('PAGE NOT FOUND: ' . mysqli_error($link));
 }
 
 $sql = 'SELECT * FROM subscriptions'
@@ -34,20 +38,24 @@ $sql = 'SELECT * FROM subscriptions'
 
 $result = mysqli_query($link, $sql);
 
-if ($result) {
-    $subscriptions_count = mysqli_num_rows($result);
+if (!$result) {
+    exit ('error' . mysqli_error($link));
 }
+
+$subscriptions_count = mysqli_num_rows($result);
 
 $sql = 'SELECT * FROM posts'
     . ' WHERE posts.user_id = ' . $post['user_id'];
 
 $result = mysqli_query($link, $sql);
 
-if ($result) {
-    $posts_count = mysqli_num_rows($result);
+if (!$result) {
+    exit ('error' . mysqli_error($link));
 }
 
-$post_content = include_template("post-{$post['class']}.php", [
+$posts_count = mysqli_num_rows($result);
+
+$post_content = include_template("post/post-{$post['class']}.php", [
     'post' => $post
 ]);
 
@@ -60,7 +68,9 @@ $page_content = include_template('post.php', [
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
-    'title' => 'readme: публикация'
+    'title' => 'readme: публикация',
+    'user_name' => 'Nadiia',
+    'is_auth' => rand(0, 1)
 
 ]);
 

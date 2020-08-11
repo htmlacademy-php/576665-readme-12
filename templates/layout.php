@@ -35,7 +35,7 @@
             </div>
         </form>
         <div class="header__nav-wrapper">
-            <?php if ($is_auth == 1): ?>
+            <?php if ($is_auth === 1): ?>
                 <nav class="header__nav">
                     <ul class="header__my-nav">
                         <li class="header__my-page header__my-page--popular">
@@ -59,7 +59,7 @@
                         <li class="header__profile">
                             <a class="header__profile-link" href="#">
                                 <div class="header__avatar-wrapper">
-                                    <img class="header__profile-avatar" src="img/userpic-medium.jpg" alt="Аватар профиля">
+                                    <img class="header__profile-avatar" src="/img/userpic-medium.jpg" alt="Аватар профиля">
                                 </div>
                                 <div class="header__profile-name">
                                 <span>
@@ -101,7 +101,7 @@
                             </div>
                         </li>
                         <li>
-                            <a class="header__post-button button button--transparent" href="adding-post.html">Пост</a>
+                            <a class="header__post-button button button--transparent" href="/add.php?post_type=1">Пост</a>
                         </li>
                     </ul>
                 </nav>
@@ -111,7 +111,7 @@
 </header>
 
 <section class="page__main page__main--popular">
-    <?=$content;?>
+    <?= $content; ?>
 </section>
 
 <footer class="footer">
@@ -168,8 +168,8 @@
         </div>
     </div>
 </footer>
-<script src="libs/dropzone.js"></script>
-<script src="js/dropzone-settings.js"></script>
-<script src="js/main.js"></script>
+<!--<script src="/libs/dropzone.js"></script>-->
+<!--<script src="/js/dropzone-settings.js"></script>-->
+<script src="/js/main_updated.js"></script>
 </body>
 </html>
