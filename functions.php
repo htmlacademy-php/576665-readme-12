@@ -130,20 +130,12 @@ function is_valid_email(string $email)
     return false;
 }
 
-function check_password_repeat(string $value)
-{
-    if ($value === $_POST['password']) {
-        return true;
-    }
-    return false;
-}
-
 function password_repeat_validate (string $value)
 {
     if (empty($value)) {
         return "Это поле должно быть заполнено";
     }
-    if (check_password_repeat($value) !== true) {
+    if ($value !== $_POST['password']) {
         return "Пароли не совпадаеют";
     }
     return '';
@@ -157,7 +149,7 @@ function email_validate (string $email)
     if (is_valid_email($email) !== true) {
         return "Адресс электронной почты не корректен";
     }
-    if (is_new_user($email) !== true) {
+    if (is_new_user($email, $link) !== true) {
         return "Указанный email уже используется другим пользователем";
     }
     return '';
