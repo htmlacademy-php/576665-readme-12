@@ -106,6 +106,63 @@ function check_youtube_domain(string $value)
     return strpos($domain, 'youtube.com') === false ? 'Введите ссылку на видео из YOUTUBE' : '';
 }
 
+function is_new_user(string $email, $link)
+{
+    $sql = 'SELECT id FROM users '
+        . 'WHERE email =' . '?';
+
+    $stmt = db_get_prepare_stmt($link, $sql, [
+        $email
+    ]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if (mysqli_num_rows($result) > 0) {
+        return false;
+    }
+    return true;
+}
+
+function is_valid_email(string $email)
+{
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return true;
+    }
+    return false;
+}
+
+function check_password_repeat(string $value)
+{
+    if ($value === $_POST['password']) {
+        return true;
+    }
+    return false;
+}
+
+function password_repeat_validate (string $value)
+{
+    if (empty($value)) {
+        return "Это поле должно быть заполнено";
+    }
+    if (check_password_repeat($value) !== true) {
+        return "Пароли не совпадаеют";
+    }
+    return '';
+}
+
+function email_validate (string $email)
+{
+    if (empty($email)) {
+        return "Это поле должно быть заполнено";
+    }
+    if (is_valid_email($email) !== true) {
+        return "Адресс электронной почты не корректен";
+    }
+    if (is_new_user($email) !== true) {
+        return "Указанный email уже используется другим пользователем";
+    }
+    return '';
+}
+
 /**
  * Checks whether a string is a correct link
  * @param string $link_value
