@@ -8,8 +8,6 @@ require_once 'functions.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = [];
     $registration_data = [];
-    var_dump ($_POST);
-    var_dump($_FILES);
 
     $registration_data = filter_input_array(INPUT_POST, [
         'email' => FILTER_DEFAULT,
@@ -23,8 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $registration_data['avatar'] = !empty($_FILES['userpic-file']) ? $_FILES['userpic-file'] : '';
-
-    var_dump($registration_data);
 
     $rules = [];
     $rules ['email'] = function ($value) {
@@ -75,7 +71,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'avatar' => 'Аватар'
         ];
     }
-    var_dump($errors);
+
+    if (empty($errors)) {
+        $registration_data['password'] = password_hash($registration_data['password'], PASSWORD_DEFAULT);
+        $registration_data['avatar'] = !empty($_FILES['userpic-file']['name']) ? upload_photo($_FILES['userpic-file']) : '';
+
+        $sql = 'INSERT INTO users (email, login, password, picture) VALUE (?, ?, ?, ?)';
+        $stmt = db_get_prepare_stmt($link, $sql, [
+            $registration_data['email'],
+            $registration_data['login'],
+            $registration_data['password'],
+            $registration_data['avatar']
+        ]);
+
+        $result = mysqli_stmt_execute($stmt);
+
+        if(!$result) {
+            exit('error' . mysqli_error($link));
+        }
+        header('Location: /');
+    }
 }
 
 $page_content = include_template('registration.php', [
