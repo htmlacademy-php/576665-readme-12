@@ -3,11 +3,11 @@
 require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
-$registration_data = [];
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = [];
-
+    $registration_data = [];
     var_dump ($_POST);
     var_dump($_FILES);
 
@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $page_content = include_template('registration.php', [
-    'registration_data' => $registration_data,
+    'registration_data' => !empty($registration_data) ? $registration_data : '',
     'errors' => !empty($errors) ? $errors : '',
     'error_titles' => !empty($error_titles) ? $error_titles : ''
 
