@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rules['password_repeat'] = function ($value) {
         return password_repeat_validate($value);
     };
-    if (!empty($_FILES['userpic-file'])) {
+    if (!empty($_FILES['userpic-file']['name'])) {
         $rules['avatar'] = function ($value) {
             return photo_validate($value);
         };
@@ -54,6 +54,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    if (empty($errors['email'])) {
+        $errors['email'] = check_unique_user($link, $registration_data['email'],
+            'email') !== true ? 'Указанный email уже используется другим пользователем' : '';
+    }
+
+    if (empty($errors['login'])) {
+        $errors['login'] = check_unique_user($link, $registration_data['login'],
+            'login') !== true ? 'Указанный login уже используется другим пользователем' : '';
+    }
+
     $errors = array_filter ($errors);
 
     if (!empty($errors)) {
@@ -65,11 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'avatar' => 'Аватар'
         ];
     }
-
     var_dump($errors);
-
-
-
 }
 
 $page_content = include_template('registration.php', [

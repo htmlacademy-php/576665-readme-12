@@ -106,14 +106,12 @@ function check_youtube_domain(string $value)
     return strpos($domain, 'youtube.com') === false ? 'Введите ссылку на видео из YOUTUBE' : '';
 }
 
-function is_new_user(string $email, $link)
+function check_unique_user($link, string $value, string $param)
 {
     $sql = 'SELECT id FROM users '
-        . 'WHERE email =' . '?';
+        . 'WHERE' . $param = '?';
 
-    $stmt = db_get_prepare_stmt($link, $sql, [
-        $email
-    ]);
+    $stmt = db_get_prepare_stmt($link, $sql, [$value]);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     if (mysqli_num_rows($result) > 0) {
@@ -148,9 +146,6 @@ function email_validate (string $email)
     }
     if (is_valid_email($email) !== true) {
         return "Адресс электронной почты не корректен";
-    }
-    if (is_new_user($email, $link) !== true) {
-        return "Указанный email уже используется другим пользователем";
     }
     return '';
 }
