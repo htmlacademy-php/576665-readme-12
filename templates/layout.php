@@ -31,8 +31,7 @@
                     <a class="header__user-button header__user-button--active header__register-button button" href="/registration.php">Регистрация</a>
                 </li>
             </ul>
-        <?php endif; ?>
-        <?php if ($is_auth === 1): ?>
+        <?php else: ?>
         <form class="header__search-form form" action="#" method="get">
             <div class="header__search">
                 <label class="visually-hidden">Поиск</label>

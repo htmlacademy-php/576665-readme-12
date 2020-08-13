@@ -27,13 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return email_validate($value);
     };
     $rules['login'] = function ($value) {
-        return check_text($value);
+        return check_emptiness($value);
     };
     $rules['password'] = function ($value) {
-        return check_text($value);
+        return check_emptiness($value);
     };
     $rules['password_repeat'] = function ($value) {
-        return password_repeat_validate($value);
+        return check_emptiness($value);
     };
     if (!empty($_FILES['userpic-file']['name'])) {
         $rules['avatar'] = function ($value) {
@@ -58,6 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors['login'])) {
         $errors['login'] = check_unique_user($link, $registration_data['login'],
             'login') !== true ? 'Указанный login уже используется другим пользователем' : '';
+    }
+
+    if (empty($errors['password_repeat'])) {
+        $errors['password_repeat'] = check_password_repeat($registration_data['password_repeat'], $registration_data['password']);
     }
 
     $errors = array_filter ($errors);
