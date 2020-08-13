@@ -50,14 +50,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (empty($errors['email'])) {
-        $errors['email'] = check_unique_user($link, $registration_data['email'],
-            'email') !== true ? 'Указанный email уже используется другим пользователем' : '';
-    }
+    $unique_values = ['email', 'login'];
 
-    if (empty($errors['login'])) {
-        $errors['login'] = check_unique_user($link, $registration_data['login'],
-            'login') !== true ? 'Указанный login уже используется другим пользователем' : '';
+    foreach ($unique_values as $item) {
+        if (empty($errors[$item])) {
+            $errors[$item] = !check_unique_user($link, $registration_data[$item],
+                $item) ? "Указанный {$item} уже используется другим пользователем" : '';
+        }
     }
 
     if (empty($errors['password_repeat'])) {
