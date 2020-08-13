@@ -106,6 +106,14 @@ function check_youtube_domain(string $value)
     return strpos($domain, 'youtube.com') === false ? 'Введите ссылку на видео из YOUTUBE' : '';
 }
 
+/**
+ * Checks whether a value is exists in database
+ * @param mysqli $link The MySQL connection
+ * @param string $value
+ * @param string $param
+ *
+ * @return bool true if value is unique or false if a value is exists in database
+ */
 function check_unique_user($link, string $value, string $param)
 {
     $sql = 'SELECT id FROM users '
@@ -119,6 +127,12 @@ function check_unique_user($link, string $value, string $param)
     return true;
 }
 
+/**
+ * Checks whether a string is valid email
+ * @param string $email
+ *
+ * @return bool true if email is correct or false if email is not valid
+ */
 function is_valid_email(string $email)
 {
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -127,6 +141,12 @@ function is_valid_email(string $email)
     return false;
 }
 
+/**
+ * Checks whether the password repeat value is correct
+ * @param string $value
+ *
+ * @return string Error message or empty string if value is correct
+ */
 function password_repeat_validate (string $value)
 {
     if (empty($value)) {
@@ -138,13 +158,18 @@ function password_repeat_validate (string $value)
     return '';
 }
 
+/**
+ * Checks whether the email value is correct
+ * @param string $email
+ * @return string Error message or empty string if value is correct
+ */
 function email_validate (string $email)
 {
     if (empty($email)) {
         return "Это поле должно быть заполнено";
     }
     if (is_valid_email($email) !== true) {
-        return "Адресс электронной почты не корректен";
+        return "Адрес электронной почты не корректен";
     }
     return '';
 }
