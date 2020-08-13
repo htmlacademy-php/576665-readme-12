@@ -109,8 +109,7 @@ function check_youtube_domain(string $value)
 function check_unique_user($link, string $value, string $param)
 {
     $sql = 'SELECT id FROM users '
-        . 'WHERE' . $param = '?';
-
+        . 'WHERE ' . $param . ' = ?';
     $stmt = db_get_prepare_stmt($link, $sql, [$value]);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
