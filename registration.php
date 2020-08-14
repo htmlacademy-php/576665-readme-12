@@ -106,9 +106,6 @@ $page_content = include_template('registration.php', [
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'title' => 'readme: регистрация',
-    'user_name' => 'Nadiia',
-    'is_auth' => rand(0, 1)
-
 ]);
 
 print ($layout_content);

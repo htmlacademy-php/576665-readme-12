@@ -56,9 +56,7 @@ $page_content = include_template('main.php', [
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
-    'title' => 'readme: популярное',
-    'user_name' => 'Nadiia',
-    'is_auth' => rand(0, 1)
+    'title' => 'readme: популярное'
 ]);
 
 print ($layout_content);
