@@ -1,59 +1,75 @@
 <?php
+require_once ('init.php');
+require_once ('helpers.php');
+require_once ('functions.php');
 
-require_once 'init.php';
-require_once 'helpers.php';
-require_once 'functions.php';
+//if (isset($_SESSION['user'])) {
+//    header("Location: /feed.php");
+//    exit();
+//}
 
-$sql = 'SELECT id, name, class FROM post_types';
-$result = mysqli_query($link, $sql);
-if (!$result) {
-    exit ('error '.mysqli_error($link));
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $authorization_data = [];
+    $errors = [];
+
+    $authorization_data = filter_input_array(INPUT_POST, [
+        'login' => FILTER_DEFAULT,
+        'password' => FILTER_DEFAULT
+    ], true);
+
+    foreach ($authorization_data as $key => $value) {
+        $authorization[$key] = !empty($value) ? trim($value) : '';
+    }
+
+    $rules = [];
+    $rules['login'] = function ($value) {
+        return check_emptiness($value);
+    };
+    $rules['password'] = function ($value) {
+        return check_emptiness($value);
+    };
+
+    foreach ($authorization_data as $key => $value) {
+        if (isset($rules[$key])) {
+            $rule = $rules[$key];
+            $errors[$key] = $rule($value);
+        }
+    }
+
+    $errors = array_filter($errors);
+
+
+
+    if (empty($errors)) {
+        $sql = 'SELECT * from users WHERE login = ?';
+        $stmt = db_get_prepare_stmt($link, $sql, [$authorization_data['login']]);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if (!$result) {
+            $errors['login'] = 'Пользователь с таким логином не найден';
+        } else {
+            $current_user = mysqli_fetch_array($result, MYSQLI_ASSOC);
+            var_dump($current_user);
+        }
+    }
+
+    if (empty($errors) && !empty($current_user)) {
+        $password_verify = password_verify($authorization_data['password'], $current_user['password']);
+        if ($password_verify) {
+            $_SESSION['user'] = $current_user;
+            header('Location: /feed.php');
+        } else {
+            $errors['password'] = 'Пароль не верный';
+        }
+
+    }
 }
 
-$post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-$param_type = '';
-
-$param_sort = 'view_count';
-
-$query_type = filter_input(INPUT_GET, 'post_type');
-
-if ($query_type) {
-    $param_type = $query_type;
-}
-
-$sql = 'SELECT * , users.id, post_types.id FROM posts'
-    . ' JOIN users ON posts.user_id = users.id'
-    . ' JOIN post_types ON posts.post_type_id = post_types.id';
-
-if ($param_type) {
-    $sql .= " WHERE posts.post_type_id =" . $param_type;
-}
-
-if ($param_sort) {
-    $sql .= " ORDER BY " . $param_sort . " DESC LIMIT 6 ";
-}
-
-$result = mysqli_query($link, $sql);
-
-if (!$result) {
-    exit ('error' . mysqli_error($link));
-}
-
-$popular_posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-$page_content = include_template('main.php', [
-    'popular_posts' => $popular_posts,
-    'post_types' => $post_types,
-    'param_type' => $param_type,
-    'param_sort' => $param_sort
-]);
-
-$layout_content = include_template('layout.php', [
-    'content' => $page_content,
-    'title' => 'readme: популярное',
-    'user_name' => 'Nadiia',
-    'is_auth' => rand(0, 1)
+$layout_content = include_template('index.php', [
+    'authorization_data' => !empty($authorization_data) ? $authorization_data : '',
+    'errors' => !empty($errors) ? $errors : ''
 ]);
 
 print ($layout_content);
+
