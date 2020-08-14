@@ -89,7 +89,7 @@ function get_active_post_type(array $array, string $id)
  *
  * @return string Error message or empty string
  */
-function check_text(string $value)
+function check_emptiness(string $value)
 {
     return empty($value) ? 'Это поле должно быть заполнено' : '';
 }
@@ -104,6 +104,62 @@ function check_youtube_domain(string $value)
 {
     $domain = parse_url($value, PHP_URL_HOST);
     return strpos($domain, 'youtube.com') === false ? 'Введите ссылку на видео из YOUTUBE' : '';
+}
+
+/**
+ * Checks whether a value is exists in database
+ * @param mysqli $link The MySQL connection
+ * @param string $value
+ * @param string $param
+ *
+ * @return bool true if value is unique or false if a value is exists in database
+ */
+function check_unique_user($link, string $value, string $param)
+{
+    $sql = "SELECT id FROM users WHERE {$param} = ?";
+    $stmt = db_get_prepare_stmt($link, $sql, [$value]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return (mysqli_num_rows($result) > 0) ? false : true;
+}
+
+/**
+ * Checks whether a string is valid email
+ * @param string $email
+ *
+ * @return bool true if email is correct or false if email is not valid
+ */
+function is_valid_email(string $email)
+{
+    return (filter_var($email, FILTER_VALIDATE_EMAIL)) ? true : false;
+}
+
+/**
+ * Checks whether password_repeat value and the password do match
+ * @param string $value The password_repeat value
+ * @param string $password The password value
+ *
+ * @return string Error message or empty string if passwords do match
+ */
+function check_password_repeat (string $value, $password)
+{
+    return  ($value !== $password) ? 'Пароли не совпадают' : '';
+}
+
+/**
+ * Checks whether the email value is correct
+ * @param string $email
+ * @return string Error message or empty string if value is correct
+ */
+function email_validate (string $email)
+{
+    if (empty($email)) {
+        return "Это поле должно быть заполнено";
+    }
+    if (!is_valid_email($email)) {
+        return "Адрес электронной почты не корректен";
+    }
+    return '';
 }
 
 /**
@@ -292,7 +348,7 @@ function validate_post_rules($post_type, $tags)
 {
     $rules = [];
     $rules['title'] = function ($value) {
-        return check_text($value);
+        return check_emptiness($value);
     };
     if (!empty($tags)) {
         $rules['tags'] = function ($value) {
@@ -302,7 +358,7 @@ function validate_post_rules($post_type, $tags)
     switch ($post_type) {
         case 'text':
             $rules['content'] = function ($value) {
-                return check_text($value);
+                return check_emptiness($value);
             };
             break;
         case 'link':
@@ -317,10 +373,10 @@ function validate_post_rules($post_type, $tags)
             break;
         case 'quote':
             $rules['content'] = function ($value) {
-                return check_text($value);
+                return check_emptiness($value);
             };
             $rules['author_quote'] = function ($value) {
-                return check_text($value);
+                return check_emptiness($value);
             };
             break;
         case 'photo' :
