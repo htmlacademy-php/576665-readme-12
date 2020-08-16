@@ -3,6 +3,11 @@ require_once ('init.php');
 require_once ('helpers.php');
 require_once ('functions.php');
 
+if (isset($_SESSION['user'])) {
+    header('Location: /feed.php');
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $authorization_data = [];
     $errors = [];
@@ -16,18 +21,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $authorization[$key] = !empty($value) ? trim($value) : '';
     }
 
-    $rules = [];
-    $rules['login'] = function ($value) {
-        return check_emptiness($value);
-    };
-    $rules['password'] = function ($value) {
-        return check_emptiness($value);
-    };
+    $rules = [
+        'login' => function ($value) {
+            return check_emptiness($value);
+        },
+        'password' => function ($value) {
+            return check_emptiness($value);
+        }
+    ];
 
     foreach ($authorization_data as $key => $value) {
         if (isset($rules[$key])) {
-            $rule = $rules[$key];
-            $errors[$key] = $rule($value);
+            $errors[$key] = $rules[$key]($value);
         }
     }
 
@@ -55,11 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors['password'] = 'Неверный пароль';
             }
         }
-    }
-} else {
-    if (isset($_SESSION['user'])) {
-        header('Location: /feed.php');
-        exit();
     }
 }
 

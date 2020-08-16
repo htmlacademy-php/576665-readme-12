@@ -60,8 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     foreach ($new_post as $key => $value) {
         if (isset($rules[$key])) {
-            $rule = $rules[$key];
-            $errors[$key] = $rule($value);
+            $errors[$key] = $rules[$key]($value);
         }
     }
 
