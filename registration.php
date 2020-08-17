@@ -22,33 +22,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $registration_data['avatar'] = !empty($_FILES['userpic-file']) ? $_FILES['userpic-file'] : '';
 
-    $rules = [];
-    $rules ['email'] = function ($value) {
-        return email_validate($value);
-    };
-    $rules['login'] = function ($value) {
-        return check_emptiness($value);
-    };
-    $rules['password'] = function ($value) {
-        return check_emptiness($value);
-    };
-    $rules['password_repeat'] = function ($value) {
-        return check_emptiness($value);
-    };
-    if (!empty($_FILES['userpic-file']['name'])) {
-        $rules['avatar'] = function ($value) {
-            return photo_validate($value);
-        };
-    };
+    $rules = [
+        'email' => function ($value) {
+            return email_validate($value);
+        },
+        'login' => function ($value) {
+            return check_emptiness($value);
+        },
+        'password' => function ($value) {
+            return check_emptiness($value);
+        },
+        'password_repeat' => function ($value) {
+            return check_emptiness($value);
+        }
+    ];
 
     $errors = [];
 
-    foreach ($registration_data as $key => $value) {
-        if (isset($rules[$key])) {
-            $rule = $rules[$key];
-            $errors[$key] = $rule($value);
-        }
-    }
+    $errors = check_data_by_rules($registration_data, $rules);
 
     $unique_values = ['email', 'login'];
 
@@ -77,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         $registration_data['password'] = password_hash($registration_data['password'], PASSWORD_DEFAULT);
-        $registration_data['avatar'] = !empty($_FILES['userpic-file']['name']) ? upload_photo($_FILES['userpic-file']) : '';
+        $registration_data['avatar'] = !empty($_FILES['userpic-file']['name']) ? upload_photo($_FILES['userpic-file']) : 'img/icon-input-user.svg';
 
         $sql = 'INSERT INTO users (email, login, password, picture) VALUE (?, ?, ?, ?)';
         $stmt = db_get_prepare_stmt($link, $sql, [
@@ -106,9 +97,6 @@ $page_content = include_template('registration.php', [
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
     'title' => 'readme: регистрация',
-    'user_name' => 'Nadiia',
-    'is_auth' => rand(0, 1)
-
 ]);
 
 print ($layout_content);

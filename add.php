@@ -4,6 +4,11 @@ require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
 
+if (!isset($_SESSION['user'])) {
+    header('Location: /feed.php');
+    exit();
+}
+
 $sql = 'SELECT * from post_types';
 $result = mysqli_query($link, $sql);
 if (!$result) {
@@ -53,12 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $rules = validate_post_rules($new_post['post_type'], $new_post['tags']);
 
-    foreach ($new_post as $key => $value) {
-        if (isset($rules[$key])) {
-            $rule = $rules[$key];
-            $errors[$key] = $rule($value);
-        }
-    }
+    $errors = check_data_by_rules($new_post, $rules);
 
     $errors = array_filter($errors);
 
@@ -129,6 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             create_post_tag_sql($link, $post_id, $tags_id);
         }
         header('Location: /post.php?post_id=' . $post_id);
+        exit();
     }
 }
 
@@ -150,9 +151,7 @@ $page_content = include_template('adding-post.php', [
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
-    'title' => 'readme: добавление публикации',
-    'user_name' => 'Nadiia',
-    'is_auth' => rand(0, 1)
+    'title' => 'readme: добавление публикации'
 
 ]);
 
