@@ -39,11 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $errors = [];
 
-    foreach ($registration_data as $key => $value) {
-        if (isset($rules[$key])) {
-            $errors[$key] = $rules[$key]($value);
-        }
-    }
+    $errors = check_data_by_rules($registration_data, $rules);
 
     $unique_values = ['email', 'login'];
 

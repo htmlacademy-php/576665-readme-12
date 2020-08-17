@@ -393,3 +393,20 @@ function validate_post_rules($post_type, $tags)
     }
     return $rules;
 }
+
+/**
+ * Checks data array by rules array and creates errors array
+ * @param array $data_array The data array
+ * @param array $rules The rules array
+ *
+ * @return array The errors array
+ */
+function check_data_by_rules($data_array, $rules) {
+    $errors = [];
+    foreach ($data_array as $key => $value) {
+        if (isset($rules[$key])) {
+            $errors[$key] = $rules[$key]($value);
+        }
+    }
+    return $errors;
+}

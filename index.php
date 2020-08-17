@@ -30,11 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     ];
 
-    foreach ($authorization_data as $key => $value) {
-        if (isset($rules[$key])) {
-            $errors[$key] = $rules[$key]($value);
-        }
-    }
+    $errors = check_data_by_rules($authorization_data, $rules);
 
     $errors = array_filter($errors);
 
