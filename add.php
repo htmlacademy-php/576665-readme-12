@@ -4,6 +4,10 @@ require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
 
+if (!isset($_SESSION['user'])) {
+    header('Location: /feed.php');
+    exit();
+}
 
 $sql = 'SELECT * from post_types';
 $result = mysqli_query($link, $sql);
