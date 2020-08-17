@@ -60,8 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $errors = check_data_by_rules($new_post, $rules);
 
-    $errors = array_filter($errors);
-
     if (!empty($errors)) {
         $error_titles = [
             'title' => 'Заголовок',

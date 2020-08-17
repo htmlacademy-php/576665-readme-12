@@ -408,5 +408,6 @@ function check_data_by_rules($data_array, $rules) {
             $errors[$key] = $rules[$key]($value);
         }
     }
+    $errors = array_filter($errors);
     return $errors;
 }
