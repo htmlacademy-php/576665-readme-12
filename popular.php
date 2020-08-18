@@ -47,7 +47,7 @@ if (!$result) {
 
 $popular_posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-$page_content = include_template('main.php', [
+$page_content = include_template('popular.php', [
     'popular_posts' => $popular_posts,
     'post_types' => $post_types,
     'param_type' => $param_type,
