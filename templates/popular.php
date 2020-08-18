@@ -44,7 +44,7 @@
                 <?php foreach ($post_types as $post_type): ?>
                     <li class="popular__filters-item filters__item">
                         <a class="filters__button filters__button--<?= $post_type['class'] ?> <?= $param_type === $post_type['id'] ? 'filters__button--active' : '' ?> button"
-                           href="/?post_type=<?= $post_type['id'] ?>">
+                           href="/popular.php?post_type=<?= $post_type['id'] ?>">
                             <span class="visually-hidden"><?= $post_type['name'] ?></span>
                             <svg class="filters__icon" width="22" height="18">
                                 <use xlink:href="#icon-filter-<?= $post_type['class'] ?>"></use>
@@ -75,7 +75,7 @@
                     <?php elseif ($item['class'] === 'link'): ?>
                         <!--содержимое для поста-ссылки-->
                         <div class="post-link__wrapper">
-                            <a class="post-link__external" href="http://" title="Перейти по ссылке">
+                            <a class="post-link__external" href="<?= esc($item['link']) ?>" title="Перейти по ссылке">
                                 <div class="post-link__info-wrapper">
                                     <div class="post-link__icon-wrapper">
                                         <img
@@ -99,7 +99,6 @@
                         <div class="post-video__block">
                             <div class="post-video__preview">
                                 <?= embed_youtube_cover(esc($item['video'])); ?>
-<!--                                <img src="/img/coast-medium.jpg" alt="Превью к видео" width="360" height="188">-->
                             </div>
                             <a href="/post.php/?post_id=<?= $item['post_id'] ?>" class="post-video__play-big button">
                                 <svg class="post-video__play-big-icon" width="14" height="14">

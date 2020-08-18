@@ -15,27 +15,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if ($search_query) {
         $sql = 'SELECT * FROM posts '
             . 'JOIN users ON posts.user_id = users.id '
-            . 'WHERE MATCH(title, content) AGAINST(?)';
-        $stmt = db_get_prepare_stmt($link, $sql, [$search_query]);
-        $result = mysqli_stmt_execute($stmt);
+            . 'JOIN post_types ON posts.post_type_id = post_types.id '
+            . 'WHERE MATCH(title, content) AGAINST(?) ';
+        $stmt = db_get_prepare_stmt($link, $sql, [
+            $search_query
+        ]);
+
+        mysqli_stmt_execute($stmt);
+
+        $result = mysqli_stmt_get_result($stmt);
 
         if (!$result) {
-            exit('error' . mysqli_error($link));
+            exit ('error' . mysqli_error($link));
         }
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
+
         $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        var_dump($posts);
+
+        if (!$posts) {
+            print "Нет таких результатвов";
+            exit();
+        }
     }
-
-
 }
 
-
-
 $page_content = include_template('search-results.php', [
-    'search_query' => $search_query,
-
+    'posts' => $posts,
+    'search_query' => $search_query
 ]);
 
 $layout = include_template('layout.php', [
