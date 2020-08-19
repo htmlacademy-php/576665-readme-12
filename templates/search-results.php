@@ -1,16 +1,17 @@
 <main class="page__main page__main--search-results">
-    <h1 class="visually-hidden">Страница результатов поиска</h1>
+    <h1 class="visually-hidden">Страница результатов поиска<?= empty($posts) ? ': (нет результатов)' : '' ?></h1>
     <section class="search">
         <h2 class="visually-hidden">Результаты поиска</h2>
         <div class="search__query-wrapper">
             <div class="search__query container">
                 <span>Вы искали:</span>
-                <span class="search__query-text">#<?= esc($search_query) ?></span>
+                <span class="search__query-text"><?= esc($search_query) ?></span>
             </div>
         </div>
         <div class="search__results-wrapper">
             <div class="container">
                 <div class="search__content">
+                    <?php if (!empty($posts)): ?>
                     <?php foreach ($posts as $post): ?>
                         <article class="search__post post post-<?= $post['class'] ?>">
                             <header class="post__header post__author">
@@ -21,19 +22,22 @@
                                     </div>
                                     <div class="post__info">
                                         <b class="post__author-name"><?= $post['login'] ?></b>
-                                        <span class="post__time"><?= relative_date($post['date'])?></span>
+                                        <span class="post__time"><?= relative_date($post['date']) ?></span>
                                     </div>
                                 </a>
                             </header>
                             <div class="post__main">
                                 <?php switch ($post['class']): ?><?php case TEXT: ?>
-                                    <h2><a href="/post.php?post_id=<?= $post['post_id'] ?>"><?= esc($post['title']) ?></a></h2>
-                                    <?php $post_content = $post['content']?>
+                                    <h2>
+                                        <a href="/post.php?post_id=<?= $post['post_id'] ?>"><?= esc($post['title']) ?></a>
+                                    </h2>
+                                    <?php $post_content = $post['content'] ?>
                                     <p>
                                         <?= cut_text($post_content) ?>
                                     </p>
                                     <?php if ($post_content !== esc($post['content'])) : ?>
-                                        <a class="post-text__more-link" href="/post.php?post_id=<?= $post['post_id'] ?>">Читать далее</a>
+                                        <a class="post-text__more-link"
+                                           href="/post.php?post_id=<?= $post['post_id'] ?>">Читать далее</a>
                                     <?php endif; ?>
                                     <?php break; ?>
                                 <?php case VIDEO: ?>
@@ -127,14 +131,28 @@
                                 <div>
                                     <ul class="post__tags">
                                         <?php foreach ($post_tags as $tag): ?>
-                                        <li><a href="/search.php?q=<?= $tag?>">#<?= $tag?></a></li>
-                                       <?php endforeach; ?>
+                                            <li><a href="/search.php?q=<?= $tag ?>">#<?= $tag ?></a></li>
+                                        <?php endforeach; ?>
                                     </ul>
                                 </div>
 
                             </footer>
                         </article>
                     <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="search__results-wrapper">
+                            <div class="search__no-results container">
+                                <p class="search__no-results-info">К сожалению, ничего не найдено.</p>
+                                <p class="search__no-results-desc">
+                                    Попробуйте изменить поисковый запрос или просто зайти в раздел &laquo;Популярное&raquo;, там живет самый крутой контент.
+                                </p>
+                                <div class="search__links">
+                                    <a class="search__popular-link button button--main" href="#">Популярное</a>
+                                    <a class="search__back-link" href="#">Вернуться назад</a>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
