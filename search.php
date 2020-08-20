@@ -13,15 +13,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $posts = [];
 
     $search_query = trim($_GET['q']) ?? '';
-
-    $search_sql = 'SELECT * FROM posts '
-        . 'JOIN users ON posts.user_id = users.id '
-        . 'JOIN post_types ON posts.post_type_id = post_types.id '
-    . 'JOIN tags WHERE tags.id IN (SELECT tag_id FROM post_tag WHERE post_tag.post_id = posts.post_id)';
+    print $search_query;
 
     if (substr($search_query, 0, 1) === '#') {
         $search_tag = substr($search_query, 1);
-        $sql = "SELECT id FROM tags WHERE tag = ?";
+        $sql = "SELECT posts.*,
+       users.login,
+       users.picture,
+       users.registered,
+       post_types.class,
+       GROUP_CONCAT(tags.tag)
+FROM (SELECT posts.*
+     FROM posts
+         JOIN post_tag ON posts.post_id = post_tag.post_id
+         JOIN tags ON post_tag.tag_id = tags.id
+     WHERE tags.tag = ?) as posts
+    JOIN post_tag ON posts.post_id = post_tag.post_id
+    JOIN tags ON post_tag.tag_id = tags.id
+    JOIN post_types ON posts.post_type_id = post_types.id
+    JOIN users ON posts.user_id = users.id
+GROUP BY posts.post_id;";
         $stmt = db_get_prepare_stmt($link, $sql, [$search_tag]);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
@@ -29,24 +40,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         if (!$result) {
             exit ('error' . mysqli_error($link));
         }
-        $search_tag_id = mysqli_fetch_row($result);
-        $search_tag_id = implode('', $search_tag_id);
-        $sql = "SELECT post_id FROM post_tag WHERE tag_id = {$search_tag_id}";
-        $result = mysqli_query($link, $sql);
-        $post_id = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        $post_id = implode(', ', array_column($post_id, 'post_id'));
-        $search_sql .= "WHERE post_id IN ({$post_id})";
-        $result = mysqli_query($link, $search_sql);
-        if (!$result) {
-            exit ('error' . mysqli_error($link));
-        }
 
         $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     } else {
+        $sql = "SELECT posts.*,
+       users.login,
+       users.picture,
+       users.registered,
+       post_types.class,
+       GROUP_CONCAT(tags.tag)
+FROM  posts
+    JOIN post_tag ON posts.post_id = post_tag.post_id
+    JOIN tags ON post_tag.tag_id = tags.id
+    JOIN post_types ON posts.post_type_id = post_types.id
+    JOIN users ON posts.user_id = users.id
+WHERE MATCH(title, content) AGAINST(?)
+GROUP BY posts.post_id;";
 
-        $search_sql .= 'WHERE MATCH(title, content) AGAINST(?) ';
-        $stmt = db_get_prepare_stmt($link, $search_sql, [$search_query]);
+        $stmt = db_get_prepare_stmt($link, $sql, [$search_query]);
 
         mysqli_stmt_execute($stmt);
 
@@ -60,9 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     }
 
-    foreach ($posts as $key => $post) {
-        $posts[$key]['tags'] = get_post_tags($post['post_id'], $link);
-    }
 }
 
 $page_content = include_template('search-results.php', [

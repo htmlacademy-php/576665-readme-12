@@ -411,18 +411,3 @@ function check_data_by_rules($data_array, $rules) {
     $errors = array_filter($errors);
     return $errors;
 }
-
-function get_post_tags(int $post_id, $link)
-{
-    $tags_array = [];
-    $sql = "SELECT tag FROM tags WHERE id IN ()";
-    $result = mysqli_query($link, $sql);
-    if (!$result) {
-        exit ('error' . mysqli_error($link));
-    }
-    $tags = mysqli_fetch_all($result, MYSQLI_ASSOC);
-    foreach ($tags as $key => $value) {
-        $tags_array[$key] = $value['tag'];
-    }
-    return $tags_array;
-}

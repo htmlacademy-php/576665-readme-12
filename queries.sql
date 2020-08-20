@@ -59,7 +59,6 @@ SELECT posts.*,
        users.login,
        users.picture,
        users.registered,
-       GROUP_CONCAT(pt.tag_id),
        GROUP_CONCAT(t.tag)
 FROM posts
          JOIN users ON posts.user_id = users.id
@@ -67,4 +66,19 @@ FROM posts
          LEFT JOIN post_tag pt on posts.post_id = pt.post_id
          LEFT JOIN tags t on pt.tag_id = t.id
 WHERE t.tag = 'test'
+GROUP BY posts.post_id;
+
+SELECT posts.*,
+       users.login,
+       users.picture,
+       users.registered,
+       post_types.class,
+       GROUP_CONCAT(tags.tag)
+FROM (SELECT posts.*
+      FROM posts
+      WHERE MATCH(posts.title, posts.content) AGAINST('Игра2')) as posts
+         JOIN post_types ON posts.post_type_id = post_types.id
+         JOIN users ON posts.user_id = users.id
+         JOIN post_tag ON posts.post_id = post_tag.post_id
+         JOIN tags ON post_tag.tag_id = tags.id
 GROUP BY posts.post_id;
