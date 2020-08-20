@@ -5,22 +5,16 @@ require_once 'helpers.php';
 require_once 'functions.php';
 
 if (!isset($_SESSION['user'])) {
-    header('Location: /feed.php');
+    header('Location: /index.php');
     exit();
 }
 
-$sql = 'SELECT * from post_types';
-$result = mysqli_query($link, $sql);
-if (!$result) {
-    exit ('error '.mysqli_error($link));
-}
-
-$post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
 $active_post_type_id = isset($_GET['post_type'])
     ? filter_input(INPUT_GET, 'post_type', FILTER_DEFAULT)
     : filter_input(INPUT_POST, 'post_type_id', FILTER_DEFAULT);
 
-$active_post_type = get_active_post_type($post_types, $active_post_type_id);
+$active_post_type = get_active_post_type($link, $active_post_type_id);
+print $active_post_type;
 
 if (is_null($active_post_type)) {
     header("HTTP/1.0 404 Not Found");
