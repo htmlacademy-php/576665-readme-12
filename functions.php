@@ -415,7 +415,7 @@ function check_data_by_rules($data_array, $rules) {
 function get_post_tags(int $post_id, $link)
 {
     $tags_array = [];
-    $sql = "SELECT tag FROM tags WHERE id IN (SELECT tag_id FROM post_tag WHERE post_id = {$post_id})";
+    $sql = "SELECT tag FROM tags WHERE id IN ()";
     $result = mysqli_query($link, $sql);
     if (!$result) {
         exit ('error' . mysqli_error($link));

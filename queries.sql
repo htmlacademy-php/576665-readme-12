@@ -51,3 +51,20 @@ VALUES (1, 2);
 
 INSERT INTO subscriptions (author_id, follower_id)
 VALUES (1, 2);
+
+SELECT posts.*,
+       post_types.name,
+       post_types.class,
+       users.id,
+       users.login,
+       users.picture,
+       users.registered,
+       GROUP_CONCAT(pt.tag_id),
+       GROUP_CONCAT(t.tag)
+FROM posts
+         JOIN users ON posts.user_id = users.id
+         JOIN post_types ON posts.post_type_id = post_types.id
+         LEFT JOIN post_tag pt on posts.post_id = pt.post_id
+         LEFT JOIN tags t on pt.tag_id = t.id
+WHERE t.tag = 'test'
+GROUP BY posts.post_id;

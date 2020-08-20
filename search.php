@@ -16,7 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     $search_sql = 'SELECT * FROM posts '
         . 'JOIN users ON posts.user_id = users.id '
-        . 'JOIN post_types ON posts.post_type_id = post_types.id ';
+        . 'JOIN post_types ON posts.post_type_id = post_types.id '
+    . 'JOIN tags WHERE tags.id IN (SELECT tag_id FROM post_tag WHERE post_tag.post_id = posts.post_id)';
 
     if (substr($search_query, 0, 1) === '#') {
         $search_tag = substr($search_query, 1);
