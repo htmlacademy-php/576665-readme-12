@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $new_post[$key] = !empty($value) ? trim($value) : '';
     }
     $new_post['post_type'] = $active_post_type;
-    $new_post['user_id'] = 1;
+    $new_post['user_id'] = $_SESSION['user']['id'];
     $new_post['view_count'] = 0;
 
     if ($new_post['post_type'] === PHOTO) {
