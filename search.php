@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $search_query = trim($_GET['q']) ?? '';
 
     if (substr($search_query, 0, 1) === '#') {
-        $search_query = substr($search_query, 1);
+        $search = substr($search_query, 1);
         $sql = "SELECT posts.*,
             users.login,
             users.picture,
@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             JOIN users ON posts.user_id = users.id
             WHERE tags.tag = ?";
     } else {
+        $search = $search_query;
         $sql = "SELECT posts.*,
             users.login,
             users.picture,
@@ -38,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             JOIN users ON posts.user_id = users.id
             WHERE MATCH(posts.title, posts.content) AGAINST(?)";
     }
-    $stmt = db_get_prepare_stmt($link, $sql, [$search_query]);
+    $stmt = db_get_prepare_stmt($link, $sql, [$search]);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     if (!$result) {
