@@ -46,11 +46,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
     $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-    $posts_id = array_column($posts, 'post_id');
-    $post_tags = get_posts_tags($link, $posts_id);
+    if (!empty($posts)) {
+        $posts_id = array_column($posts, 'post_id');
+        $posts_tags = get_posts_tags($link, $posts_id);
 
-    foreach ($posts as $key => $post) {
-        $posts[$key]['tags'] = $post_tags[$posts[$key]['post_id']] ?? '';
+        foreach ($posts as $key => $post) {
+            $posts[$key]['tags'] = $posts_tags[$posts[$key]['post_id']] ?? '';
+        }
     }
 }
 
@@ -61,7 +63,8 @@ $page_content = include_template('search-results.php', [
 
 $layout = include_template('layout.php', [
     'content' => $page_content,
-    'title' => 'readme: результаты поиска'
+    'title' => 'readme: результаты поиска',
+    'search_query' => $search_query
 ]);
 
 print $layout;
