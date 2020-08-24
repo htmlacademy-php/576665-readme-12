@@ -415,3 +415,23 @@ function check_data_by_rules($data_array, $rules) {
     $errors = array_filter($errors);
     return $errors;
 }
+
+function get_posts_tags($link, $posts_id) {
+    $posts_id_string = implode(', ', $posts_id);
+    $sql = "SELECT post_tag.post_id, tags.tag
+    FROM tags
+    JOIN post_tag ON post_tag.tag_id = tags.id
+    WHERE post_tag.post_id IN ({$posts_id_string})";
+    $result = mysqli_query($link, $sql);
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+    $tags = mysqli_fetch_all($result,MYSQLI_ASSOC);
+
+    $post_tags = [];
+
+    foreach ($tags as $key => $value) {
+        $post_tags[$value['post_id']][] = $value['tag'];
+    }
+    return $post_tags;
+}
