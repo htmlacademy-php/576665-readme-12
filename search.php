@@ -14,30 +14,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     $search_query = trim($_GET['q']) ?? '';
 
-    if (substr($search_query, 0, 1) === '#') {
-        $search = substr($search_query, 1);
-        $sql = "SELECT posts.*,
+    $sql = "SELECT posts.*,
             users.login,
             users.picture,
             users.registered,
             post_types.class
             FROM posts
-            JOIN post_tag ON posts.post_id = post_tag.post_id
-            JOIN tags ON post_tag.tag_id = tags.id
             JOIN post_types ON posts.post_type_id = post_types.id
-            JOIN users ON posts.user_id = users.id
+            JOIN users ON posts.user_id = users.id ";
+
+    if (substr($search_query, 0, 1) === '#') {
+        $search = substr($search_query, 1);
+        $sql .= "JOIN post_tag ON posts.post_id = post_tag.post_id
+            JOIN tags ON post_tag.tag_id = tags.id
             WHERE tags.tag = ?";
     } else {
         $search = $search_query;
-        $sql = "SELECT posts.*,
-            users.login,
-            users.picture,
-            users.registered,
-            post_types.class
-            FROM posts
-            JOIN post_types ON posts.post_type_id = post_types.id
-            JOIN users ON posts.user_id = users.id
-            WHERE MATCH(posts.title, posts.content) AGAINST(?)";
+        $sql .= "WHERE MATCH(posts.title, posts.content) AGAINST(?)";
     }
     $stmt = db_get_prepare_stmt($link, $sql, [$search]);
     mysqli_stmt_execute($stmt);
