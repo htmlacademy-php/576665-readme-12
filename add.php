@@ -5,22 +5,21 @@ require_once 'helpers.php';
 require_once 'functions.php';
 
 if (!isset($_SESSION['user'])) {
-    header('Location: /feed.php');
+    header('Location: /index.php');
     exit();
 }
 
-$sql = 'SELECT * from post_types';
-$result = mysqli_query($link, $sql);
+$result = mysqli_query($link, "SELECT * FROM post_types");
 if (!$result) {
-    exit ('error '.mysqli_error($link));
+    exit ('error' . mysqli_error($link));
 }
-
 $post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
 $active_post_type_id = isset($_GET['post_type'])
     ? filter_input(INPUT_GET, 'post_type', FILTER_DEFAULT)
     : filter_input(INPUT_POST, 'post_type_id', FILTER_DEFAULT);
 
-$active_post_type = get_active_post_type($post_types, $active_post_type_id);
+$active_post_type = get_active_post_type($link, $active_post_type_id);
 
 if (is_null($active_post_type)) {
     header("HTTP/1.0 404 Not Found");
@@ -45,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $new_post[$key] = !empty($value) ? trim($value) : '';
     }
     $new_post['post_type'] = $active_post_type;
-    $new_post['user_id'] = 1;
+    $new_post['user_id'] = $_SESSION['user']['id'];
     $new_post['view_count'] = 0;
 
     if ($new_post['post_type'] === PHOTO) {
@@ -59,8 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rules = validate_post_rules($new_post['post_type'], $new_post['tags']);
 
     $errors = check_data_by_rules($new_post, $rules);
-
-    $errors = array_filter($errors);
 
     if (!empty($errors)) {
         $error_titles = [

@@ -4,7 +4,7 @@ require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
 
-if (!isset($_SESION['user'])) {
+if (!isset($_SESSION['user'])) {
     header("Location: /index.php");
     exit();
 }
@@ -73,10 +73,7 @@ $page_content = include_template('post.php', [
 
 $layout_content = include_template('layout.php', [
     'content' => $page_content,
-    'title' => 'readme: публикация',
-    'user_name' => 'Nadiia',
-    'is_auth' => rand(0, 1)
-
+    'title' => 'readme: публикация'
 ]);
 
 print ($layout_content);

@@ -32,8 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $errors = check_data_by_rules($authorization_data, $rules);
 
-    $errors = array_filter($errors);
-
     if (empty($errors)) {
         $sql = 'SELECT * from users WHERE login = ?';
         $stmt = db_get_prepare_stmt($link, $sql, [$authorization_data['login']]);

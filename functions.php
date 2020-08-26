@@ -68,19 +68,23 @@ function relative_date(string $post_date)
 
 /**
  * Returns class-name of post type by id
- * @param array $array  Existing posts types array
+ * @param $link
  * @param string $id Post type ID
  *
  * @return string | null The post type class-name or null if ID is not exist
  */
-function get_active_post_type(array $array, string $id)
+function get_active_post_type( $link, string $id)
 {
-    foreach ($array as $key => $value) {
-        if ($value['id'] === $id) {
-            return $value['class'];
-        }
+    $sql = "SELECT class FROM post_types WHERE post_types.id = ?";
+    $stmt = db_get_prepare_stmt($link, $sql, [$id]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
     }
-    return null;
+    $class =  mysqli_fetch_assoc($result)['class'] ?? '';
+    return $class;
 }
 
 /**
@@ -408,5 +412,26 @@ function check_data_by_rules($data_array, $rules) {
             $errors[$key] = $rules[$key]($value);
         }
     }
+    $errors = array_filter($errors);
     return $errors;
+}
+
+function get_posts_tags($link, $posts_id) {
+    $posts_id_string = implode(', ', $posts_id);
+    $sql = "SELECT post_tag.post_id, tags.tag
+    FROM tags
+    JOIN post_tag ON post_tag.tag_id = tags.id
+    WHERE post_tag.post_id IN ({$posts_id_string})";
+    $result = mysqli_query($link, $sql);
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+    $tags = mysqli_fetch_all($result,MYSQLI_ASSOC);
+
+    $post_tags = [];
+
+    foreach ($tags as $key => $value) {
+        $post_tags[$value['post_id']][] = $value['tag'];
+    }
+    return $post_tags;
 }

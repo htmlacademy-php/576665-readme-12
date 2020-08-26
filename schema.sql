@@ -76,3 +76,5 @@ CREATE INDEX view_count ON posts (view_count);
 
 CREATE INDEX date ON posts (date);
 
+CREATE FULLTEXT INDEX post_ft_search ON posts(title, content);
+
