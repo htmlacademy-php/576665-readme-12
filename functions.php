@@ -414,7 +414,14 @@ function check_data_by_rules($data_array, $rules) {
     return array_filter($errors);
 }
 
-function get_posts_tags($link, $posts_id) {
+/**
+ * Return posts tags array, using post_id as keys
+ * @param mysqli $link
+ * @param array $posts_id Array of the given posts id
+ * @return array an associative array of tags as
+ * key is post's id and value is post's tags array
+ */
+function get_posts_tags($link, array $posts_id) {
     $posts_id_string = implode(', ', $posts_id);
     $sql = "SELECT post_tag.post_id, tags.tag
     FROM tags
@@ -434,7 +441,13 @@ function get_posts_tags($link, $posts_id) {
     return $post_tags;
 }
 
-function get_user_data($link,  int $user_id)
+/**
+ * Return user's data by user_id
+ * @param mysqli $link
+ * @param int $user_id
+ * @return array || null the user data array or null if user_id is not exist
+ */
+function get_user_data(mysqli $link,  int $user_id)
 {
     $sql = 'SELECT users.* '
         . 'FROM users '
@@ -448,7 +461,15 @@ function get_user_data($link,  int $user_id)
     return mysqli_fetch_assoc($result);
 }
 
-function get_posts_by_parameter ($link, $param, $value, $order = 'date')
+/**
+ * Select posts by value of parameter
+ * @param mysqli $link
+ * @param string $param The parameter for selecting
+ * @param string $value The value of parameter
+ * @param string $order The sorting order of posts, the default is 'date'
+ * @return array The array of selected posts
+ */
+function get_posts_by_parameter (mysqli $link, string $param, string $value, string $order = 'date')
 {
     $sql = "SELECT posts.*, post_types.class "
         . "FROM posts "
