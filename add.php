@@ -125,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!empty($tags_id)) {
             create_post_tag_sql($link, $post_id, $tags_id);
         }
-        header('Location: /post.php?post_id=' . $post_id);
+        header('Location: /posts.php?post_id=' . $post_id);
         exit();
     }
 }
@@ -135,6 +135,7 @@ $adding_post_content = include_template("/adding-post/adding-post-{$active_post_
     'new_post' => !empty($new_post) ? $new_post : '',
     'errors' => !empty($errors) ? $errors : ''
 ]);
+
 
 $page_content = include_template('adding-post.php', [
     'post_types' => $post_types,
