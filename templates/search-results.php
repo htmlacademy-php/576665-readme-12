@@ -100,7 +100,7 @@
                                         </div>
                                         <?php break; ?>
                                     <?php case PHOTO: ?>
-                                        <h2><a href="#"><?= esc($post['title']) ?></a></h2>
+                                        <h2><a href="/post.php?post_id=<?= $post['post_id'] ?>"><?= esc($post['title']) ?></a></h2>
                                         <div class="post-photo__image-wrapper">
                                             <img src="<?= esc($post['img']) ?>" alt="Фото от пользователя" width="760"
                                                  height="396">
