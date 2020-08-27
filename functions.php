@@ -68,7 +68,7 @@ function relative_date(string $post_date)
 
 /**
  * Returns class-name of post type by id
- * @param $link
+ * @param mysqli $link
  * @param string $id Post type ID
  *
  * @return string | null The post type class-name or null if ID is not exist
@@ -83,8 +83,7 @@ function get_active_post_type( $link, string $id)
     if (!$result) {
         exit ('error' . mysqli_error($link));
     }
-    $class =  mysqli_fetch_assoc($result)['class'] ?? '';
-    return $class;
+    return mysqli_fetch_assoc($result)['class'] ?? '';
 }
 
 /**
@@ -111,7 +110,7 @@ function check_youtube_domain(string $value)
 }
 
 /**
- * Checks whether a value is exists in database
+ * Checks whether a user value is exists in database
  * @param mysqli $link The MySQL connection
  * @param string $value
  * @param string $param
@@ -412,8 +411,7 @@ function check_data_by_rules($data_array, $rules) {
             $errors[$key] = $rules[$key]($value);
         }
     }
-    $errors = array_filter($errors);
-    return $errors;
+    return array_filter($errors);
 }
 
 function get_posts_tags($link, $posts_id) {
