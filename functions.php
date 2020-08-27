@@ -435,3 +435,45 @@ function get_posts_tags($link, $posts_id) {
     }
     return $post_tags;
 }
+
+function get_user_data($link,  int $user_id)
+{
+    $sql = 'SELECT users.* '
+        . 'FROM users '
+        .'WHERE users.id = ?';
+    $stmt = db_get_prepare_stmt($link, $sql, [$user_id]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if (!$result) {
+        exit ('errorSQL' . mysqli_error($link));
+    }
+    return mysqli_fetch_assoc($result);
+}
+
+function get_posts_by_parameter ($link, $param, $value, $order = 'date')
+{
+    $sql = "SELECT posts.*, post_types.class "
+        . "FROM posts "
+        . "JOIN post_types ON posts.post_type_id = post_types.id "
+        . "WHERE posts.{$param} = ? "
+        . "ORDER by {$order}";
+    $stmt = db_get_prepare_stmt($link, $sql, [$value]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+/**
+ * Adds query parameters to current query string
+ * @param array $current_query Current query string
+ * @param array $query_data The array of parameters which must be adding
+ *
+ * @return string The query string
+ */
+function get_query_string ($current_query, $query_data)
+{
+    return http_build_query(array_merge($current_query, $query_data));
+}

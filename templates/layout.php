@@ -66,9 +66,9 @@
                     <!-- здесь должен быть PHP код, который показывает следующий тег по условию -->
                     <ul class="header__user-nav">
                         <li class="header__profile">
-                            <a class="header__profile-link" href="#">
+                            <a class="header__profile-link" href="/profile.php?user_id=<?= $_SESSION['user']['id'] ? $_SESSION['user']['id'] : '' ?>">
                                 <div class="header__avatar-wrapper">
-                                    <img class="header__profile-avatar" src="<?= $_SESSION['user']['picture'] ?>" alt="Аватар профиля">
+                                    <img class="header__profile-avatar" src="<?= $_SESSION['user']['picture'] ? $_SESSION['user']['picture'] : 'img/icon-input-user.svg' ?>" alt="Аватар профиля">
                                 </div>
                                 <div class="header__profile-name">
                                 <span>
@@ -83,7 +83,7 @@
                                 <div class="header__profile-tooltip">
                                     <ul class="header__profile-nav">
                                         <li class="header__profile-nav-item">
-                                            <a class="header__profile-nav-link" href="#">
+                                            <a class="header__profile-nav-link" href="/profile.php?user_id=<?= $_SESSION['user']['id'] ? $_SESSION['user']['id'] : '' ?>">
                           <span class="header__profile-nav-text">
                             Мой профиль
                           </span>
