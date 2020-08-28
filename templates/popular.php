@@ -128,7 +128,7 @@
                                 <b class="post__author-name"><?= esc($item['login']); ?></b>
                                 <?php $post_date = generate_random_date($key); ?>
                                 <time class="post__time" title="<?= date('d.m.Y H:i', strtotime($post_date)); ?>"
-                                      datetime="<?= $post_date; ?>"><?= relative_date($post_date); ?></time>
+                                      datetime="<?= $post_date; ?>"><?= get_relative_date($post_date); ?> назад</time>
                             </div>
                         </a>
                     </div>

@@ -9,7 +9,7 @@
                     </div>
                     <div class="profile__name-wrapper user__name-wrapper">
                         <span class="profile__name user__name"><?= $profile_data['login'] ?></span>
-                        <time class="profile__user-time user__time" datetime="<?= $profile_data['registered'] ?>"><?= relative_date($profile_data['registered'])?></time>
+                        <time class="profile__user-time user__time" datetime="<?= $profile_data['registered'] ?>"><?= get_relative_date($profile_data['registered'])?> на сайте</time>
                     </div>
                 </div>
                 <div class="profile__rating user__rating">

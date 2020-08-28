@@ -22,7 +22,7 @@
                                         </div>
                                         <div class="post__info">
                                             <b class="post__author-name"><?= $post['login'] ?></b>
-                                            <span class="post__time"><?= relative_date($post['date']) ?></span>
+                                            <span class="post__time"><?= get_relative_date($post['date']) ?> назад</span>
                                         </div>
                                     </a>
                                 </header>

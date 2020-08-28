@@ -38,32 +38,32 @@ function cut_text(string $text, int $excerpt_length = 80)
  * @return string The date in relative terms or string 'меньше минуты назад'
  * if post was created less then 60 seconds ago
  */
-function relative_date(string $post_date)
+function get_relative_date(string $post_date)
 {
     $publish_date = date_create($post_date);
     $cur_date = date_create('now');
     $diff = date_diff($cur_date, $publish_date);
     if ($diff->m >= 1) {
         $diff_months = $diff->m;
-        return "$diff_months " . get_noun_plural_form($diff_months, 'месяц', 'месяца', 'месяцев') . ' назад';
+        return "$diff_months " . get_noun_plural_form($diff_months, 'месяц', 'месяца', 'месяцев');
     }
     if ($diff->d >= 7) {
         $diff_weeks = floor(($diff->d) / 7);
-        return "$diff_weeks " . get_noun_plural_form($diff_weeks, 'неделя', 'недели', 'недель') . ' назад';
+        return "$diff_weeks " . get_noun_plural_form($diff_weeks, 'неделя', 'недели', 'недель');
     }
     if ($diff->d < 7 && $diff->d >= 1) {
         $diff_days = $diff->d;
-        return "$diff_days " . get_noun_plural_form($diff_days, 'день', 'дня', 'дней') . ' назад';
+        return "$diff_days " . get_noun_plural_form($diff_days, 'день', 'дня', 'дней');
     }
     if ($diff->h >= 1) {
         $diff_hours = $diff->h;
-        return "$diff_hours " . get_noun_plural_form($diff_hours, 'час', 'часа', 'часов') . ' назад';
+        return "$diff_hours " . get_noun_plural_form($diff_hours, 'час', 'часа', 'часов');
     }
     if ($diff->i >= 1) {
         $diff_minutes = $diff->i;
-        return "$diff_minutes " . get_noun_plural_form($diff_minutes, 'минута', 'минуты', 'минут') . ' назад';
+        return "$diff_minutes " . get_noun_plural_form($diff_minutes, 'минута', 'минуты', 'минут');
     }
-    return 'меньше минуты назад';
+    return 'меньше минуты';
 }
 
 /**
