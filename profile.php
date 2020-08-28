@@ -4,6 +4,8 @@ require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
 
+check_page_access();
+
 $current_user = $_SESSION['user'];
 
 $profile_id = filter_input(INPUT_GET, 'user_id', FILTER_VALIDATE_INT);

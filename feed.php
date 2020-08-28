@@ -4,11 +4,8 @@ require_once ('init.php');
 require_once ('helpers.php');
 require_once ('functions.php');
 
+check_page_access();
 
-if (!isset($_SESSION['user'])) {
-    header('Location: /');
-    exit();
-}
 $page_content = include_template('feed.php', [
 
 ]);

@@ -496,3 +496,11 @@ function get_query_string ($current_query, $query_data)
 {
     return http_build_query(array_merge($current_query, $query_data));
 }
+
+function check_page_access()
+{
+    if (!isset($_SESSION['user'])) {
+        header('Location: /index.php');
+        exit();
+    }
+}

@@ -4,10 +4,7 @@ require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
 
-if (!isset($_SESSION['user'])) {
-    header("Location: /index.php");
-    exit();
-}
+check_page_access();
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $posts = [];
