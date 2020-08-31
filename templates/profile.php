@@ -14,17 +14,21 @@
                 </div>
                 <div class="profile__rating user__rating">
                     <p class="profile__rating-item user__rating-item user__rating-item--publications">
-                        <span class="user__rating-amount">556</span>
-                        <span class="profile__rating-text user__rating-text">публикаций</span>
+                        <span class="user__rating-amount"><?= $profile_data['posts_count']?></span>
+                        <span class="profile__rating-text user__rating-text"><?= get_noun_plural_form($profile_data['posts_count'], 'публикация', 'публикации', 'публикаций')?></span>
                     </p>
                     <p class="profile__rating-item user__rating-item user__rating-item--subscribers">
-                        <span class="user__rating-amount">1856</span>
-                        <span class="profile__rating-text user__rating-text">подписчиков</span>
+                        <span class="user__rating-amount"><?= $profile_data['followers_count']?></span>
+                        <span class="profile__rating-text user__rating-text"><?= get_noun_plural_form($profile_data['followers_count'], 'подписчик', 'подписчика', 'подписчиков') ?></span>
                     </p>
                 </div>
                 <div class="profile__user-buttons user__buttons">
-                    <button class="profile__user-button user__button user__button--subscription button button--main" type="button">Подписаться</button>
+                    <?php if ($profile_data['is_current_user'] !== 'true'): ?>
+                    <button class="profile__user-button user__button user__button--subscription button <?= $profile_data['is_following'] === 'true' ? 'button--quartz' : 'button--main' ?>" type="button">
+                        <?= $profile_data['is_following'] === 'true' ? 'Отписаться' : 'Подписаться' ?>
+                    </button>
                     <a class="profile__user-button user__button user__button--writing button button--green" href="#">Сообщение</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

@@ -17,7 +17,8 @@
                     </div>
                 </header>
                 <div class="post__main">
-                    <?php switch ($post['class']): ?><?php case TEXT: ?>
+                    <?php switch ($post['class']):
+                        case TEXT: ?>
                         <h2>
                             <a href="/post.php?post_id=<?= $post['post_id'] ?>"><?= esc($post['title']) ?></a>
                         </h2>
@@ -107,7 +108,7 @@
                                 <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
                                     <use xlink:href="#icon-heart-active"></use>
                                 </svg>
-                                <span>250</span>
+                                <span><?= $post['likes_count'] ?> </span>
                                 <span class="visually-hidden">количество лайков</span>
                             </a>
                             <a class="post__indicator post__indicator--repost button" href="#" title="Репост">

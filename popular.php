@@ -11,18 +11,14 @@ $result = mysqli_query($link, $sql);
 if (!$result) {
     exit ('error '.mysqli_error($link));
 }
-
 $post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-$param_type = '';
 
 $param_sort = 'view_count';
 
 $query_type = filter_input(INPUT_GET, 'post_type');
 
-if ($query_type) {
-    $param_type = $query_type;
-}
+$param_type = $query_type ?? '';
+
 
 $sql = 'SELECT * , users.id, post_types.id FROM posts'
     . ' JOIN users ON posts.user_id = users.id'

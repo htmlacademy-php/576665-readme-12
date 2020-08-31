@@ -421,7 +421,7 @@ function check_data_by_rules($data_array, $rules) {
  * @return array an associative array of tags as
  * key is post's id and value is post's tags array
  */
-function get_posts_tags($link, array $posts_id) {
+function get_posts_tags(mysqli $link, array $posts_id) {
     $posts_id_string = implode(', ', $posts_id);
     $sql = "SELECT post_tag.post_id, tags.tag
     FROM tags
@@ -449,9 +449,11 @@ function get_posts_tags($link, array $posts_id) {
  */
 function get_user_data(mysqli $link,  int $user_id)
 {
-    $sql = 'SELECT users.* '
-        . 'FROM users '
-        .'WHERE users.id = ?';
+    $sql = 'SELECT users.*,
+       (SELECT COUNT(post_id) FROM posts WHERE posts.user_id = users.id) as posts_count,
+       (SELECT COUNT(subscriptions.id) FROM subscriptions WHERE subscriptions.author_id = users.id) as followers_count
+        FROM users
+        WHERE users.id = ?';
     $stmt = db_get_prepare_stmt($link, $sql, [$user_id]);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
@@ -466,19 +468,23 @@ function get_user_data(mysqli $link,  int $user_id)
  * @param mysqli $link
  * @param string $param The parameter for selecting
  * @param string $value The value of parameter
- * @param string $order The sorting order of posts, the default is 'date'
+ * @param string $order_by The sorting order of posts, the default is 'date'
+ * @param string $order
  * @return array The array of selected posts
  */
-function get_posts_by_parameter (mysqli $link, string $param, string $value, string $order = 'date')
+function get_posts_by_parameter (mysqli $link, string $param, string $value, string $order_by = 'date', string $order = 'DESC')
 {
-    $sql = "SELECT posts.*, post_types.class "
-        . "FROM posts "
-        . "JOIN post_types ON posts.post_type_id = post_types.id "
-        . "WHERE posts.{$param} = ? "
-        . "ORDER by {$order}";
-    $stmt = db_get_prepare_stmt($link, $sql, [$value]);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
+    $sql = "SELECT posts.*, post_types.class, users.login, users.picture,
+        (SELECT COUNT(likes.id) FROM likes WHERE likes.post_id = posts.post_id) as likes_count,
+        (SELECT COUNT(comments.id) FROM comments WHERE comments.post_id = posts.post_id) as comments_count
+        FROM posts
+        JOIN post_types ON posts.post_type_id = post_types.id
+        JOIN users ON users.id = posts.user_id
+        WHERE posts.{$param} IN ({$value})
+        ORDER by {$order_by} {$order}";
+    print $sql;
+
+    $result = mysqli_query($link, $sql);
     if (!$result) {
         exit ('error' . mysqli_error($link));
     }
@@ -492,7 +498,7 @@ function get_posts_by_parameter (mysqli $link, string $param, string $value, str
  *
  * @return string The query string
  */
-function get_query_string ($current_query, $query_data)
+function get_query_string (array $current_query, array $query_data)
 {
     return http_build_query(array_merge($current_query, $query_data));
 }
@@ -503,4 +509,38 @@ function check_page_access()
         header('Location: /index.php');
         exit();
     }
+}
+
+function get_followers ($link, $user_id)
+{
+    $sql = "SELECT subscriptions.*, users.id, registered, login, picture,
+       (SELECT COUNT(post_id) FROM posts WHERE posts.user_id = subscriptions.follower_id) as posts_count,
+       (SELECT COUNT(subscriptions.id) FROM subscriptions WHERE users.id = subscriptions.author_id) as followers_count
+        FROM subscriptions
+        JOIN users ON  users.id = subscriptions.follower_id
+        WHERE subscriptions.author_id = ?";
+    $stmt = db_get_prepare_stmt($link, $sql, [$user_id]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+function get_posts_likes ($link, $posts_id)
+{
+    $posts_id_string = implode(', ', $posts_id);
+    $sql = "SELECT likes.user_id, likes.post_id, likes.date, users.login, users.picture, posts.post_id, posts.post_type_id, posts.img, posts.video, post_types.class
+        FROM likes
+        JOIN users ON  users.id = likes.user_id
+        JOIN posts ON posts.post_id = likes.post_id
+        JOIN post_types ON posts.post_type_id = post_types.id
+        WHERE likes.post_id IN ({$posts_id_string})
+        ORDER BY likes.date DESC";
+    $result = mysqli_query($link, $sql);
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }

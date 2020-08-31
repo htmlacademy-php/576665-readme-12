@@ -1,117 +1,48 @@
-
-    <h2 class="visually-hidden">Подписки</h2>
+<h2 class="visually-hidden">Подписки</h2>
+<?php if (!empty($followers)): ?>
     <ul class="profile__subscriptions-list">
-        <li class="post-mini post-mini--photo post user">
-            <div class="post-mini__user-info user__info">
-                <div class="post-mini__avatar user__avatar">
-                    <a class="user__avatar-link" href="#">
-                        <img class="post-mini__picture user__picture" src="../img/userpic-petro.jpg" alt="Аватар пользователя">
-                    </a>
+        <?php foreach ($followers as $key => $follower): ?>
+        <?php var_dump($follower) ?>
+            <li class="post-mini post-mini--photo post user">
+                <div class="post-mini__user-info user__info">
+                    <div class="post-mini__avatar user__avatar">
+                        <a class="user__avatar-link" href="/profile.php?user_id=<?= $follower['id'] ?>">
+                            <img class="post-mini__picture user__picture" src="<?= $follower['picture'] ?>"
+                                 alt="Аватар пользователя">
+                        </a>
+                    </div>
+                    <div class="post-mini__name-wrapper user__name-wrapper">
+                        <a class="post-mini__name user__name" href="/profile.php?user_id=<?= $follower['id'] ?>">
+                            <span><?= $follower['login'] ?></span>
+                        </a>
+                        <time class="post-mini__time user__additional" datetime="<?= $follower['registered'] ?>"><?= get_relative_date($follower['registered'])?> на сайте</time>
+                    </div>
                 </div>
-                <div class="post-mini__name-wrapper user__name-wrapper">
-                    <a class="post-mini__name user__name" href="#">
-                        <span>Петр Демин</span>
-                    </a>
-                    <time class="post-mini__time user__additional" datetime="2014-03-20T20:20">5 лет на сайте</time>
+                <div class="post-mini__rating user__rating">
+                    <p class="post-mini__rating-item user__rating-item user__rating-item--publications">
+                        <span class="post-mini__rating-amount user__rating-amount"><?= $follower['posts_count']?></span>
+                        <span class="post-mini__rating-text user__rating-text"><?= get_noun_plural_form($follower['posts_count'], 'публикация', 'публикации', 'публикаций')?></span>
+                    </p>
+                    <p class="post-mini__rating-item user__rating-item user__rating-item--subscribers">
+                        <span class="post-mini__rating-amount user__rating-amount"><?= $follower['followers_count']?></span>
+                        <span class="post-mini__rating-text user__rating-text"><?= get_noun_plural_form($follower['followers_count'], 'подписчик', 'подписчика', 'подписчиков') ?></span>
+                    </p>
                 </div>
-            </div>
-            <div class="post-mini__rating user__rating">
-                <p class="post-mini__rating-item user__rating-item user__rating-item--publications">
-                    <span class="post-mini__rating-amount user__rating-amount">556</span>
-                    <span class="post-mini__rating-text user__rating-text">публикаций</span>
-                </p>
-                <p class="post-mini__rating-item user__rating-item user__rating-item--subscribers">
-                    <span class="post-mini__rating-amount user__rating-amount">1856</span>
-                    <span class="post-mini__rating-text user__rating-text">подписчиков</span>
-                </p>
-            </div>
-            <div class="post-mini__user-buttons user__buttons">
-                <button class="post-mini__user-button user__button user__button--subscription button button--main" type="button">Подписаться</button>
-            </div>
-        </li>
-        <li class="post-mini post-mini--photo post user">
-            <div class="post-mini__user-info user__info">
-                <div class="post-mini__avatar user__avatar">
-                    <a class="user__avatar-link" href="#">
-                        <img class="post-mini__picture user__picture" src="../img/userpic-petro.jpg" alt="Аватар пользователя">
-                    </a>
+
+                <div class="post-mini__user-buttons user__buttons">
+                    <?php if ($follower['is_current_user'] !== 'true'): ?>
+                    <button class="post-mini__user-button user__button user__button--subscription button <?= $follower['is_following'] === 'true' ? 'button--quartz' : 'button--main' ?>"
+                        type="button">
+                        <?= $follower['is_following'] === 'true' ? 'Отписаться' : 'Подписаться' ?>
+                    </button>
+                    <?php endif; ?>
                 </div>
-                <div class="post-mini__name-wrapper user__name-wrapper">
-                    <a class="post-mini__name user__name" href="#">
-                        <span>Петр Демин</span>
-                    </a>
-                    <time class="post-mini__time user__additional" datetime="2014-03-20T20:20">5 лет на сайте</time>
-                </div>
-            </div>
-            <div class="post-mini__rating user__rating">
-                <p class="post-mini__rating-item user__rating-item user__rating-item--publications">
-                    <span class="post-mini__rating-amount user__rating-amount">556</span>
-                    <span class="post-mini__rating-text user__rating-text">публикаций</span>
-                </p>
-                <p class="post-mini__rating-item user__rating-item user__rating-item--subscribers">
-                    <span class="post-mini__rating-amount user__rating-amount">1856</span>
-                    <span class="post-mini__rating-text user__rating-text">подписчиков</span>
-                </p>
-            </div>
-            <div class="post-mini__user-buttons user__buttons">
-                <button class="post-mini__user-button user__button user__button--subscription button button--quartz" type="button">Отписаться</button>
-            </div>
-        </li>
-        <li class="post-mini post-mini--photo post user">
-            <div class="post-mini__user-info user__info">
-                <div class="post-mini__avatar user__avatar">
-                    <a class="user__avatar-link" href="#">
-                        <img class="post-mini__picture user__picture" src="../img/userpic-petro.jpg" alt="Аватар пользователя">
-                    </a>
-                </div>
-                <div class="post-mini__name-wrapper user__name-wrapper">
-                    <a class="post-mini__name user__name" href="#">
-                        <span>Петр Демин</span>
-                    </a>
-                    <time class="post-mini__time user__additional" datetime="2014-03-20T20:20">5 лет на сайте</time>
-                </div>
-            </div>
-            <div class="post-mini__rating user__rating">
-                <p class="post-mini__rating-item user__rating-item user__rating-item--publications">
-                    <span class="post-mini__rating-amount user__rating-amount">556</span>
-                    <span class="post-mini__rating-text user__rating-text">публикаций</span>
-                </p>
-                <p class="post-mini__rating-item user__rating-item user__rating-item--subscribers">
-                    <span class="post-mini__rating-amount user__rating-amount">1856</span>
-                    <span class="post-mini__rating-text user__rating-text">подписчиков</span>
-                </p>
-            </div>
-            <div class="post-mini__user-buttons user__buttons">
-                <button class="post-mini__user-button user__button user__button--subscription button button--main" type="button">Подписаться</button>
-            </div>
-        </li>
-        <li class="post-mini post-mini--photo post user">
-            <div class="post-mini__user-info user__info">
-                <div class="post-mini__avatar user__avatar">
-                    <a class="user__avatar-link" href="#">
-                        <img class="post-mini__picture user__picture" src="../img/userpic-petro.jpg" alt="Аватар пользователя">
-                    </a>
-                </div>
-                <div class="post-mini__name-wrapper user__name-wrapper">
-                    <a class="post-mini__name user__name" href="#">
-                        <span>Петр Демин</span>
-                    </a>
-                    <time class="post-mini__time user__additional" datetime="2014-03-20T20:20">5 лет на сайте</time>
-                </div>
-            </div>
-            <div class="post-mini__rating user__rating">
-                <p class="post-mini__rating-item user__rating-item user__rating-item--publications">
-                    <span class="post-mini__rating-amount user__rating-amount">556</span>
-                    <span class="post-mini__rating-text user__rating-text">публикаций</span>
-                </p>
-                <p class="post-mini__rating-item user__rating-item user__rating-item--subscribers">
-                    <span class="post-mini__rating-amount user__rating-amount">1856</span>
-                    <span class="post-mini__rating-text user__rating-text">подписчиков</span>
-                </p>
-            </div>
-            <div class="post-mini__user-buttons user__buttons">
-                <button class="post-mini__user-button user__button user__button--subscription button button--main" type="button">Подписаться</button>
-            </div>
-        </li>
+            </li>
+        <?php endforeach; ?>
     </ul>
+<?php endif; ?>
+
+
+
+
 
