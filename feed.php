@@ -14,14 +14,21 @@ if (!$result) {
     exit ('error' . mysqli_error($link));
 }
 $authors = mysqli_fetch_all($result, MYSQLI_ASSOC);
-var_dump($authors);
 
 $authors_id_string = implode (', ' , array_column($authors, 'author_id'));
-var_dump($authors_id_string);
 
 $posts = get_posts_by_parameter($link, 'user_id', $authors_id_string);
-var_dump($posts);
 
+
+if (!empty($posts)) {
+    $posts_id = array_column($posts, 'post_id');
+    $posts_tags = get_posts_tags($link, $posts_id);
+
+    foreach ($posts as $key => $post) {
+        $posts[$key]['tags'] = $posts_tags[$posts[$key]['post_id']] ?? '';
+    }
+}
+var_dump($posts);
 $page_content = include_template('feed.php', [
     'posts' => $posts ?? ''
 
