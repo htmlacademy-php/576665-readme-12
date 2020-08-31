@@ -20,7 +20,6 @@ if (empty($profile_data)) {
 };
 
 $posts = get_posts_by_parameter($link, 'user_id', $profile_data['id']);
-var_dump($posts);
 $profile_followers = get_followers($link, $profile_id);
 
 $current_user_followers = get_followers($link, $current_user['id']);

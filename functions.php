@@ -67,6 +67,21 @@ function get_relative_date(string $post_date)
 }
 
 /**
+ * Return post types associative array
+ * @param mysqli $link The MySQL connection
+ *
+ * @return array The associative array of post types
+ */
+function get_post_types(mysqli $link)
+{
+    $result = mysqli_query($link, "SELECT * FROM post_types");
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+/**
  * Returns class-name of post type by id
  * @param mysqli $link
  * @param string $id Post type ID
@@ -416,7 +431,7 @@ function check_data_by_rules($data_array, $rules) {
 
 /**
  * Return posts tags array, using post_id as keys
- * @param mysqli $link
+ * @param mysqli $link The MySQL connection
  * @param array $posts_id Array of the given posts id
  * @return array an associative array of tags as
  * key is post's id and value is post's tags array
@@ -443,7 +458,7 @@ function get_posts_tags(mysqli $link, array $posts_id) {
 
 /**
  * Return user's data by user_id
- * @param mysqli $link
+ * @param mysqli $link The MySQL connection
  * @param int $user_id
  * @return array || null the user data array or null if user_id is not exist
  */
@@ -465,24 +480,29 @@ function get_user_data(mysqli $link,  int $user_id)
 
 /**
  * Select posts by value of parameter
- * @param mysqli $link
- * @param string $param The parameter for selecting
- * @param string $value The value of parameter
- * @param string $order_by The sorting order of posts, the default is 'date'
- * @param string $order
+ * @param mysqli $link The MySQL connection
+ * @param array $params The array as key is parameter and value is string of required values
+ * @param string $order_by The field on which the sorting is to be performed, the default is 'date'
+ * @param string $order The sorting order, the default is 'DESC'
  * @return array The array of selected posts
  */
-function get_posts_by_parameter (mysqli $link, string $param, string $value, string $order_by = 'date', string $order = 'DESC')
+function get_posts_by_parameter (mysqli $link, array $params, string $order_by = 'date', string $order = 'DESC')
 {
     $sql = "SELECT posts.*, post_types.class, users.login, users.picture,
         (SELECT COUNT(likes.id) FROM likes WHERE likes.post_id = posts.post_id) as likes_count,
         (SELECT COUNT(comments.id) FROM comments WHERE comments.post_id = posts.post_id) as comments_count
         FROM posts
         JOIN post_types ON posts.post_type_id = post_types.id
-        JOIN users ON users.id = posts.user_id
-        WHERE posts.{$param} IN ({$value})
-        ORDER by {$order_by} {$order}";
-    print $sql;
+        JOIN users ON users.id = posts.user_id ";
+
+    foreach ($params as $key => $value) {
+        if (!empty($value)) {
+            $conditions[] = "posts.{$key} IN ({$value})";
+        }
+    };
+
+    $sql .= "WHERE " . implode(' AND ', $conditions);
+    $sql .= " ORDER by {$order_by} {$order}";
 
     $result = mysqli_query($link, $sql);
     if (!$result) {

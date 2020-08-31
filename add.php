@@ -6,11 +6,7 @@ require_once 'functions.php';
 
 check_page_access();
 
-$result = mysqli_query($link, "SELECT * FROM post_types");
-if (!$result) {
-    exit ('error' . mysqli_error($link));
-}
-$post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$post_types = get_post_types($link);
 
 $active_post_type_id = isset($_GET['post_type'])
     ? filter_input(INPUT_GET, 'post_type', FILTER_DEFAULT)
