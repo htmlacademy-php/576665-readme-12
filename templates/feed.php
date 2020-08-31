@@ -22,114 +22,49 @@
                                 </a>
                             </header>
                             <div class="post__main">
-                                <?php switch ($post['class']):
-                                    case TEXT: ?>
-                                        <h2>
-                                            <a href="/post.php?post_id=<?= $post['post_id'] ?>"><?= esc($post['title']) ?></a>
-                                        </h2>
-                                        <?php $post_content = esc($post['content']) ?>
-                                        <p>
-                                            <?= cut_text($post_content) ?>
-                                        </p>
-                                        <?php if ($post_content !== cut_text($post_content)) : ?>
-                                            <a class="post-text__more-link"
-                                               href="/post.php?post_id=<?= $post['post_id'] ?>">Читать далее</a>
-                                        <?php endif; ?>
-                                        <?php break; ?>
-                                    <?php case VIDEO: ?>
-                                        <div class="post-video__block">
-                                            <div class="post-video__preview">
-                                                <?= embed_youtube_video(esc($post['video'])); ?>
-                                            </div>
-                                            <div class="post-video__control">
-                                                <button
-                                                    class="post-video__play post-video__play--paused button button--video"
-                                                    type="button"><span class="visually-hidden">Запустить видео</span>
-                                                </button>
-                                                <div class="post-video__scale-wrapper">
-                                                    <div class="post-video__scale">
-                                                        <div class="post-video__bar">
-                                                            <div class="post-video__toggle"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <button
-                                                    class="post-video__fullscreen post-video__fullscreen--inactive button button--video"
-                                                    type="button"><span
-                                                        class="visually-hidden">Полноэкранный режим</span>
-                                                </button>
-                                            </div>
-                                            <button class="post-video__play-big button" type="button">
-                                                <svg class="post-video__play-big-icon" width="27" height="28">
-                                                    <use xlink:href="#icon-video-play-big"></use>
-                                                </svg>
-                                                <span class="visually-hidden">Запустить проигрыватель</span>
-                                            </button>
-                                        </div>
-                                        <?php break; ?>
-                                    <?php case QUOTE: ?>
-                                        <blockquote>
-                                            <p>
-                                                <?= esc($post['content']) ?>
-                                            </p>
-                                            <cite><?= esc($post['author_quote']) ?></cite>
-                                        </blockquote>
-                                        <?php break; ?>
-                                    <?php case LINK: ?>
-                                        <div class="post-link__wrapper">
-                                            <a class="post-link__external" href="<?= esc($post['link']) ?>"
-                                               title="Перейти по ссылке">
-                                                <div class="post-link__icon-wrapper">
-                                                    <img
-                                                        src="https://www.google.com/s2/favicons?domain=<?= esc($post['link']) ?>"
-                                                        alt="Иконка">
-                                                </div>
-                                                <div class="post-link__info">
-                                                    <h3><?= esc($post['title']) ?></h3>
-                                                    <p></p>
-                                                    <span><?= esc($post['link']) ?></span>
-                                                </div>
-                                                <svg class="post-link__arrow" width="11" height="16">
-                                                    <use xlink:href="#icon-arrow-right-ad"></use>
-                                                </svg>
-                                            </a>
-                                        </div>
-                                        <?php break; ?>
-                                    <?php case PHOTO: ?>
-                                        <h2><a href="#"><?= esc($post['title']) ?></a></h2>
-                                        <div class="post-photo__image-wrapper">
-                                            <img src="<?= esc($post['img']) ?>" alt="Фото от пользователя" width="760"
-                                                 height="396">
-                                        </div>
-                                    <?php endswitch ?>
+                               <?= include_template('post-main.php', [
+                                   'post' => $post
+                               ]) ?>
                             </div>
-                            <footer class="post__footer post__indicators">
-                                <div class="post__buttons">
-                                    <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
-                                        <svg class="post__indicator-icon" width="20" height="17">
-                                            <use xlink:href="#icon-heart"></use>
-                                        </svg>
-                                        <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
-                                            <use xlink:href="#icon-heart-active"></use>
-                                        </svg>
-                                        <span><?= $post['likes_count'] ?></span>
-                                        <span class="visually-hidden">количество лайков</span>
-                                    </a>
-                                    <a class="post__indicator post__indicator--comments button" href="#" title="Комментарии">
-                                        <svg class="post__indicator-icon" width="19" height="17">
-                                            <use xlink:href="#icon-comment"></use>
-                                        </svg>
-                                        <span><?= $post['comments_count'] ?></span>
-                                        <span class="visually-hidden">количество комментариев</span>
-                                    </a>
-                                    <a class="post__indicator post__indicator--repost button" href="#" title="Репост">
-                                        <svg class="post__indicator-icon" width="19" height="17">
-                                            <use xlink:href="#icon-repost"></use>
-                                        </svg>
-                                        <span>5</span>
-                                        <span class="visually-hidden">количество репостов</span>
-                                    </a>
+                            <footer class="post__footer">
+                                <div class="post__indicators">
+                                    <div class="post__buttons">
+                                        <a class="post__indicator post__indicator--likes button" href="#" title="Лайк">
+                                            <svg class="post__indicator-icon" width="20" height="17">
+                                                <use xlink:href="#icon-heart"></use>
+                                            </svg>
+                                            <svg class="post__indicator-icon post__indicator-icon--like-active"
+                                                 width="20" height="17">
+                                                <use xlink:href="#icon-heart-active"></use>
+                                            </svg>
+                                            <span><?= $post['likes_count'] ?></span>
+                                            <span class="visually-hidden">количество лайков</span>
+                                        </a>
+                                        <a class="post__indicator post__indicator--comments button" href="#"
+                                           title="Комментарии">
+                                            <svg class="post__indicator-icon" width="19" height="17">
+                                                <use xlink:href="#icon-comment"></use>
+                                            </svg>
+                                            <span><?= $post['comments_count'] ?></span>
+                                            <span class="visually-hidden">количество комментариев</span>
+                                        </a>
+                                        <a class="post__indicator post__indicator--repost button" href="#"
+                                           title="Репост">
+                                            <svg class="post__indicator-icon" width="19" height="17">
+                                                <use xlink:href="#icon-repost"></use>
+                                            </svg>
+                                            <span>5</span>
+                                            <span class="visually-hidden">количество репостов</span>
+                                        </a>
+                                    </div>
                                 </div>
+                                <ul class="post__tags">
+                                    <?php if (!empty($post['tags'])) : ?>
+                                        <?php foreach ($post['tags'] as $tag): ?>
+                                            <li><a href="/search.php?q=%23<?= $tag ?>">#<?= $tag ?></a></li>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </ul>
                             </footer>
                         </article>
                     <?php endforeach; ?>
@@ -138,50 +73,22 @@
             </div>
             <ul class="feed__filters filters">
                 <li class="feed__filters-item filters__item">
-                    <a class="filters__button filters__button--active" href="#">
+                    <a class="filters__button <?= empty($active_post_type) ? 'filters__button--active' : '' ?>"
+                       href="/">
                         <span>Все</span>
                     </a>
                 </li>
-                <li class="feed__filters-item filters__item">
-                    <a class="filters__button filters__button--photo button" href="#">
-                        <span class="visually-hidden">Фото</span>
-                        <svg class="filters__icon" width="22" height="18">
-                            <use xlink:href="#icon-filter-photo"></use>
-                        </svg>
-                    </a>
-                </li>
-                <li class="feed__filters-item filters__item">
-                    <a class="filters__button filters__button--video button" href="#">
-                        <span class="visually-hidden">Видео</span>
-                        <svg class="filters__icon" width="24" height="16">
-                            <use xlink:href="#icon-filter-video"></use>
-                        </svg>
-                    </a>
-                </li>
-                <li class="feed__filters-item filters__item">
-                    <a class="filters__button filters__button--text button" href="#">
-                        <span class="visually-hidden">Текст</span>
-                        <svg class="filters__icon" width="20" height="21">
-                            <use xlink:href="#icon-filter-text"></use>
-                        </svg>
-                    </a>
-                </li>
-                <li class="feed__filters-item filters__item">
-                    <a class="filters__button filters__button--quote button" href="#">
-                        <span class="visually-hidden">Цитата</span>
-                        <svg class="filters__icon" width="21" height="20">
-                            <use xlink:href="#icon-filter-quote"></use>
-                        </svg>
-                    </a>
-                </li>
-                <li class="feed__filters-item filters__item">
-                    <a class="filters__button filters__button--link button" href="#">
-                        <span class="visually-hidden">Ссылка</span>
-                        <svg class="filters__icon" width="21" height="18">
-                            <use xlink:href="#icon-filter-link"></use>
-                        </svg>
-                    </a>
-                </li>
+                <?php foreach ($post_types as $post_type): ?>
+                    <li class="feed__filters-item filters__item">
+                        <a class="filters__button filters__button--<?= $post_type['class'] ?> <?= $active_post_type === $post_type['id'] ? 'filters__button--active' : '' ?> button"
+                           href="/feed.php?post_type=<?= $post_type['id'] ?>">
+                            <span class="visually-hidden"><?= $post_type['name'] ?></span>
+                            <svg class="filters__icon" width="22" height="18">
+                                <use xlink:href="#icon-filter-<?= $post_type['class'] ?>"></use>
+                            </svg>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
             </ul>
         </section>
         <aside class="promo">
