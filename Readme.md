@@ -1,7 +1,7 @@
 # Личный проект «Readme»
 
 * Студент: [Nadiia Derevianchenko](https://up.htmlacademy.ru/php/12/user/576665).
-* Наставник: [Евгений Самойленко](https://htmlacademy.ru/profile/id999539).
+* Наставник: [Сергей Шершнев](https://htmlacademy.ru/profile/shv_sergey).
 
 ---
 
