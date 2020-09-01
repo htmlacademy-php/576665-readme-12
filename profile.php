@@ -19,7 +19,7 @@ if (empty($profile_data)) {
     exit ('PAGE NOT FOUND');
 };
 
-$posts = get_posts_by_parameter($link, 'user_id', $profile_data['id']);
+$posts = get_posts_by_parameters($link, ['user_id' => $profile_data['id']]);
 $profile_followers = get_followers($link, $profile_id);
 
 $current_user_followers = get_followers($link, $current_user['id']);
@@ -47,7 +47,7 @@ $tabs_content = include_template("profile/{$current_tab}.php", [
     'posts' => $posts ?? '',
     'posts_tags' => $posts_tags ?? '',
     'followers' => $profile_followers ?? '',
-    'posts_likes' => $posts_likes
+    'posts_likes' => $posts_likes ?? ''
 ]);
 
 $page_content = include_template('profile.php', [

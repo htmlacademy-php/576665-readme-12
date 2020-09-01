@@ -25,7 +25,7 @@ $params = [
     'post_type_id' => $active_post_type
 ];
 
-$posts = get_posts_by_parameter($link, $params);
+$posts = get_posts_by_parameters($link, $params);
 
 if (!empty($posts)) {
     $posts_id = array_column($posts, 'post_id');
