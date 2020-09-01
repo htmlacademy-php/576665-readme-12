@@ -17,30 +17,6 @@
             <div class="post-video__preview">
                 <?= embed_youtube_video(esc($post['video'])); ?>
             </div>
-            <div class="post-video__control">
-                <button
-                    class="post-video__play post-video__play--paused button button--video"
-                    type="button"><span class="visually-hidden">Запустить видео</span>
-                </button>
-                <div class="post-video__scale-wrapper">
-                    <div class="post-video__scale">
-                        <div class="post-video__bar">
-                            <div class="post-video__toggle"></div>
-                        </div>
-                    </div>
-                </div>
-                <button
-                    class="post-video__fullscreen post-video__fullscreen--inactive button button--video"
-                    type="button"><span
-                        class="visually-hidden">Полноэкранный режим</span>
-                </button>
-            </div>
-            <button class="post-video__play-big button" type="button">
-                <svg class="post-video__play-big-icon" width="27" height="28">
-                    <use xlink:href="#icon-video-play-big"></use>
-                </svg>
-                <span class="visually-hidden">Запустить проигрыватель</span>
-            </button>
         </div>
         <?php break; ?>
     <?php case QUOTE: ?>
@@ -62,7 +38,6 @@
                 </div>
                 <div class="post-link__info">
                     <h3><?= esc($post['title']) ?></h3>
-                    <p></p>
                     <span><?= esc($post['link']) ?></span>
                 </div>
                 <svg class="post-link__arrow" width="11" height="16">
@@ -72,9 +47,9 @@
         </div>
         <?php break; ?>
     <?php case PHOTO: ?>
-        <h2><a href="#"><?= esc($post['title']) ?></a></h2>
         <div class="post-photo__image-wrapper">
             <img src="<?= esc($post['img']) ?>" alt="Фото от пользователя" width="760"
                  height="396">
         </div>
-    <?php endswitch ?>
+        <?php break; ?>
+    <?php endswitch; ?>

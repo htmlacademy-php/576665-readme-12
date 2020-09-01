@@ -22,7 +22,7 @@
                                 </a>
                             </header>
                             <div class="post__main">
-                               <?= include_template('post-main.php', [
+                               <?= include_template('post-card-main.php', [
                                    'post' => $post
                                ]) ?>
                             </div>
