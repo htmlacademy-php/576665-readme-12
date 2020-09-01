@@ -433,6 +433,7 @@ function check_data_by_rules($data_array, $rules) {
  * Return posts tags array, using post_id as keys
  * @param mysqli $link The MySQL connection
  * @param array $posts_id Array of the given posts id
+ *
  * @return array an associative array of tags as
  * key is post's id and value is post's tags array
  */
@@ -460,6 +461,7 @@ function get_posts_tags(mysqli $link, array $posts_id) {
  * Return user's data by user_id
  * @param mysqli $link The MySQL connection
  * @param int $user_id
+ *
  * @return array || null the user data array or null if user_id is not exist
  */
 function get_user_data(mysqli $link,  int $user_id)
@@ -484,6 +486,7 @@ function get_user_data(mysqli $link,  int $user_id)
  * @param array $params The array as keys is parameters and values is string of required values
  * @param string $order_by The field on which the sorting is to be performed, the default is 'date'
  * @param string $order The sorting order, the default is 'DESC'
+ *
  * @return array The array of selected posts
  */
 function get_posts_by_parameters (mysqli $link, array $params, string $order_by = 'date', string $order = 'DESC')
@@ -536,6 +539,13 @@ function check_page_access()
     }
 }
 
+/**
+ * Returns the data of users who follow the user by user_id
+ * @param mysqli $link The MySQL connection
+ * @param string $user_id User ID
+ *
+ * @return array The array data of users who follow the user
+ */
 function get_followers ($link, $user_id)
 {
     $sql = "SELECT subscriptions.*, users.id, registered, login, picture,
@@ -553,7 +563,14 @@ function get_followers ($link, $user_id)
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
-function get_posts_likes ($link, $posts_id)
+/**
+ * Returns data array of likes to posts by posts IDs
+ * @param mysqli $link The MySQL connection
+ * @param string $posts_id The array of the posts IDs
+ *
+ * @return array The array of likes data, sorting by date
+ */
+function get_posts_likes (mysqli $link, string $posts_id)
 {
     $posts_id_string = implode(', ', $posts_id);
     $sql = "SELECT likes.user_id, likes.post_id, likes.date, users.login, users.picture, posts.post_id, posts.post_type_id, posts.img, posts.video, post_types.class
