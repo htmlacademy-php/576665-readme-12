@@ -475,7 +475,7 @@ function get_user_data(mysqli $link,  int $user_id)
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     if (!$result) {
-        exit ('errorSQL' . mysqli_error($link));
+        exit ('error' . mysqli_error($link));
     }
     return mysqli_fetch_assoc($result);
 }
@@ -564,13 +564,37 @@ function get_followers ($link, $user_id)
 }
 
 /**
+ * Checks whether user is follower of author or not
+ * @param mysqli $link The MySQL connection
+ * @param int $user_id The current user ID
+ * @param int $author_id The author's ID
+ * @return bool True if current user is follower or false if  is not follower
+ */
+function is_following (mysqli $link, $user_id, $author_id)
+{
+    $sql = "SELECT subscriptions.*
+        FROM subscriptions
+        WHERE subscriptions.follower_id = ? AND subscriptions.author_id = ?";
+    $stmt = db_get_prepare_stmt($link, $sql, [$user_id, $author_id]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+    if (mysqli_fetch_all($result)) {
+        return true;
+    }
+    return false;
+}
+
+/**
  * Returns data array of likes to posts by posts IDs
  * @param mysqli $link The MySQL connection
- * @param string $posts_id The array of the posts IDs
+ * @param array $posts_id The array of the posts IDs
  *
  * @return array The array of likes data, sorting by date
  */
-function get_posts_likes (mysqli $link, string $posts_id)
+function get_posts_likes (mysqli $link, array $posts_id)
 {
     $posts_id_string = implode(', ', $posts_id);
     $sql = "SELECT likes.user_id, likes.post_id, likes.date, users.login, users.picture, posts.post_id, posts.post_type_id, posts.img, posts.video, post_types.class

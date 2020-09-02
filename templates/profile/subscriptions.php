@@ -31,10 +31,10 @@
 
                 <div class="post-mini__user-buttons user__buttons">
                     <?php if ($follower['is_current_user'] !== 'true'): ?>
-                    <button class="post-mini__user-button user__button user__button--subscription button <?= $follower['is_following'] === 'true' ? 'button--quartz' : 'button--main' ?>"
-                        type="button">
-                        <?= $follower['is_following'] === 'true' ? 'Отписаться' : 'Подписаться' ?>
-                    </button>
+                    <a class="post-mini__user-button user__button user__button--subscription button <?= $follower['is_following'] ? 'button--quartz' : 'button--main' ?>"
+                        href="/subscription.php?author_id=<?= $follower['id']?>">
+                        <?= $follower['is_following'] ? 'Отписаться' : 'Подписаться' ?>
+                    </a>
                     <?php endif; ?>
                 </div>
             </li>

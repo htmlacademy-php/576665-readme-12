@@ -24,9 +24,9 @@
                 </div>
                 <div class="profile__user-buttons user__buttons">
                     <?php if ($profile_data['is_current_user'] !== 'true'): ?>
-                    <button class="profile__user-button user__button user__button--subscription button <?= $profile_data['is_following'] === 'true' ? 'button--quartz' : 'button--main' ?>" type="button">
-                        <?= $profile_data['is_following'] === 'true' ? 'Отписаться' : 'Подписаться' ?>
-                    </button>
+                    <a class="profile__user-button user__button user__button--subscription button <?= ($profile_data['is_following']) ? 'button--quartz' : 'button--main' ?>" href="/subscription.php?author_id=<?= $profile_data['id']?>">
+                        <?= ($profile_data['is_following']) ? 'Отписаться' : 'Подписаться' ?>
+                    </a>
                     <a class="profile__user-button user__button user__button--writing button button--green" href="#">Сообщение</a>
                     <?php endif; ?>
                 </div>

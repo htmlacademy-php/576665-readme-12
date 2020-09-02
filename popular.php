@@ -5,7 +5,6 @@ require_once 'helpers.php';
 require_once 'functions.php';
 
 check_page_access();
-var_dump($_GET);
 
 $post_types = get_post_types($link);
 
@@ -18,10 +17,6 @@ $params = [
 ];
 
 $popular_posts = get_posts_by_parameters($link, $params, $sorting, $order);
-foreach ($popular_posts as $key => $value) {
-    var_dump($popular_posts[$key]['likes_count']);
-}
-
 
 $page_content = include_template('popular.php', [
     'popular_posts' => $popular_posts,
