@@ -88,7 +88,7 @@ function get_post_types(mysqli $link)
  *
  * @return string | null The post type class-name or null if ID is not exist
  */
-function get_active_post_type( $link, string $id)
+function get_active_post_type( mysqli $link, string $id)
 {
     $sql = "SELECT class FROM post_types WHERE post_types.id = ?";
     $stmt = db_get_prepare_stmt($link, $sql, [$id]);
@@ -132,7 +132,7 @@ function check_youtube_domain(string $value)
  *
  * @return bool true if value is unique or false if a value is exists in database
  */
-function check_unique_user($link, string $value, string $param)
+function check_unique_user(mysqli $link, string $value, string $param)
 {
     $sql = "SELECT id FROM users WHERE {$param} = ?";
     $stmt = db_get_prepare_stmt($link, $sql, [$value]);
@@ -159,7 +159,7 @@ function is_valid_email(string $email)
  *
  * @return string Error message or empty string if passwords do match
  */
-function check_password_repeat (string $value, $password)
+function check_password_repeat (string $value, string $password)
 {
     return  ($value !== $password) ? 'Пароли не совпадают' : '';
 }
@@ -320,7 +320,7 @@ function upload_photo(array $upload_photo)
  *
  * @return bool|int false if ID is not exist or tag's ID
  */
-function get_tag_id($link, string $tag, array $tags)
+function get_tag_id(mysqli $link, string $tag, array $tags)
 {
     foreach ($tags as $item) {
         if ($item['tag'] === $tag) {
@@ -341,7 +341,7 @@ function get_tag_id($link, string $tag, array $tags)
  *
  * @return bool|string true if tags added or error massage
  */
-function create_post_tag_sql($link, int $post_id, array $tags_id)
+function create_post_tag_sql(mysqli $link, int $post_id, array $tags_id)
 {
     foreach ($tags_id as $item) {
         $request_values[] = "({$post_id}, {$item})";
@@ -362,7 +362,7 @@ function create_post_tag_sql($link, int $post_id, array $tags_id)
  *
  * @return array The array of validation rules
  */
-function validate_post_rules($post_type, $tags)
+function validate_post_rules(string $post_type, string $tags)
 {
     $rules = [];
     $rules['title'] = function ($value) {
@@ -419,7 +419,7 @@ function validate_post_rules($post_type, $tags)
  *
  * @return array The errors array
  */
-function check_data_by_rules($data_array, $rules) {
+function check_data_by_rules(array $data_array, array $rules) {
     $errors = [];
     foreach ($data_array as $key => $value) {
         if (isset($rules[$key])) {
@@ -504,7 +504,7 @@ function get_posts_by_parameters (mysqli $link, array $params, string $order_by 
         if (!empty($value)) {
             $conditions[] = "posts.{$key} IN ({$value})";
         }
-    };
+    }
 
     if (!empty($conditions)) {
         $sql .= "WHERE " . implode(' AND ', $conditions);
@@ -546,7 +546,7 @@ function check_page_access()
  *
  * @return array The array data of users who follow the user
  */
-function get_followers ($link, $user_id)
+function get_followers (mysqli $link, string $user_id)
 {
     $sql = "SELECT subscriptions.*, users.id, registered, login, picture,
        (SELECT COUNT(post_id) FROM posts WHERE posts.user_id = subscriptions.follower_id) as posts_count,
@@ -570,7 +570,7 @@ function get_followers ($link, $user_id)
  * @param int $author_id The author's ID
  * @return bool True if current user is follower or false if  is not follower
  */
-function is_following (mysqli $link, $user_id, $author_id)
+function is_following (mysqli $link, int $user_id, int $author_id)
 {
     $sql = "SELECT subscriptions.*
         FROM subscriptions
