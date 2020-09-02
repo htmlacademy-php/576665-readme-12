@@ -4,6 +4,7 @@
     <?php foreach ($posts as $key => $post) : ?>
             <article class="profile__post post post-<?= $post['class']?>">
                 <header class="post__header">
+<!-- for repost-->
                     <div class="post__author">
                         <a class="post__author-link" href="#" title="Автор">
                             <div class="post__avatar-wrapper post__avatar-wrapper--repost">

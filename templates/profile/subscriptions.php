@@ -2,7 +2,6 @@
 <?php if (!empty($followers)): ?>
     <ul class="profile__subscriptions-list">
         <?php foreach ($followers as $key => $follower): ?>
-        <?php var_dump($follower) ?>
             <li class="post-mini post-mini--photo post user">
                 <div class="post-mini__user-info user__info">
                     <div class="post-mini__avatar user__avatar">

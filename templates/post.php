@@ -18,14 +18,14 @@
                                      height="17">
                                     <use xlink:href="#icon-heart-active"></use>
                                 </svg>
-                                <span>250</span>
+                                <span><?= $post['likes_count'] ?></span>
                                 <span class="visually-hidden">количество лайков</span>
                             </a>
                             <a class="post__indicator post__indicator--comments button" href="#" title="Комментарии">
                                 <svg class="post__indicator-icon" width="19" height="17">
                                     <use xlink:href="#icon-comment"></use>
                                 </svg>
-                                <span>25</span>
+                                <span><?= $post['comments_count'] ?></span>
                                 <span class="visually-hidden">количество комментариев</span>
                             </a>
                             <a class="post__indicator post__indicator--repost button" href="#" title="Репост">
@@ -38,7 +38,7 @@
                         </div>
                         <span class="post__view">
                             <?= $post['view_count']; ?>
-                            <?= get_noun_plural_form(1, 'просмотр', 'просмотра', 'просмотров'); ?>
+                            <?= get_noun_plural_form($post['view_count'], 'просмотр', 'просмотра', 'просмотров'); ?>
                         </span>
                     </div>
                     <div class="comments">
@@ -114,41 +114,41 @@
                 <div class="post-details__user user">
                     <div class="post-details__user-info user__info">
                         <div class="post-details__avatar user__avatar">
-                            <a class="post-details__avatar-link user__avatar-link" href="#">
-                                <img class="post-details__picture user__picture" src="/<?= $post['picture'] ?>"
+                            <a class="post-details__avatar-link user__avatar-link" href="profile.php?user_id=<?= $author_data['id']?>">
+                                <img class="post-details__picture user__picture" src="/<?= $author_data['picture'] ?>"
                                      alt="Аватар пользователя">
                             </a>
                         </div>
                         <div class="post-details__name-wrapper user__name-wrapper">
-                            <a class="post-details__name user__name" href="#">
-                                <span><?= $post['login'] ?></span>
+                            <a class="post-details__name user__name" href="/profile.php?user_id=<?= $author_data['id']?>">
+                                <span><?= $author_data['login'] ?></span>
                             </a>
-                            <time class="post-details__time user__time" datetime="2014-03-20">5 лет на сайте</time>
+                            <time class="post-details__time user__time" datetime="$user_data['registered']"><?= get_relative_date($author_data['registered'])?> назад</time>
                         </div>
                     </div>
                     <div class="post-details__rating user__rating">
                         <p class="post-details__rating-item user__rating-item user__rating-item--subscribers">
                             <span class="post-details__rating-amount user__rating-amount">
-                                <?= $subscriptions_count ?>
+                                <?= $author_data['followers_count'] ?>
                             </span>
                             <span class="post-details__rating-text user__rating-text">
-                                <?= get_noun_plural_form($subscriptions_count, 'подписчик', 'подписчика',
+                                <?= get_noun_plural_form($author_data['followers_count'], 'подписчик', 'подписчика',
                                     'подписчиков'); ?>
                             </span>
                         </p>
                         <p class="post-details__rating-item user__rating-item user__rating-item--publications">
                             <span class="post-details__rating-amount user__rating-amount">
-                                <?= $posts_count ?>
+                                <?= $author_data['posts_count'] ?>
                             </span>
                             <span class="post-details__rating-text user__rating-text">
-                                <?= get_noun_plural_form($posts_count, 'публикация', 'публикации', 'публикаций'); ?>
+                                <?= get_noun_plural_form($author_data['posts_count'], 'публикация', 'публикации', 'публикаций'); ?>
                             </span>
                         </p>
                     </div>
                     <div class="post-details__user-buttons user__buttons">
-                        <button class="user__button user__button--subscription button button--main" type="button">
-                            Подписаться
-                        </button>
+                        <a class="user__button user__button--subscription button <?= $author_data['is_following'] ? 'button--quartz' : 'button--main'?>" href="/subscription.php?author_id=<?= $author_data['id']?>">
+                            <?= $author_data['is_following'] ? 'Отписаться' : 'Подписаться'?>
+                        </a>
                         <a class="user__button user__button--writing button button--green" href="#">Сообщение</a>
                     </div>
                 </div>

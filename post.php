@@ -6,56 +6,22 @@ require_once 'functions.php';
 
 check_page_access();
 
+$current_user_id = $_SESSION['user']['id'];
+
 if (isset($_GET['post_id'])) {
-    $param_id = filter_input(INPUT_GET, 'post_id');
-    $post = '';
-
-    $sql = 'SELECT * , users.id, post_types.id FROM posts'
-        . ' JOIN users ON posts.user_id = users.id'
-        . ' JOIN post_types ON posts.post_type_id = post_types.id'
-        . ' WHERE post_id =' . ' ?';
-
-    $stmt = db_get_prepare_stmt($link, $sql, [
-        'i' => $param_id
+    $post_id = filter_input(INPUT_GET, 'post_id');
+    $post = get_posts_by_parameters($link, [
+        'post_id' => $post_id
     ]);
+    $post = call_user_func_array('array_merge', $post);
 
-    mysqli_stmt_execute($stmt);
-
-    $result = mysqli_stmt_get_result($stmt);
-
-    if (!$result) {
-        exit ('error' . mysqli_error($link));
+    if (empty($post)) {
+        header("HTTP/1.0 404 Not Found");
+        print ('PAGE NOT FOUND: ' . mysqli_error($link));
     }
-
-    $post = mysqli_fetch_assoc($result);
+    $author_data = get_user_data($link, $post['user_id']);
+    $author_data['is_following'] = is_following($link, $current_user_id, $author_data['id']);
 }
-
-if (empty($post)) {
-    header("HTTP/1.0 404 Not Found");
-    print ('PAGE NOT FOUND: ' . mysqli_error($link));
-}
-
-$sql = 'SELECT * FROM subscriptions'
-    . ' WHERE subscriptions.author_id = ' . $post['user_id'];
-
-$result = mysqli_query($link, $sql);
-
-if (!$result) {
-    exit ('error' . mysqli_error($link));
-}
-
-$subscriptions_count = mysqli_num_rows($result);
-
-$sql = 'SELECT * FROM posts'
-    . ' WHERE posts.user_id = ' . $post['user_id'];
-
-$result = mysqli_query($link, $sql);
-
-if (!$result) {
-    exit ('error' . mysqli_error($link));
-}
-
-$posts_count = mysqli_num_rows($result);
 
 $post_content = include_template("post/post-{$post['class']}.php", [
     'post' => $post
@@ -64,8 +30,7 @@ $post_content = include_template("post/post-{$post['class']}.php", [
 $page_content = include_template('post.php', [
     'post' => $post,
     'post_content' => $post_content,
-    'subscriptions_count' => $subscriptions_count,
-    'posts_count' => $posts_count
+    'author_data' => $author_data
 ]);
 
 $layout_content = include_template('layout.php', [
