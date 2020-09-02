@@ -5,6 +5,7 @@ require_once ('helpers.php');
 require_once ('functions.php');
 
 check_page_access();
+
 $post_types = get_post_types($link);
 
 $active_post_type = isset($_GET['post_type']) ? filter_input(INPUT_GET, 'post_type') : '';
@@ -17,15 +18,18 @@ if (!$result) {
     exit ('error' . mysqli_error($link));
 }
 $authors = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$posts = [];
 
-$authors_id_string = implode (', ' , array_column($authors, 'author_id'));
+if (!empty($authors)) {
+    $authors_id_string = implode (', ' , array_column($authors, 'author_id'));
 
-$params = [
-    'user_id' => $authors_id_string,
-    'post_type_id' => $active_post_type
-];
+    $params = [
+        'user_id' => $authors_id_string,
+        'post_type_id' => $active_post_type
+    ];
 
-$posts = get_posts_by_parameters($link, $params);
+    $posts = get_posts_by_parameters($link, $params);
+}
 
 if (!empty($posts)) {
     $posts_id = array_column($posts, 'post_id');
@@ -40,7 +44,6 @@ $page_content = include_template('feed.php', [
     'posts' => $posts ?? '',
     'active_post_type' => $active_post_type,
     'post_types' => $post_types
-
 ]);
 
 $layout_content = include_template('layout.php', [
