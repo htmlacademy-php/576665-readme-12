@@ -19,6 +19,10 @@ if (isset($_GET['post_id'])) {
         header("HTTP/1.0 404 Not Found");
         print ('PAGE NOT FOUND: ' . mysqli_error($link));
     }
+
+    $view_count = ++$post['view_count'];
+    mysqli_query($link, "UPDATE posts SET posts.view_count = {$view_count}");
+
     $author_data = get_user_data($link, $post['user_id']);
     $author_data['is_following'] = is_following($link, $current_user_id, $author_data['id']);
 }
