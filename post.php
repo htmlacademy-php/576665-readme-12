@@ -13,12 +13,12 @@ if (isset($_GET['post_id'])) {
     $post = get_posts_by_parameters($link, [
         'post_id' => $post_id
     ]);
-    $post = call_user_func_array('array_merge', $post);
 
     if (empty($post)) {
         header("HTTP/1.0 404 Not Found");
-        print ('PAGE NOT FOUND: ' . mysqli_error($link));
+        exit ('PAGE NOT FOUND: ' . mysqli_error($link));
     }
+    $post = call_user_func_array('array_merge', $post);
 
     $view_count = ++$post['view_count'];
     mysqli_query($link, "UPDATE posts SET posts.view_count = {$view_count}");
