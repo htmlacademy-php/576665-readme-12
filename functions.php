@@ -486,10 +486,12 @@ function get_user_data(mysqli $link,  int $user_id)
  * @param array $params The array as keys is parameters and values is string of required values
  * @param string $order_by The field on which the sorting is to be performed, the default is 'date'
  * @param string $order The sorting order, the default is 'DESC'
+ * @param int $limit The number of posts to be returned
+ * @param int $offset The offset of the first post to returned, the default is 0
  *
  * @return array The array of selected posts
  */
-function get_posts_by_parameters (mysqli $link, array $params, string $order_by = 'date', string $order = 'DESC')
+function get_posts_by_parameters (mysqli $link, array $params, string $order_by = 'date', string $order = 'DESC', int $limit, int $offset = 0)
 {
     $sql = "SELECT posts.*, post_types.class, users.login, users.picture,
         (SELECT COUNT(likes.id) FROM likes WHERE likes.post_id = posts.post_id) as likes_count,
@@ -512,11 +514,38 @@ function get_posts_by_parameters (mysqli $link, array $params, string $order_by 
 
     $sql .= " ORDER by {$order_by} {$order}";
 
+    if (!empty($limit)) {
+        $sql .= " LIMIT {$limit} OFFSET {$offset}";
+    }
+
     $result = mysqli_query($link, $sql);
     if (!$result) {
         exit ('error' . mysqli_error($link));
     }
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+function get_posts_count (mysqli $link, array $params)
+{
+    $sql = "SELECT posts.* FROM posts ";
+
+    $conditions = [];
+
+    foreach ($params as $key => $value) {
+        if (!empty($value)) {
+            $conditions[] = "posts.{$key} IN ({$value})";
+        }
+    }
+
+    if (!empty($conditions)) {
+        $sql .= "WHERE " . implode(' AND ', $conditions);
+    }
+
+    $result = mysqli_query($link, $sql);
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+    return mysqli_num_rows($result);
 }
 
 /**
