@@ -26,7 +26,7 @@ if ($posts_counts) {
     $next_page = ($current_page+1) < $pages_count ? $current_page+1 : '';
     $offset = ($current_page - 1) * $post_per_page;
     $limit= $post_per_page;
-    $popular_posts = get_posts_by_parameters($link, $params, $sorting, $order, $limit, $offset);
+    $popular_posts = get_posts_by_parameters($link, $params, $limit, $sorting, $order,  $offset);
 }
 
 $page_content = include_template('popular.php', [
