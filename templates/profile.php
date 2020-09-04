@@ -23,7 +23,7 @@
                     </p>
                 </div>
                 <div class="profile__user-buttons user__buttons">
-                    <?php if ($profile_data['is_current_user'] !== 'true'): ?>
+                    <?php if (!$profile_data['is_current_user']): ?>
                     <a class="profile__user-button user__button user__button--subscription button <?= ($profile_data['is_following']) ? 'button--quartz' : 'button--main' ?>" href="/subscription.php?author_id=<?= $profile_data['id']?>">
                         <?= ($profile_data['is_following']) ? 'Отписаться' : 'Подписаться' ?>
                     </a>

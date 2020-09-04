@@ -10,9 +10,9 @@ $post_types = get_post_types($link);
 
 $active_post_type = isset($_GET['post_type']) ? filter_input(INPUT_GET, 'post_type') : '';
 
-$current_user = $_SESSION['user']['id'];
+$current_user = $_SESSION['user'];
 
-$sql = "SELECT subscriptions.author_id FROM subscriptions WHERE follower_id = {$current_user}";
+$sql = "SELECT subscriptions.author_id FROM subscriptions WHERE follower_id = {$current_user['id']}";
 $result = mysqli_query($link, $sql);
 if (!$result) {
     exit ('error' . mysqli_error($link));
@@ -47,6 +47,7 @@ $page_content = include_template('feed.php', [
 ]);
 
 $layout_content = include_template('layout.php', [
+    'current_user' => $current_user,
     'content' => $page_content,
     'title' => 'readme: моя лента'
 ]);

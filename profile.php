@@ -16,7 +16,7 @@ $profile_data = get_user_data($link, (int)$profile_id);
 
 if (empty($profile_data)) {
     header("HTTP/1.0 404 Not Found");
-    exit ('PAGE NOT FOUND');
+    exit ();
 };
 
 $posts = get_posts_by_parameters($link, ['user_id' => $profile_data['id']]);
@@ -26,12 +26,12 @@ $profile_followers = get_followers($link, $profile_id);
 if (!empty($profile_followers)) {
     foreach ($profile_followers as $key => $follower) {
         $profile_followers[$key]['is_following'] = is_following($link, $current_user['id'], $follower['id']);
-        $profile_followers[$key]['is_current_user'] = ($current_user['id'] === $follower['id']) ? 'true' : 'false';
+        $profile_followers[$key]['is_current_user'] = ($current_user['id'] === $follower['id']) ? true : false;
     }
 }
 
 $profile_data['is_following'] = is_following($link, $current_user['id'], $profile_id);
-$profile_data['is_current_user'] = ($current_user['id'] === $profile_id) ? 'true' : 'false';
+$profile_data['is_current_user'] = ($current_user['id'] === $profile_id) ? true : false;
 
 if (!empty($posts)) {
     $posts_id = array_column($posts, 'post_id');
@@ -56,6 +56,7 @@ $page_content = include_template('profile.php', [
 ]);
 
 $layout = include_template('layout.php', [
+    'current_user' => $current_user,
     'content' => $page_content,
     'title' =>  'readme: мой профиль'
 ]);

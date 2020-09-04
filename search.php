@@ -6,6 +6,8 @@ require_once 'functions.php';
 
 check_page_access();
 
+$current_user = $_SESSION['user'];
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $posts = [];
 
@@ -53,6 +55,7 @@ $page_content = include_template('search-results.php', [
 ]);
 
 $layout = include_template('layout.php', [
+    'current_user' => $current_user,
     'content' => $page_content,
     'title' => 'readme: результаты поиска',
     'search_query' => $search_query

@@ -125,20 +125,20 @@ function check_youtube_domain(string $value)
 }
 
 /**
- * Checks whether a user value is exists in database
+ * Checks whether a user data is exists in database or not
  * @param mysqli $link The MySQL connection
  * @param string $value
  * @param string $param
  *
- * @return bool true if value is unique or false if a value is exists in database
+ * @return bool true if a value is exists in database or false if a value is unique
  */
-function check_unique_user(mysqli $link, string $value, string $param)
+function is_user_exist(mysqli $link, string $value, string $param)
 {
-    $sql = "SELECT id FROM users WHERE {$param} = ?";
+    $sql = "SELECT * FROM users WHERE {$param} = ?";
     $stmt = db_get_prepare_stmt($link, $sql, [$value]);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
-    return (mysqli_num_rows($result) > 0) ? false : true;
+    return mysqli_num_rows($result) > 0;
 }
 
 /**
@@ -193,7 +193,6 @@ function link_validate(string $link_value)
     } elseif (!filter_var($link_value, FILTER_VALIDATE_URL)) {
         return "Значение не является ссылкой";
     }
-    return '';
 }
 
 /**
@@ -487,12 +486,12 @@ function get_user_data(mysqli $link,  int $user_id)
  * @param array $params The array as keys is parameters and values is string of required values
  * @param string $order_by The field on which the sorting is to be performed, the default is 'date'
  * @param string $order The sorting order, the default is 'DESC'
- * @param int $limit The number of posts to be returned
+ * @param int|null $limit The number of posts to be returned, the default is null
  * @param int $offset The offset of the first post to returned, the default is 0
  *
  * @return array The array of selected posts
  */
-function get_posts_by_parameters (mysqli $link, array $params,  int $limit, string $order_by = 'date', string $order = 'DESC', int $offset = 0)
+function get_posts_by_parameters (mysqli $link, array $params, string $order_by = 'date', string $order = 'DESC', int $limit = null, int $offset = 0)
 {
     $sql = "SELECT posts.*, post_types.class, users.login, users.picture,
         (SELECT COUNT(likes.id) FROM likes WHERE likes.post_id = posts.post_id) as likes_count,
@@ -510,7 +509,7 @@ function get_posts_by_parameters (mysqli $link, array $params,  int $limit, stri
     }
 
     if (!empty($conditions)) {
-        $sql .= "WHERE " . implode(' AND ', $conditions);
+        $sql .= " WHERE " . implode(' AND ', $conditions);
     }
 
     $sql .= " ORDER by {$order_by} {$order}";
@@ -598,7 +597,7 @@ function get_followers (mysqli $link, string $user_id)
  * @param mysqli $link The MySQL connection
  * @param int $user_id The current user ID
  * @param int $author_id The author's ID
- * @return bool True if current user is follower or false if  is not follower
+ * @return bool True if current user is follower, false otherwise
  */
 function is_following (mysqli $link, int $user_id, int $author_id)
 {
@@ -611,10 +610,7 @@ function is_following (mysqli $link, int $user_id, int $author_id)
     if (!$result) {
         exit ('error' . mysqli_error($link));
     }
-    if (mysqli_fetch_all($result)) {
-        return true;
-    }
-    return false;
+    return mysqli_fetch_all($result) ? true : false;
 }
 
 /**

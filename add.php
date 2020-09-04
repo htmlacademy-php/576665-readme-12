@@ -6,17 +6,19 @@ require_once 'functions.php';
 
 check_page_access();
 
+$current_user = $_SESSION['user'];
+
 $post_types = get_post_types($link);
 
 $active_post_type_id = isset($_GET['post_type'])
     ? filter_input(INPUT_GET, 'post_type', FILTER_DEFAULT)
     : filter_input(INPUT_POST, 'post_type_id', FILTER_DEFAULT);
 
-$active_post_type = get_active_post_type($link, $active_post_type_id);
+$active_post_type = get_active_post_type($link, (string)$active_post_type_id);
 
 if (is_null($active_post_type)) {
     header("HTTP/1.0 404 Not Found");
-    exit ('PAGE NOT FOUND');
+    exit ();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -118,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!empty($tags_id)) {
             create_post_tag_sql($link, $post_id, $tags_id);
         }
-        header('Location: /posts.php?post_id=' . $post_id);
+        header('Location: /post.php?post_id=' . $post_id);
         exit();
     }
 }
@@ -141,9 +143,11 @@ $page_content = include_template('adding-post.php', [
 ]);
 
 $layout_content = include_template('layout.php', [
+    'current_user' => $current_user,
     'content' => $page_content,
     'title' => 'readme: добавление публикации'
 
 ]);
 
 print ($layout_content);
+

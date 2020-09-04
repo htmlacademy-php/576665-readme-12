@@ -6,6 +6,8 @@ require_once 'functions.php';
 
 check_page_access();
 
+$current_user = $_SESSION['user'];
+
 $post_types = get_post_types($link);
 $popular_posts = [];
 
@@ -26,7 +28,7 @@ if ($posts_counts) {
     $next_page = ($current_page+1) < $pages_count ? $current_page+1 : '';
     $offset = ($current_page - 1) * $post_per_page;
     $limit= $post_per_page;
-    $popular_posts = get_posts_by_parameters($link, $params, $limit, $sorting, $order,  $offset);
+    $popular_posts = get_posts_by_parameters($link, $params, $sorting, $order, $limit, $offset);
 }
 
 $page_content = include_template('popular.php', [
@@ -41,6 +43,7 @@ $page_content = include_template('popular.php', [
 ]);
 
 $layout_content = include_template('layout.php', [
+    'current_user' => $current_user,
     'content' => $page_content,
     'title' => 'readme: популярное'
 ]);
