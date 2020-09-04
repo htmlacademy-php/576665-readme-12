@@ -193,6 +193,7 @@ function link_validate(string $link_value)
     } elseif (!filter_var($link_value, FILTER_VALIDATE_URL)) {
         return "Значение не является ссылкой";
     }
+    return '';
 }
 
 /**
@@ -491,7 +492,7 @@ function get_user_data(mysqli $link,  int $user_id)
  *
  * @return array The array of selected posts
  */
-function get_posts_by_parameters (mysqli $link, array $params, string $order_by = 'date', string $order = 'DESC', int $limit, int $offset = 0)
+function get_posts_by_parameters (mysqli $link, array $params,  int $limit, string $order_by = 'date', string $order = 'DESC', int $offset = 0)
 {
     $sql = "SELECT posts.*, post_types.class, users.login, users.picture,
         (SELECT COUNT(likes.id) FROM likes WHERE likes.post_id = posts.post_id) as likes_count,
