@@ -5,9 +5,10 @@ require_once 'helpers.php';
 require_once 'functions.php';
 
 $current_user_id = $_SESSION['user']['id'];
+
 $author_id = filter_input(INPUT_GET, 'author_id', FILTER_VALIDATE_INT);
-$author = get_user_data($link, (int) $author_id);
-if (empty($author)) {
+
+if (!is_user_exist($link, $author_id, 'id')) {
     header("HTTP/1.0 404 Not Found");
     exit ();
 }
