@@ -19,6 +19,7 @@ if (isset($_GET['post_id'])) {
         exit ();
     }
     $post = call_user_func_array('array_merge', $post);
+    $post['is_liked'] = is_liked($link, (int) $post_id, $current_user['id']);
 
     $view_count = ++$post['view_count'];
     mysqli_query($link, "UPDATE posts SET posts.view_count = {$view_count}");

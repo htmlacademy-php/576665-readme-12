@@ -636,3 +636,25 @@ function get_posts_likes (mysqli $link, array $posts_id)
     }
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
+
+function is_post_exist(mysqli $link, int $post_id)
+{
+    $sql = "SELECT * FROM posts WHERE post_id = ?";
+    $stmt = db_get_prepare_stmt($link, $sql, [$post_id]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_num_rows($result) > 0;
+}
+
+function is_liked(mysqli $link, $post_id, $current_user_id) {
+    $sql = "SELECT likes.*
+        FROM likes
+        WHERE likes.post_id = ? AND likes.user_id = ?";
+    $stmt = db_get_prepare_stmt($link, $sql, [$post_id, $current_user_id]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+    return mysqli_fetch_all($result) ? true : false;
+}
