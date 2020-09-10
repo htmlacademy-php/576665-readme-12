@@ -15,7 +15,7 @@
                         <?php foreach ($posts as $post): ?>
                             <article class="search__post post post-<?= $post['class'] ?>">
                                 <header class="post__header post__author">
-                                    <a class="post__author-link" href="#" title="Автор">
+                                    <a class="post__author-link" href="/profile.php?user_id=<?= $post['user_id']?>" title="Автор">
                                         <div class="post__avatar-wrapper">
                                             <img class="post__author-avatar" src="<?= $post['picture'] ?>"
                                                  alt="Аватар пользователя" width="60" height="60">
@@ -34,17 +34,11 @@
                                 <footer class="post__footer">
                                     <div class="post__indicators">
                                         <div class="post__buttons">
-                                            <a class="post__indicator post__indicator--likes button" href="#"
-                                               title="Лайк">
-                                                <svg class="post__indicator-icon" width="20" height="17">
-                                                    <use xlink:href="#icon-heart"></use>
+                                            <a class="post__indicator post__indicator--likes <?= $post['is_liked'] ? 'post__indicator--likes-active' : '' ?> button" href="/like.php?post_id=<?= $post['post_id'] ?>" title="Лайк">
+                                                <svg class="post__indicator-icon <?= $post['is_liked'] ? 'post__indicator-icon--like-active' : '' ?>" width="20" height="17">
+                                                    <use xlink:href="<?= $post['is_liked'] ? '#icon-heart-active' : '#icon-heart' ?>"></use>
                                                 </svg>
-                                                <svg class="post__indicator-icon post__indicator-icon--like-active"
-                                                     width="20"
-                                                     height="17">
-                                                    <use xlink:href="#icon-heart-active"></use>
-                                                </svg>
-                                                <span>250</span>
+                                                <span><?= $post['likes_count'] ?></span>
                                                 <span class="visually-hidden">количество лайков</span>
                                             </a>
                                             <a class="post__indicator post__indicator--comments button" href="#"

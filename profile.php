@@ -43,6 +43,7 @@ if (!empty($posts)) {
     $posts_tags = get_posts_tags($link, $posts_id);
     foreach ($posts as $key => $post) {
         $posts[$key]['tags'] = $posts_tags[$posts[$key]['post_id']] ?? '';
+        $posts[$key]['is_liked'] = is_liked($link, (int) $posts[$key]['post_id'], $current_user['id']);
     }
     $posts_likes = get_posts_likes($link, $posts_id);
 }

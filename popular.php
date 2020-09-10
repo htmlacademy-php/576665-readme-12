@@ -29,6 +29,7 @@ if ($posts_counts) {
     $offset = ($current_page - 1) * $post_per_page;
     $limit= $post_per_page;
     $popular_posts = get_posts_by_parameters($link, $params, $sorting, $order, $limit, $offset);
+//    TODO like action
 }
 
 $page_content = include_template('popular.php', [
