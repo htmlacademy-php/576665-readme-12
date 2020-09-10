@@ -28,6 +28,17 @@ if (isset($_GET['post_id'])) {
     $author_data['is_following'] = is_following($link, $current_user['id'], $author_data['id']);
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $errors = [];
+    $new_comment = filter_input_array(INPUT_POST, [
+        'comment' => FILTER_DEFAULT,
+        'post_id' => FILTER_VALIDATE_INT
+    ] , true);
+    $errors['post_id'] = is_post_exist($link, $new_comment['post_id']);
+    $errors['comment'] = comment_validate($new_comment['comment']);
+    var_dump($errors);
+}
+
 $post_content = include_template("post/post-{$post['class']}.php", [
     'post' => $post
 ]);
@@ -35,6 +46,9 @@ $post_content = include_template("post/post-{$post['class']}.php", [
 $page_content = include_template('post.php', [
     'post' => $post,
     'post_content' => $post_content,
+    'current_user' => $current_user,
+    'new_comment' => $new_comment ?? '',
+    'errors' => $errors ?? '',
     'author_data' => $author_data
 ]);
 

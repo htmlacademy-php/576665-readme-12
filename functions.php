@@ -658,3 +658,14 @@ function is_liked(mysqli $link, $post_id, $current_user_id) {
     }
     return mysqli_fetch_all($result) ? true : false;
 }
+
+function comment_validate (string $comment)
+{
+    if (empty($comment)) {
+        return "Это поле обязательно к заполнению";
+    }
+    if (strlen($comment) < 4) {
+        return "Длина комментария не должна быть меньше четырех символов";
+    }
+    return '';
+}
