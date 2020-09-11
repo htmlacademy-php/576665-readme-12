@@ -17,7 +17,7 @@
                                 <span><?= $post['likes_count'] ?></span>
                                 <span class="visually-hidden">количество лайков</span>
                             </a>
-                            <a class="post__indicator post__indicator--comments button" href="#" title="Комментарии">
+                            <a class="post__indicator post__indicator--comments button" href="#comment" title="Комментарии">
                                 <svg class="post__indicator-icon" width="19" height="17">
                                     <use xlink:href="#icon-comment"></use>
                                 </svg>
@@ -40,9 +40,9 @@
                     <div class="comments">
                         <form class="comments__form form" method="post">
                             <div class="comments__my-avatar">
-                                <img class="comments__picture" src="<?= $current_user['picture'] ?>" alt="Аватар пользователя">
+                                <img class="comments__picture" src="<?= esc($current_user['picture']) ?>" alt="Аватар пользователя">
                             </div>
-                            <div class="form__input-section <?= $errors ? 'form__input-section--error' : ''?>">
+                            <div class="form__input-section <?= (!empty($errors)) ? 'form__input-section--error' : '' ?>">
                                 <textarea class="comments__textarea form__textarea form__input"
                                           placeholder="Ваш комментарий" id="comment" name="comment"><?= !empty($new_comment['comment']) ? esc($new_comment['comment']) : '' ?></textarea>
                                 <label class="visually-hidden" for="comment">Ваш комментарий</label>
@@ -51,63 +51,43 @@
                                 <?php if (!empty($errors)): ?>
                                 <div class="form__error-text">
                                     <h3 class="form__error-title">Ошибка валидации</h3>
-                                    <p class="form__error-desc">Это поле обязательно к заполнению</p>
+                                    <p class="form__error-desc"><?= $errors['comment'] ?></p>
                                 </div>
                                 <?php endif; ?>
                             </div>
                             <button class="comments__submit button button--green" type="submit">Отправить</button>
                         </form>
+                        <?php if (!empty($comments)): ?>
                         <div class="comments__list-wrapper">
                             <ul class="comments__list">
-                                <li class="comments__item user">
+                                <?php foreach ($comments as $key => $comment): ?>
+                                <li class="comments__item user" <?=$key = 0 ? 'id="comment"' : '' ?>>
                                     <div class="comments__avatar">
-                                        <a class="user__avatar-link" href="#">
-                                            <img class="comments__picture" src="/img/userpic-larisa.jpg"
+                                        <a class="user__avatar-link" href="profile.php?user_id=<?= $comment['user_id']?>">
+                                            <img class="comments__picture" src="<?= $comment['picture'] ?>"
                                                  alt="Аватар пользователя">
                                         </a>
                                     </div>
                                     <div class="comments__info">
                                         <div class="comments__name-wrapper">
-                                            <a class="comments__user-name" href="#">
-                                                <span>Лариса Роговая</span>
+                                            <a class="comments__user-name" href="profile.php?user_id=<?= $comment['user_id']?>">
+                                                <span><?= $comment['login'] ?></span>
                                             </a>
-                                            <time class="comments__time" datetime="2019-03-20">1 ч назад</time>
+                                            <time class="comments__time" datetime="<?= $comment['date'] ?>"><?= get_relative_date($comment['date']) ?></time>
                                         </div>
                                         <p class="comments__text">
-                                            Красота!!!1!
+                                            <?= esc($comment['content']) ?>
                                         </p>
                                     </div>
                                 </li>
-                                <li class="comments__item user">
-                                    <div class="comments__avatar">
-                                        <a class="user__avatar-link" href="#">
-                                            <img class="comments__picture" src="/img/userpic-larisa.jpg"
-                                                 alt="Аватар пользователя">
-                                        </a>
-                                    </div>
-                                    <div class="comments__info">
-                                        <div class="comments__name-wrapper">
-                                            <a class="comments__user-name" href="#">
-                                                <span>Лариса Роговая</span>
-                                            </a>
-                                            <time class="comments__time" datetime="2019-03-18">2 дня назад</time>
-                                        </div>
-                                        <p class="comments__text">
-                                            Озеро Байкал – огромное древнее озеро в горах Сибири к северу от монгольской
-                                            границы. Байкал считается самым глубоким озером в мире. Он окружен сетью
-                                            пешеходных маршрутов, называемых Большой байкальской тропой. Деревня
-                                            Листвянка, расположенная на западном берегу озера, – популярная отправная
-                                            точка для летних экскурсий. Зимой здесь можно кататься на коньках и собачьих
-                                            упряжках.
-                                        </p>
-                                    </div>
-                                </li>
+                                <?php endforeach; ?>
                             </ul>
                             <a class="comments__more-link" href="#">
                                 <span>Показать все комментарии</span>
-                                <sup class="comments__amount">45</sup>
+                                <sup class="comments__amount"><?= $post['comments_count'] ?></sup>
                             </a>
                         </div>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="post-details__user user">

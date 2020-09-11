@@ -575,7 +575,7 @@ function check_page_access()
  *
  * @return array The array data of users who follow the user
  */
-function get_followers (mysqli $link, string $user_id)
+function get_followers(mysqli $link, string $user_id)
 {
     $sql = "SELECT subscriptions.*, users.id, registered, login, picture,
        (SELECT COUNT(post_id) FROM posts WHERE posts.user_id = subscriptions.follower_id) as posts_count,
@@ -584,6 +584,22 @@ function get_followers (mysqli $link, string $user_id)
         JOIN users ON  users.id = subscriptions.follower_id
         WHERE subscriptions.author_id = ?";
     $stmt = db_get_prepare_stmt($link, $sql, [$user_id]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+function get_comments(mysqli $link, int $post_id)
+{
+    $sql = "SELECT *
+    FROM comments
+    JOIN users on users.id = comments.user_id
+    WHERE comments.post_id = ?
+    ORDER BY date DESC";
+    $stmt = db_get_prepare_stmt($link, $sql, [$post_id]);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     if (!$result) {

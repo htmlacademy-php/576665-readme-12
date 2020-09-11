@@ -47,11 +47,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return comment_validate($value);
         }
     ];
-
     $errors = check_data_by_rules($new_comment, $rules);
+    var_dump($post);
 
-    var_dump($errors);
+    if (empty($errors)) {
+        $sql = 'INSERT INTO comments (content, user_id, post_id) VALUE (?, ?, ?)';
+        $stmt = db_get_prepare_stmt($link, $sql, [
+            $new_comment['comment'],
+            $current_user['id'],
+            $post_id,
+        ]);
+
+        $result = mysqli_stmt_execute($stmt);
+
+        if (!$result) {
+            exit ('error' . mysqli_error($link));
+        }
+    }
 }
+
+
+
+$comments = get_comments($link, $post_id);
+$post['comments_count'] = count($comments);
+var_dump($comments);
 
 $post_content = include_template("post/post-{$post['class']}.php", [
     'post' => $post
@@ -63,6 +82,7 @@ $page_content = include_template('post.php', [
     'current_user' => $current_user,
     'new_comment' => $new_comment ?? '',
     'errors' => $errors ?? '',
+    'comments' => $comments ?? '',
     'author_data' => $author_data
 ]);
 
