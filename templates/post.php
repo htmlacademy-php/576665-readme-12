@@ -17,7 +17,7 @@
                                 <span><?= $post['likes_count'] ?></span>
                                 <span class="visually-hidden">количество лайков</span>
                             </a>
-                            <a class="post__indicator post__indicator--comments button" href="#comment" title="Комментарии">
+                            <a class="post__indicator post__indicator--comments button" href="#last_comment" title="Комментарии">
                                 <svg class="post__indicator-icon" width="19" height="17">
                                     <use xlink:href="#icon-comment"></use>
                                 </svg>
@@ -61,7 +61,7 @@
                         <div class="comments__list-wrapper">
                             <ul class="comments__list">
                                 <?php foreach ($comments as $key => $comment): ?>
-                                <li class="comments__item user" <?=$key = 0 ? 'id="comment"' : '' ?>>
+                                <li class="comments__item user" <?=$key === 0 ? 'id="last_comment"' : '' ?>>
                                     <div class="comments__avatar">
                                         <a class="user__avatar-link" href="profile.php?user_id=<?= $comment['user_id']?>">
                                             <img class="comments__picture" src="<?= $comment['picture'] ?>"
