@@ -48,7 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     ];
     $errors = check_data_by_rules($new_comment, $rules);
-    var_dump($post);
 
     if (empty($errors)) {
         $sql = 'INSERT INTO comments (content, user_id, post_id) VALUE (?, ?, ?)';
@@ -64,13 +63,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit ('error' . mysqli_error($link));
         }
     }
+    header('Location: /profile.php?user_id=' . $author_data['id']);
+    exit();
 }
-
-
 
 $comments = get_comments($link, $post_id);
 $post['comments_count'] = count($comments);
-var_dump($comments);
 
 $post_content = include_template("post/post-{$post['class']}.php", [
     'post' => $post
