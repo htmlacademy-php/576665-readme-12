@@ -34,8 +34,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'comment' => FILTER_DEFAULT,
         'post_id' => FILTER_VALIDATE_INT
     ] , true);
-    $errors['post_id'] = is_post_exist($link, $new_comment['post_id']);
-    $errors['comment'] = comment_validate($new_comment['comment']);
+
+    if (!is_post_exist($link, $new_comment['post_id'])) {
+        header("HTTP/1.0 404 Not Found");
+        exit ();
+    }
+
+    $new_comment['comment'] = trim($new_comment['comment']);
+
+    $rules = [
+        'comment' => function($value) {
+        return comment_validate($value);
+        }
+    ];
+
+    $errors = check_data_by_rules($new_comment, $rules);
+
     var_dump($errors);
 }
 

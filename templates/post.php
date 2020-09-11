@@ -44,7 +44,7 @@
                             </div>
                             <div class="form__input-section <?= $errors ? 'form__input-section--error' : ''?>">
                                 <textarea class="comments__textarea form__textarea form__input"
-                                          placeholder="Ваш комментарий" id="comment" name="comment"><?= esc($new_comment['comment']) ?></textarea>
+                                          placeholder="Ваш комментарий" id="comment" name="comment"><?= !empty($new_comment['comment']) ? esc($new_comment['comment']) : '' ?></textarea>
                                 <label class="visually-hidden" for="comment">Ваш комментарий</label>
                                 <input type="hidden" name="post_id" value="<?= $post['post_id']?>">
                                 <button class="form__error-button button" type="button">!</button>
