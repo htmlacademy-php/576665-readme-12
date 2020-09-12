@@ -24,9 +24,11 @@ if (empty($profile_data)) {
     exit ();
 };
 
-$posts = get_posts_by_parameters($link, ['user_id' => $profile_data['id']]);
+$posts = get_posts_by_parameters($link, ['user_id' => $profile_data['id']], $current_user['id']);
 
 $profile_followers = get_followers($link, $profile_id);
+
+
 
 if (!empty($profile_followers)) {
     foreach ($profile_followers as $key => $follower) {
@@ -43,7 +45,6 @@ if (!empty($posts)) {
     $posts_tags = get_posts_tags($link, $posts_id);
     foreach ($posts as $key => $post) {
         $posts[$key]['tags'] = $posts_tags[$posts[$key]['post_id']] ?? '';
-        $posts[$key]['is_liked'] = is_liked($link, (int) $posts[$key]['post_id'], $current_user['id']);
     }
     $posts_likes = get_posts_likes($link, $posts_id);
 }

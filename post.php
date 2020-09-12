@@ -12,14 +12,14 @@ if (isset($_GET['post_id'])) {
     $post_id = filter_input(INPUT_GET, 'post_id');
     $post = get_posts_by_parameters($link, [
         'post_id' => $post_id
-    ]);
+    ],
+    $current_user['id']);
 
     if (empty($post)) {
         header("HTTP/1.0 404 Not Found");
         exit ();
     }
     $post = call_user_func_array('array_merge', $post);
-    $post['is_liked'] = is_liked($link, (int) $post_id, $current_user['id']);
 
     $view_count = ++$post['view_count'];
     mysqli_query($link, "UPDATE posts SET posts.view_count = {$view_count}");
@@ -62,9 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$result) {
             exit ('error' . mysqli_error($link));
         }
+        header('Location: /profile.php?user_id=' . $author_data['id']);
+        exit();
     }
-    header('Location: /profile.php?user_id=' . $author_data['id']);
-    exit();
+
 }
 
 $comments = get_comments($link, $post_id);

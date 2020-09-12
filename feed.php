@@ -28,7 +28,7 @@ if (!empty($authors)) {
         'post_type_id' => $active_post_type
     ];
 
-    $posts = get_posts_by_parameters($link, $params);
+    $posts = get_posts_by_parameters($link, $params, $current_user['id']);
 }
 
 if (!empty($posts)) {
@@ -37,7 +37,6 @@ if (!empty($posts)) {
 
     foreach ($posts as $key => $post) {
         $posts[$key]['tags'] = $posts_tags[$posts[$key]['post_id']] ?? '';
-        $posts[$key]['is_liked'] = is_liked($link, (int) $posts[$key]['post_id'], $current_user['id']);
     }
 }
 
