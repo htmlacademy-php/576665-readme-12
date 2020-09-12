@@ -20,16 +20,14 @@ $params = [
 ];
 
 $posts_counts = get_posts_count($link, $params);
-$post_per_page = 9;
 if ($posts_counts) {
     $current_page = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?? 1;
-    $pages_count = ceil($posts_counts / $post_per_page);
+    $pages_count = ceil($posts_counts / POST_PER_PAGE);
     $prev_page = ($current_page-1) > 0 ? $current_page-1 : '';
     $next_page = ($current_page+1) < $pages_count ? $current_page+1 : '';
-    $offset = ($current_page - 1) * $post_per_page;
-    $limit= $post_per_page;
-    $popular_posts = get_posts_by_parameters($link, $params, $sorting, $order, $limit, $offset);
-//    TODO like action
+    $offset = ($current_page - 1) * POST_PER_PAGE;
+    $limit = POST_PER_PAGE;
+    $popular_posts = get_posts_by_parameters($link, $params, $current_user['id'], $sorting, $order, $limit, $offset);
 }
 
 $page_content = include_template('popular.php', [
