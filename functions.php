@@ -166,7 +166,7 @@ function check_password_repeat (string $value, string $password)
 
 /**
  * Checks whether the email value is correct
- * @param string $email
+ * @param string $email The string contains email
  * @return string Error message or empty string if value is correct
  */
 function email_validate (string $email)
@@ -182,7 +182,7 @@ function email_validate (string $email)
 
 /**
  * Checks whether a string is a correct link
- * @param string $link_value
+ * @param string $link_value The string contains link
  *
  * @return string Error message or empty string if link is correct
  */
@@ -197,7 +197,7 @@ function link_validate(string $link_value)
 
 /**
  * Validates a string contains tags
- * @param string $tags_value
+ * @param string The string contains tags
  *
  * @return string Error massage or empty string if string contains correct tags
  */
@@ -227,7 +227,7 @@ function tags_validate(string $tags_value)
 
 /**
  * Validates link to a video
- * @param string $url_value
+ * @param string The string contains link to a video
  *
  * @return string Error message or empty string if link is correct
  */
@@ -261,7 +261,7 @@ function check_img_type(string $file_type)
 
 /**
  * Validates uploaded file
- * @param array $upload_photo Array $_FILE
+ * @param array Array $_FILE
  *
  * @return bool|string Error message or true if file is correct
  */
@@ -275,7 +275,8 @@ function photo_validate(array $upload_photo)
 
 /**
  * Validates link to uploaded file
- * @param string $photo_link The link to image files
+ * @param string The string contains link
+ *The link to image files
  *
  * @return string Error massage or empty string if uploaded file is validate
  */
@@ -437,7 +438,8 @@ function check_data_by_rules(array $data_array, array $rules) {
  * @return array an associative array of tags as
  * key is post's id and value is post's tags array
  */
-function get_posts_tags(mysqli $link, array $posts_id) {
+function get_posts_tags(mysqli $link, array $posts_id)
+{
     $posts_id_string = implode(', ', $posts_id);
     $sql = "SELECT post_tag.post_id, tags.tag
     FROM tags
@@ -447,7 +449,7 @@ function get_posts_tags(mysqli $link, array $posts_id) {
     if (!$result) {
         exit ('error' . mysqli_error($link));
     }
-    $tags = mysqli_fetch_all($result,MYSQLI_ASSOC);
+    $tags = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     $post_tags = [];
 
@@ -456,13 +458,12 @@ function get_posts_tags(mysqli $link, array $posts_id) {
     }
     return $post_tags;
 }
-
 /**
  * Return user's data by user_id
  * @param mysqli $link The MySQL connection
  * @param int $user_id
  *
- * @return array || null the user data array or null if user_id is not exist
+ * @return array|null The user data array or null if user_id is not exist
  */
 function get_user_data(mysqli $link,  int $user_id)
 {
@@ -491,11 +492,12 @@ function get_user_data(mysqli $link,  int $user_id)
  *
  * @return array The array of selected posts
  */
-function get_posts_by_parameters (mysqli $link, array $params, string $order_by = 'date', string $order = 'DESC', int $limit = null, int $offset = 0)
+function get_posts_by_parameters (mysqli $link, array $params, int $current_user_id, string $order_by = 'date',  string $order = 'DESC', int $limit = null, int $offset = 0)
 {
     $sql = "SELECT posts.*, post_types.class, users.login, users.picture,
         (SELECT COUNT(likes.id) FROM likes WHERE likes.post_id = posts.post_id) as likes_count,
-        (SELECT COUNT(comments.id) FROM comments WHERE comments.post_id = posts.post_id) as comments_count
+        (SELECT COUNT(comments.id) FROM comments WHERE comments.post_id = posts.post_id) as comments_count,
+       (SELECT likes.user_id FROM likes WHERE posts.post_id = likes.post_id AND likes.user_id = {$current_user_id}) as is_liked
         FROM posts
         JOIN post_types ON posts.post_type_id = post_types.id
         JOIN users ON users.id = posts.user_id ";
@@ -525,8 +527,18 @@ function get_posts_by_parameters (mysqli $link, array $params, string $order_by 
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
+
+/**
+ * Counts all posts in a database, selected by parameters
+ * @param mysqli $link The MySQL connection
+ * @param array $params The array as keys is parameters and values is string of required values
+ *
+ * @return int|null The the number of posts or null if posts are not exist
+ */
 function get_posts_count (mysqli $link, array $params)
 {
+
+    $foo = count($params);
     $sql = "SELECT posts.* FROM posts ";
 
     $conditions = [];
@@ -560,6 +572,10 @@ function get_query_string (array $current_query, array $query_data)
     return http_build_query(array_merge($current_query, $query_data));
 }
 
+/**
+ * Checks if the user has access to current page or not
+ * Redirects to the login page, if user has no access
+ */
 function check_page_access()
 {
     if (!isset($_SESSION['user'])) {
@@ -592,6 +608,13 @@ function get_followers(mysqli $link, string $user_id)
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
+/**
+ * Returns array of post's comments
+ * @param mysqli $link The MySQL connection
+ * @param int $post_id The post's ID
+ *
+ * @return array The array of post's comments or null if comments are not exist
+ */
 function get_comments(mysqli $link, int $post_id)
 {
     $sql = "SELECT *
@@ -613,6 +636,7 @@ function get_comments(mysqli $link, int $post_id)
  * @param mysqli $link The MySQL connection
  * @param int $user_id The current user ID
  * @param int $author_id The author's ID
+ *
  * @return bool True if current user is follower, false otherwise
  */
 function is_following (mysqli $link, int $user_id, int $author_id)
@@ -653,6 +677,13 @@ function get_posts_likes (mysqli $link, array $posts_id)
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
+/**
+ * Checks whether post is exist
+ * @param mysqli $link The MySQL connection
+ * @param int $post_id The post's ID
+ *
+ * @return bool True if post is exist, false otherwise
+ */
 function is_post_exist(mysqli $link, int $post_id)
 {
     $sql = "SELECT * FROM posts WHERE post_id = ?";
@@ -662,7 +693,15 @@ function is_post_exist(mysqli $link, int $post_id)
     return mysqli_num_rows($result) > 0;
 }
 
-function is_liked(mysqli $link, $post_id, $current_user_id) {
+/**
+ * Checks  whether post is liked by current user
+ * @param mysqli $link The MySQL connection
+ * @param int $post_id The post's ID
+ * @param int $current_user_id The current user's ID
+ *
+ * @return bool True if post was liked by user, false otherwise
+ */
+function is_liked(mysqli $link, int $post_id, int $current_user_id) {
     $sql = "SELECT likes.*
         FROM likes
         WHERE likes.post_id = ? AND likes.user_id = ?";
@@ -675,21 +714,30 @@ function is_liked(mysqli $link, $post_id, $current_user_id) {
     return mysqli_fetch_all($result) ? true : false;
 }
 
-function check_length(string $comment, int $length)
+/**
+ * Checks whether the length of a string is greater than a required minimum number of characters
+ * @param string $string The string
+ * @param int $length The required minimum number of characters
+ *
+ * @return bool True if length of a string is greater than a required minimum or false otherwise
+ */
+function check_length(string $string, int $length)
 {
-    if (strlen($comment) < $length) {
-        return false;
-    }
-    return true;
+    return (strlen($string) > $length);
 }
 
-function comment_validate($comment)
+/**
+ * Checks whether a string is a correct comment
+ * @param string $comment The string contains comment
+ * @return string Error message or empty string if comment is correct
+ */
+function comment_validate (string $comment)
 {
     if (check_emptiness($comment)) {
         return 'Поле должно быть заполнено';
     }
-    if (!check_length($comment, 4)) {
-        return "Длина комментария должна быть не меньше четырех символов";
+    if (!check_length($comment, MIN_COMMENT)) {
+        return "Длина комментария должна быть не меньше " . MIN_COMMENT . get_noun_plural_form(MIN_COMMENT, ' символа', ' символов', ' символов');
     }
     return '';
 }
