@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     foreach ($unique_values as $item) {
         if (empty($errors[$item])) {
-            $errors[$item] = !check_unique_user($link, $registration_data[$item],
+            $errors[$item] = is_user_exist($link, $registration_data[$item],
                 $item) ? "Указанный {$item} уже используется другим пользователем" : '';
         }
     }

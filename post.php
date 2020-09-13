@@ -4,61 +4,72 @@ require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
 
-if (!isset($_SESSION['user'])) {
-    header("Location: /index.php");
-    exit();
-}
+check_page_access();
+
+$current_user = $_SESSION['user'];
 
 if (isset($_GET['post_id'])) {
-    $param_id = filter_input(INPUT_GET, 'post_id');
-    $post = '';
+    $post_id = filter_input(INPUT_GET, 'post_id');
+    $post = get_posts_by_parameters($link, [
+        'post_id' => $post_id
+    ],
+    $current_user['id']);
 
-    $sql = 'SELECT * , users.id, post_types.id FROM posts'
-        . ' JOIN users ON posts.user_id = users.id'
-        . ' JOIN post_types ON posts.post_type_id = post_types.id'
-        . ' WHERE post_id =' . ' ?';
+    if (empty($post)) {
+        header("HTTP/1.0 404 Not Found");
+        exit ();
+    }
+    $post = call_user_func_array('array_merge', $post);
 
-    $stmt = db_get_prepare_stmt($link, $sql, [
-        'i' => $param_id
-    ]);
+    $view_count = ++$post['view_count'];
+    mysqli_query($link, "UPDATE posts SET posts.view_count = {$view_count}");
 
-    mysqli_stmt_execute($stmt);
+    $author_data = get_user_data($link, $post['user_id']);
+    $author_data['is_following'] = is_following($link, $current_user['id'], $author_data['id']);
+}
 
-    $result = mysqli_stmt_get_result($stmt);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $errors = [];
+    $new_comment = filter_input_array(INPUT_POST, [
+        'comment' => FILTER_DEFAULT,
+        'post_id' => FILTER_VALIDATE_INT
+    ] , true);
 
-    if (!$result) {
-        exit ('error' . mysqli_error($link));
+    if (!is_post_exist($link, $new_comment['post_id'])) {
+        header("HTTP/1.0 404 Not Found");
+        exit ();
     }
 
-    $post = mysqli_fetch_assoc($result);
+    $new_comment['comment'] = trim($new_comment['comment']);
+
+    $rules = [
+        'comment' => function($value) {
+        return comment_validate($value);
+        }
+    ];
+    $errors = check_data_by_rules($new_comment, $rules);
+
+    if (empty($errors)) {
+        $sql = 'INSERT INTO comments (content, user_id, post_id) VALUE (?, ?, ?)';
+        $stmt = db_get_prepare_stmt($link, $sql, [
+            $new_comment['comment'],
+            $current_user['id'],
+            $post_id,
+        ]);
+
+        $result = mysqli_stmt_execute($stmt);
+
+        if (!$result) {
+            exit ('error' . mysqli_error($link));
+        }
+        header('Location: /profile.php?user_id=' . $author_data['id']);
+        exit();
+    }
+
 }
 
-if (empty($post)) {
-    header("HTTP/1.0 404 Not Found");
-    print ('PAGE NOT FOUND: ' . mysqli_error($link));
-}
-
-$sql = 'SELECT * FROM subscriptions'
-    . ' WHERE subscriptions.author_id = ' . $post['user_id'];
-
-$result = mysqli_query($link, $sql);
-
-if (!$result) {
-    exit ('error' . mysqli_error($link));
-}
-
-$subscriptions_count = mysqli_num_rows($result);
-
-$sql = 'SELECT * FROM posts'
-    . ' WHERE posts.user_id = ' . $post['user_id'];
-
-$result = mysqli_query($link, $sql);
-
-if (!$result) {
-    exit ('error' . mysqli_error($link));
-}
-
-$posts_count = mysqli_num_rows($result);
+$comments = get_comments($link, $post_id);
+$post['comments_count'] = count($comments);
 
 $post_content = include_template("post/post-{$post['class']}.php", [
     'post' => $post
@@ -67,11 +78,15 @@ $post_content = include_template("post/post-{$post['class']}.php", [
 $page_content = include_template('post.php', [
     'post' => $post,
     'post_content' => $post_content,
-    'subscriptions_count' => $subscriptions_count,
-    'posts_count' => $posts_count
+    'current_user' => $current_user,
+    'new_comment' => $new_comment ?? '',
+    'errors' => $errors ?? '',
+    'comments' => $comments ?? '',
+    'author_data' => $author_data
 ]);
 
 $layout_content = include_template('layout.php', [
+    'current_user' => $current_user,
     'content' => $page_content,
     'title' => 'readme: публикация'
 ]);

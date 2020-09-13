@@ -4,26 +4,21 @@ require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
 
-if (!isset($_SESSION['user'])) {
-    header('Location: /index.php');
-    exit();
-}
+check_page_access();
 
-$result = mysqli_query($link, "SELECT * FROM post_types");
-if (!$result) {
-    exit ('error' . mysqli_error($link));
-}
-$post_types = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$current_user = $_SESSION['user'];
+
+$post_types = get_post_types($link);
 
 $active_post_type_id = isset($_GET['post_type'])
     ? filter_input(INPUT_GET, 'post_type', FILTER_DEFAULT)
     : filter_input(INPUT_POST, 'post_type_id', FILTER_DEFAULT);
 
-$active_post_type = get_active_post_type($link, $active_post_type_id);
+$active_post_type = get_active_post_type($link, (string)$active_post_type_id);
 
 if (is_null($active_post_type)) {
     header("HTTP/1.0 404 Not Found");
-    exit ('PAGE NOT FOUND');
+    exit ();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -136,6 +131,7 @@ $adding_post_content = include_template("/adding-post/adding-post-{$active_post_
     'errors' => !empty($errors) ? $errors : ''
 ]);
 
+
 $page_content = include_template('adding-post.php', [
     'post_types' => $post_types,
     'active_post_type' => $active_post_type,
@@ -147,9 +143,11 @@ $page_content = include_template('adding-post.php', [
 ]);
 
 $layout_content = include_template('layout.php', [
+    'current_user' => $current_user,
     'content' => $page_content,
     'title' => 'readme: добавление публикации'
 
 ]);
 
 print ($layout_content);
+

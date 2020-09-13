@@ -4,10 +4,9 @@ require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
 
-if (!isset($_SESSION['user'])) {
-    header("Location: /index.php");
-    exit();
-}
+check_page_access();
+
+$current_user = $_SESSION['user'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $posts = [];
@@ -18,7 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             users.login,
             users.picture,
             users.registered,
-            post_types.class
+            post_types.class,
+       (SELECT COUNT(likes.id) FROM likes WHERE likes.post_id = posts.post_id) as likes_count,
+        (SELECT COUNT(comments.id) FROM comments WHERE comments.post_id = posts.post_id) as comments_count
             FROM posts
             JOIN post_types ON posts.post_type_id = post_types.id
             JOIN users ON posts.user_id = users.id ";
@@ -46,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
         foreach ($posts as $key => $post) {
             $posts[$key]['tags'] = $posts_tags[$posts[$key]['post_id']] ?? '';
+            $posts[$key]['is_liked'] = is_liked($link, (int) $posts[$key]['post_id'], $current_user['id']);
         }
     }
 }
@@ -56,6 +58,7 @@ $page_content = include_template('search-results.php', [
 ]);
 
 $layout = include_template('layout.php', [
+    'current_user' => $current_user,
     'content' => $page_content,
     'title' => 'readme: результаты поиска',
     'search_query' => $search_query

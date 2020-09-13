@@ -1,19 +1,19 @@
 "use strict";
 window.util = {
-  isEscEvent: function(t, e) {
+  isEscEvent: function (t, e) {
     27 === t.keyCode && e()
   },
-  getScrollbarWidth: function() {
+  getScrollbarWidth: function () {
     return window.innerWidth - document.documentElement.clientWidth
   }
 },
-  function() {
-    var t = function(t) {
+  function () {
+    var t = function (t) {
       var i = t.querySelector(".tabs__list").querySelectorAll(".tabs__item")
         , e = t.querySelectorAll(".tabs__content")
         , c = 0
         , n = !1
-        , r = function() {
+        , r = function () {
         if (!n) {
           var t = !1;
           n = !0;
@@ -25,12 +25,12 @@ window.util = {
           }
         }
       }
-        , s = function(t, e) {
-        t.addEventListener("click", function(t) {
-            a(e)
+        , s = function (t, e) {
+        t.addEventListener("click", function (t) {
+          a(e)
         })
       }
-        , a = function(t) {
+        , a = function (t) {
         if (t !== c) {
           if (i[c].classList.remove("tabs__item--active"),
             i[t].classList.add("tabs__item--active"),
@@ -68,23 +68,22 @@ window.util = {
   window.util.getScrollbarWidth(),
   document.querySelector(".page__main-section"),
   document.querySelector(".footer__wrapper"),
-  function() {
+  function () {
     var t = document.querySelector(".sorting");
     if (t)
-      for (var e = t.querySelectorAll(".sorting__link"), r = t.querySelector(".sorting__link--active"), i = function(t) {
-        t.preventDefault(),
+      for (var e = t.querySelectorAll(".sorting__link"), r = t.querySelector(".sorting__link--active"), i = function (t) {
           t.currentTarget === r ? r.classList.toggle("sorting__link--reverse") : (r.classList.remove("sorting__link--active"),
             t.currentTarget.classList.add("sorting__link--active"),
             r = t.currentTarget)
       }, c = 0; c < e.length; c++)
         e[c].addEventListener("click", i)
   }(),
-  function() {
+  function () {
     var t = document.querySelector(".filters");
     if (t)
       var e = t.querySelectorAll(".filters__button:not(.tabs__item)");
     if (e)
-      for (var r = t.querySelector(".filters__button--active"), i = function(t) {
+      for (var r = t.querySelector(".filters__button--active"), i = function (t) {
         t.currentTarget !== r && (r.classList.remove("filters__button--active"),
           t.currentTarget.classList.add("filters__button--active"),
           r = t.currentTarget)

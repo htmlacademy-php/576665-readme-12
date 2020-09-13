@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?=$title;?></title>
+    <title><?= $title; ?></title>
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body class="page">
@@ -22,7 +22,7 @@
                 micro blogging
             </p>
         </div>
-        <?php if (!isset($_SESSION['user'])): ?>
+        <?php if (!isset($current_user)): ?>
             <ul class="header__user-nav">
                 <li class="header__authorization">
                     <a class="header__user-button header__authorization-button button" href="/index.php">Вход</a>
@@ -66,13 +66,13 @@
                     <!-- здесь должен быть PHP код, который показывает следующий тег по условию -->
                     <ul class="header__user-nav">
                         <li class="header__profile">
-                            <a class="header__profile-link" href="#">
+                            <a class="header__profile-link" href="/profile.php?user_id=<?= $current_user['id'] ? $current_user['id'] : '' ?>">
                                 <div class="header__avatar-wrapper">
-                                    <img class="header__profile-avatar" src="<?= $_SESSION['user']['picture'] ?>" alt="Аватар профиля">
+                                    <img class="header__profile-avatar" src="<?= $current_user['picture'] ? $current_user['picture'] : 'img/icon-input-user.svg' ?>" alt="Аватар профиля">
                                 </div>
                                 <div class="header__profile-name">
                                 <span>
-                                    <?= $_SESSION['user']['login'] ?>
+                                    <?= $current_user['login'] ?>
                                 </span>
                                     <svg class="header__link-arrow" width="10" height="6">
                                         <use xlink:href="#icon-arrow-right-ad"></use>
@@ -83,7 +83,7 @@
                                 <div class="header__profile-tooltip">
                                     <ul class="header__profile-nav">
                                         <li class="header__profile-nav-item">
-                                            <a class="header__profile-nav-link" href="#">
+                                            <a class="header__profile-nav-link" href="/profile.php?user_id=<?= $current_user['id'] ? $current_user['id'] : '' ?>">
                           <span class="header__profile-nav-text">
                             Мой профиль
                           </span>

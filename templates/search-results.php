@@ -15,112 +15,30 @@
                         <?php foreach ($posts as $post): ?>
                             <article class="search__post post post-<?= $post['class'] ?>">
                                 <header class="post__header post__author">
-                                    <a class="post__author-link" href="#" title="Автор">
+                                    <a class="post__author-link" href="/profile.php?user_id=<?= $post['user_id']?>" title="Автор">
                                         <div class="post__avatar-wrapper">
                                             <img class="post__author-avatar" src="<?= $post['picture'] ?>"
                                                  alt="Аватар пользователя" width="60" height="60">
                                         </div>
                                         <div class="post__info">
                                             <b class="post__author-name"><?= $post['login'] ?></b>
-                                            <span class="post__time"><?= relative_date($post['date']) ?></span>
+                                            <span class="post__time"><?= get_relative_date($post['date']) ?> назад</span>
                                         </div>
                                     </a>
                                 </header>
                                 <div class="post__main">
-                                    <?php switch ($post['class']): ?><?php case TEXT: ?>
-                                        <h2>
-                                            <a href="/post.php?post_id=<?= $post['post_id'] ?>"><?= esc($post['title']) ?></a>
-                                        </h2>
-                                        <?php $post_content = $post['content'] ?>
-                                        <p>
-                                            <?= cut_text($post_content) ?>
-                                        </p>
-                                        <?php if ($post_content !== esc($post['content'])) : ?>
-                                            <a class="post-text__more-link"
-                                               href="/post.php?post_id=<?= $post['post_id'] ?>">Читать далее</a>
-                                        <?php endif; ?>
-                                        <?php break; ?>
-                                    <?php case VIDEO: ?>
-                                        <div class="post-video__block">
-                                            <div class="post-video__preview">
-                                                <?= embed_youtube_video(esc($post['video'])); ?>
-                                            </div>
-                                            <div class="post-video__control">
-                                                <button
-                                                    class="post-video__play post-video__play--paused button button--video"
-                                                    type="button"><span class="visually-hidden">Запустить видео</span>
-                                                </button>
-                                                <div class="post-video__scale-wrapper">
-                                                    <div class="post-video__scale">
-                                                        <div class="post-video__bar">
-                                                            <div class="post-video__toggle"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <button
-                                                    class="post-video__fullscreen post-video__fullscreen--inactive button button--video"
-                                                    type="button"><span
-                                                        class="visually-hidden">Полноэкранный режим</span>
-                                                </button>
-                                            </div>
-                                            <button class="post-video__play-big button" type="button">
-                                                <svg class="post-video__play-big-icon" width="27" height="28">
-                                                    <use xlink:href="#icon-video-play-big"></use>
-                                                </svg>
-                                                <span class="visually-hidden">Запустить проигрыватель</span>
-                                            </button>
-                                        </div>
-                                        <?php break; ?>
-                                    <?php case QUOTE: ?>
-                                        <blockquote>
-                                            <p>
-                                                <?= esc($post['content']) ?>
-                                            </p>
-                                            <cite><?= esc($post['author_quote']) ?></cite>
-                                        </blockquote>
-                                        <?php break; ?>
-                                    <?php case LINK: ?>
-                                        <div class="post-link__wrapper">
-                                            <a class="post-link__external" href="<?= esc($post['link']) ?>"
-                                               title="Перейти по ссылке">
-                                                <div class="post-link__icon-wrapper">
-                                                    <img
-                                                        src="https://www.google.com/s2/favicons?domain=<?= esc($post['link']) ?>"
-                                                        alt="Иконка">
-                                                </div>
-                                                <div class="post-link__info">
-                                                    <h3><?= esc($post['title']) ?></h3>
-                                                    <p></p>
-                                                    <span><?= esc($post['link']) ?></span>
-                                                </div>
-                                                <svg class="post-link__arrow" width="11" height="16">
-                                                    <use xlink:href="#icon-arrow-right-ad"></use>
-                                                </svg>
-                                            </a>
-                                        </div>
-                                        <?php break; ?>
-                                    <?php case PHOTO: ?>
-                                        <h2><a href="#"><?= esc($post['title']) ?></a></h2>
-                                        <div class="post-photo__image-wrapper">
-                                            <img src="<?= esc($post['img']) ?>" alt="Фото от пользователя" width="760"
-                                                 height="396">
-                                        </div>
-                                    <?php endswitch ?>
+                                    <?= include_template('post-card-main.php', [
+                                        'post' => $post
+                                    ]) ?>
                                 </div>
                                 <footer class="post__footer">
                                     <div class="post__indicators">
                                         <div class="post__buttons">
-                                            <a class="post__indicator post__indicator--likes button" href="#"
-                                               title="Лайк">
-                                                <svg class="post__indicator-icon" width="20" height="17">
-                                                    <use xlink:href="#icon-heart"></use>
+                                            <a class="post__indicator post__indicator--likes <?= $post['is_liked'] ? 'post__indicator--likes-active' : '' ?> button" href="/like.php?post_id=<?= $post['post_id'] ?>" title="Лайк">
+                                                <svg class="post__indicator-icon <?= $post['is_liked'] ? 'post__indicator-icon--like-active' : '' ?>" width="20" height="17">
+                                                    <use xlink:href="<?= $post['is_liked'] ? '#icon-heart-active' : '#icon-heart' ?>"></use>
                                                 </svg>
-                                                <svg class="post__indicator-icon post__indicator-icon--like-active"
-                                                     width="20"
-                                                     height="17">
-                                                    <use xlink:href="#icon-heart-active"></use>
-                                                </svg>
-                                                <span>250</span>
+                                                <span><?= $post['likes_count'] ?></span>
                                                 <span class="visually-hidden">количество лайков</span>
                                             </a>
                                             <a class="post__indicator post__indicator--comments button" href="#"

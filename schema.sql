@@ -37,6 +37,7 @@ CREATE TABLE comments (
 
 CREATE TABLE likes (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id INT REFERENCES users (id),
     post_id INT REFERENCES posts (post_id)
 );
