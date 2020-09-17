@@ -33,12 +33,12 @@ $profile_followers = get_followers($link, $profile_id);
 if (!empty($profile_followers)) {
     foreach ($profile_followers as $key => $follower) {
         $profile_followers[$key]['is_following'] = is_following($link, $current_user['id'], $follower['id']);
-        $profile_followers[$key]['is_current_user'] = ($current_user['id'] === $follower['id']) ? true : false;
+        $profile_followers[$key]['is_current_user'] = ($current_user['id'] === $follower['id']);
     }
 }
 
 $profile_data['is_following'] = is_following($link, $current_user['id'], $profile_id);
-$profile_data['is_current_user'] = ($current_user['id'] === $profile_id) ? true : false;
+$profile_data['is_current_user'] = ($current_user['id'] === $profile_id);
 
 if (!empty($posts)) {
     $posts_id = array_column($posts, 'post_id');
