@@ -593,7 +593,7 @@ function check_page_access()
  */
 function get_followers(mysqli $link, string $user_id)
 {
-    $sql = "SELECT subscriptions.*, users.id, registered, login, picture,
+    $sql = "SELECT subscriptions.*, users.id, users.registered, users.email, users.login, picture,
        (SELECT COUNT(post_id) FROM posts WHERE posts.user_id = subscriptions.follower_id) as posts_count,
        (SELECT COUNT(subscriptions.id) FROM subscriptions WHERE users.id = subscriptions.author_id) as followers_count
         FROM subscriptions

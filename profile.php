@@ -28,8 +28,6 @@ $posts = get_posts_by_parameters($link, ['user_id' => $profile_data['id']], $cur
 
 $profile_followers = get_followers($link, $profile_id);
 
-
-
 if (!empty($profile_followers)) {
     foreach ($profile_followers as $key => $follower) {
         $profile_followers[$key]['is_following'] = is_following($link, $current_user['id'], $follower['id']);
@@ -69,3 +67,4 @@ $layout = include_template('layout.php', [
 ]);
 
 print $layout;
+
