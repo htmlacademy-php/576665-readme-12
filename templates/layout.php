@@ -59,8 +59,8 @@
                             </a>
                         </li>
                         <li class="header__my-page header__my-page--messages">
-                            <a class="header__page-link <?= $_SERVER['PHP_SELF'] === '/message.php' ?
-                                'header__page-link--active' : ''; ?>" href="messages.html" title="Личные сообщения">
+                            <a class="header__page-link <?= $_SERVER['PHP_SELF'] === '/messages.php' ?
+                                'header__page-link--active' : ''; ?>" href="/messages.php" title="Личные сообщения">
                                 <span class="visually-hidden">Личные сообщения</span>
                             </a>
                         </li>

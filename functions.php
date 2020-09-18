@@ -631,6 +631,22 @@ function get_comments(mysqli $link, int $post_id)
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
+function get_messages(mysqli $link, int $user_id)
+{
+    $sql = "SELECT *
+    FROM messages
+    JOIN users on users.id = messages.user_sender_id
+    WHERE messages.user_sender_id = ? || messages.user_recipient_id = ?
+    ORDER BY date DESC";
+    $stmt = db_get_prepare_stmt($link, $sql, [$user_id]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
 /**
  * Checks whether user is follower of author or not
  * @param mysqli $link The MySQL connection
@@ -741,3 +757,4 @@ function comment_validate (string $comment)
     }
     return '';
 }
+
