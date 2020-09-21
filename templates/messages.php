@@ -24,7 +24,7 @@
               </a>
             </li>
             <li class="messages__contacts-item messages__contacts-item--new">
-              <a class="messages__contacts-tab tabs__item" href="#">
+              <a class="messages__contacts-tab tabs__item" href="">
                 <div class="messages__avatar-wrapper">
                   <img class="messages__avatar" src="../img/userpic-petro.jpg" alt="Аватар пользователя">
                   <i class="messages__indicator">2</i>
@@ -341,13 +341,13 @@
             </ul>
           </div>
           <div class="comments">
-            <form class="comments__form form" action="#" method="post">
+            <form class="comments__form form" action="/messages.php" method="post">
               <div class="comments__my-avatar">
-                <img class="comments__picture" src="../img/userpic-medium.jpg" alt="Аватар пользователя">
+                <img class="comments__picture" src="" alt="Аватар пользователя">
               </div>
               <div class="form__input-section form__input-section--error">
                 <textarea class="comments__textarea form__textarea form__input"
-                          placeholder="Ваше сообщение"></textarea>
+                          placeholder="Ваше сообщение" name="new_message"></textarea>
                 <label class="visually-hidden">Ваше сообщение</label>
                 <button class="form__error-button button" type="button">!</button>
                 <div class="form__error-text">

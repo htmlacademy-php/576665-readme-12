@@ -633,12 +633,17 @@ function get_comments(mysqli $link, int $post_id)
 
 function get_messages(mysqli $link, int $user_id)
 {
-    $sql = "SELECT *
-    FROM messages
-    JOIN users on users.id = messages.user_sender_id
-    WHERE messages.user_sender_id = ? || messages.user_recipient_id = ?
-    ORDER BY date DESC";
-    $stmt = db_get_prepare_stmt($link, $sql, [$user_id]);
+    $sql = "SELECT messages.*,
+       sender.login as sender_name,
+       sender.picture as sender_picture,
+       recipient.login as recipient_name,
+       recipient.picture as recipient_picture
+FROM messages
+JOIN users sender ON user_sender_id = sender.id
+JOIN users recipient ON user_recipient_id = recipient.id
+WHERE messages.user_sender_id = ? || messages.user_recipient_id = ?
+ORDER BY date ASC ";
+    $stmt = db_get_prepare_stmt($link, $sql, [$user_id, $user_id]);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     if (!$result) {
