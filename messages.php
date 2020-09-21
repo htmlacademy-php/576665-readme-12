@@ -16,43 +16,42 @@ foreach ($messages as $message) {
         if (!isset($contacts[$message['user_sender_id']])) {
             $contacts[$message['user_sender_id']] = array(
                 'name' => $message['sender_name'],
-                'picture' => $message['sender_picture']
-            );
-            $contacts_messages[$message['user_sender_id']] = array(
-                'message' => $message['content'],
-                'my_message' => false
-            );
-        } else {
-            $contacts_messages[$message['user_sender_id']][] = array(
-                'message' => $message['content'],
-                'my_message' => false
+                'picture' => $message['sender_picture'],
             );
         }
+        $contacts_messages[$message['user_sender_id']][] = array(
+            'message' => $message['content'],
+            'date' => $message['date'],
+            'my_message' => false,
+        );
+    }
 
-    } else {
+    if ($message['user_recipient_id'] !== $current_user['id']) {
         if (!isset($contacts[$message['user_recipient_id']])) {
             $contacts[$message['user_recipient_id']] = array(
                 'name' => $message['recipient_name'],
-                'picture' => $message['recipient_picture']
-            );
-            $contacts_messages[$message['user_recipient_id']] = array(
-                'message' => $message['content'],
-                'my_message' => true
-            );
-        } else {
-            $contacts_messages[$message['user_recipient_id']][] = array(
-                'message' => $message['content'],
-                'my_message' => true
+                'picture' => $message['recipient_picture'],
             );
         }
-
+        $contacts_messages[$message['user_recipient_id']][] = array(
+            'message' => $message['content'],
+            'date' => $message['date'],
+            'my_message' => true,
+        );
+    }
+}
+foreach ($contacts as $contact_id => $contact) {
+    $contact['last_message'] = '';
+    if (!empty($contacts_messages[$contact_id])) {
+        $last_message_key = array_key_last($contacts_messages[$contact_id]);
+        $contacts[$contact_id]['last_message'] = $contacts_messages[$contact_id][$last_message_key];
     }
 }
     var_dump($messages);
     var_dump($contacts);
     var_dump($contacts_messages);
-exit();
-$message_to = filter_input(INPUT_GET, 'message_to', FILTER_VALIDATE_INT) ?? 5;
+
+$current_contact = filter_input(INPUT_GET, 'message_to', FILTER_VALIDATE_INT) ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_message = filter_input(INPUT_POST, 'new_message', FILTER_DEFAULT);
@@ -69,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = db_get_prepare_stmt($link, $sql, [
             $new_message,
             $current_user['id'],
-            $message_to
+            $current_contact
         ]);
     }
     $result = mysqli_stmt_execute($stmt);
@@ -79,7 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $page_content = include_template('messages.php', [
-    'current_user' => $current_user
+    'current_user' => $current_user,
+    'current_contact' => $current_contact,
+    'contacts' => $contacts,
+    'contacts_messages' => $contacts_messages
 ]);
 
 $layout = include_template('layout.php', [
