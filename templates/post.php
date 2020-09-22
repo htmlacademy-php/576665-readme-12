@@ -124,12 +124,15 @@
                             </span>
                         </p>
                     </div>
-                    <div class="post-details__user-buttons user__buttons">
-                        <a class="user__button user__button--subscription button <?= $author_data['is_following'] ? 'button--quartz' : 'button--main'?>" href="/subscription.php?author_id=<?= $author_data['id']?>">
-                            <?= $author_data['is_following'] ? 'Отписаться' : 'Подписаться'?>
-                        </a>
-                        <a class="user__button user__button--writing button button--green" href="#">Сообщение</a>
-                    </div>
+                    <?php if ($author_data['id'] !== $current_user['id']): ?>
+                        <div class="post-details__user-buttons user__buttons">
+                            <a class="user__button user__button--subscription button <?= $author_data['is_following'] ? 'button--quartz' : 'button--main' ?>"
+                               href="/subscription.php?author_id=<?= $author_data['id'] ?>">
+                                <?= $author_data['is_following'] ? 'Отписаться' : 'Подписаться' ?>
+                            </a>
+                            <a class="user__button user__button--writing button button--green" href="#">Сообщение</a>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </section>

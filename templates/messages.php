@@ -14,14 +14,14 @@
                                          alt="Аватар пользователя">
                                 </div>
                                 <div class="messages__info">
-                                    <span class="messages__contact-name"><?= $contact['name'] ?></span>
+                                    <span class="messages__contact-name"><?= $contact['login'] ?></span>
                                     <div class="messages__preview">
                                         <p class="messages__preview-text">
-                                            <?= !empty($contact['last_message']) ? esc(cut_text($contact['last_message']['message'],
+                                            <?= !empty($contact['last_message']) ? esc(cut_text($contact['last_message']['content'],
                                                 20)) : '' ?>
                                         </p>
                                         <time class="messages__preview-time"
-                                              datetime="<?= $contact['last_message']['date'] ?>">
+                                              datetime="<?= $contact['last_message']['date'] ?? '' ?>">
                                             14:40
                                         </time>
                                     </div>
@@ -38,25 +38,25 @@
                     <?php foreach ($contacts_messages as $contact_id => $chat): ?>
                         <ul class="messages__list tabs__content <?= $current_contact === $contact_id ? 'tabs__content--active' : '' ?>">
                             <?php foreach ($chat as $key => $message): ?>
-                                <li class="messages__item <?= $message['my_message'] ? 'messages__item--my' : '' ?>">
+                                <li class="messages__item <?= $message['user_sender_id'] === $current_user['id'] ? 'messages__item--my' : '' ?>">
                                     <div class="messages__info-wrapper">
                                         <div class="messages__item-avatar">
                                             <a class="messages__author-link" href="#">
-                                                <img class="messages__avatar" src="../img/userpic-larisa-small.jpg"
+                                                <img class="messages__avatar" src="<?= $message['sender_picture']?>"
                                                      alt="Аватар пользователя">
                                             </a>
                                         </div>
                                         <div class="messages__item-info">
-                                            <a class="messages__author" href="#">
-                                                Лариса Роговая
+                                            <a class="messages__author" href="/profile.php?user_id="<?= $message['user_sender_id'] ?>>
+                                                <?= $message['sender_name']?>
                                             </a>
-                                            <time class="messages__time" datetime="2019-05-01T14:40">
-                                                1 ч назад
+                                            <time class="messages__time" datetime="<?= $message['date'] ?>">
+                                                <?= get_relative_date($message['date'])?>
                                             </time>
                                         </div>
                                     </div>
                                     <p class="messages__text">
-                                        <?= $message['message'] ?>
+                                        <?= $message['content'] ?>
                                     </p>
                                 </li>
                             <?php endforeach; ?>
@@ -67,11 +67,11 @@
             <div class="comments">
                 <form class="comments__form form" action="/messages.php" method="post">
                     <div class="comments__my-avatar">
-                        <img class="comments__picture" src="" alt="Аватар пользователя">
+                        <img class="comments__picture" src="<?= $current_user['picture']?>" alt="Аватар пользователя">
                     </div>
                     <div class="form__input-section <?= !empty($errors) ? 'form__input-section--error' : '' ?> ">
                         <textarea class="comments__textarea form__textarea form__input"
-                          placeholder="Ваше сообщение" name="new_message"></textarea>
+                          placeholder="Ваше сообщение" name="content"><?= $new_message['content'] ?? ''?></textarea>
                         <input type="hidden" name="recipient_id" value="<?= $current_contact ?? '' ?>">
                         <label class="visually-hidden">Ваше сообщение</label>
                         <button class="form__error-button button" type="button">!</button>

@@ -12,35 +12,37 @@ $messages = get_messages($link, $current_user['id']);
 $contacts = [];
 $contacts_messages = [];
 
+$current_contact = isset($_GET['contact_id'])
+    ? filter_input(INPUT_GET, 'contact_id', FILTER_VALIDATE_INT)
+    : filter_input(INPUT_POST, 'recipient_id', FILTER_VALIDATE_INT);
+
+    if ($current_contact !== null && !is_user_exist($link, $current_contact, 'id')) {
+       header('HTTP/1.0 404 Not Found');
+       exit();
+   }
+
 foreach ($messages as $message) {
     if ($message['user_sender_id'] !== $current_user['id']) {
         if (!isset($contacts[$message['user_sender_id']])) {
             $contacts[$message['user_sender_id']] = array(
-                'name' => $message['sender_name'],
+                'login' => $message['sender_name'],
                 'picture' => $message['sender_picture'],
             );
         }
-        $contacts_messages[$message['user_sender_id']][] = array(
-            'message' => $message['content'],
-            'date' => $message['date'],
-            'my_message' => false,
-        );
+        $contacts_messages[$message['user_sender_id']][] = $message;
     }
 
     if ($message['user_recipient_id'] !== $current_user['id']) {
         if (!isset($contacts[$message['user_recipient_id']])) {
             $contacts[$message['user_recipient_id']] = array(
-                'name' => $message['recipient_name'],
+                'login' => $message['recipient_name'],
                 'picture' => $message['recipient_picture'],
             );
         }
-        $contacts_messages[$message['user_recipient_id']][] = array(
-            'message' => $message['content'],
-            'date' => $message['date'],
-            'my_message' => true,
-        );
+        $contacts_messages[$message['user_recipient_id']][] = $message;
     }
 }
+
 foreach ($contacts as $contact_id => $contact) {
     $contact['last_message'] = '';
     if (!empty($contacts_messages[$contact_id])) {
@@ -49,38 +51,36 @@ foreach ($contacts as $contact_id => $contact) {
     }
 }
 
-$current_contact = filter_input(INPUT_GET, 'contact_id', FILTER_VALIDATE_INT) ?? '';
+if (empty($current_contact)) {
+    $current_contact = array_key_first($contacts);
+}
+
+if (!in_array($current_contact, $contacts)) {
+    $contacts[$current_contact] = get_user_data($link, $current_contact);
+}
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $new_message = filter_input_array(INPUT_POST, [
-        'content' => FILTER_DEFAULT,
-        'recipient_id' => FILTER_VALIDATE_INT
-    ] , true);
-    $recipient_id = filter_input(INPUT_POST, 'recipient_id', FILTER_VALIDATE_INT);
-    $new_message['content'] = trim($new_message['content']);
+    $new_message['content'] = trim(filter_input(INPUT_POST, 'content', FILTER_DEFAULT));
     $rules = [
-        'content' => function($value) {
-        return check_emptiness($value);
+        'content' => function ($value) {
+            return check_emptiness($value);
         },
-        'recipient_id' => function($value) {
-        return is_user_exist($link, $value)===false ? 'Такой пользователь не существует' : '';
-    }
     ];
+    $errors['recipient_id'] = !is_user_exist($link, $current_contact, 'id') || $current_contact === $current_user_id ? 'Невозможно отправить сообщение этому пользователю' : '';
     $errors = check_data_by_rules($new_message, $rules);
-    var_dump($errors);
-
     if (empty($errors)) {
         $sql = 'INSERT INTO messages (content, user_sender_id, user_recipient_id) VALUES (?, ?, ?)';
         $stmt = db_get_prepare_stmt($link, $sql, [
-            $new_message,
+            $new_message['content'],
             $current_user_id,
-            $recipient_id
+            $current_contact
         ]);
         $result = mysqli_stmt_execute($stmt);
         if (!$result) {
             exit ('error' . mysqli_error($link));
         }
-        header("Location: /messages.php?contact_id=" . $recipient_id);
+        header("Location: /messages.php?contact_id=" . $current_contact);
         exit ();
     }
 }
@@ -90,6 +90,7 @@ $page_content = include_template('messages.php', [
     'current_contact' => $current_contact,
     'contacts' => $contacts,
     'contacts_messages' => $contacts_messages,
+    'new_message' => $new_message ?? '',
     'errors' => $errors ?? ''
 ]);
 
