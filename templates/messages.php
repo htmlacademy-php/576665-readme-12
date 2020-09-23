@@ -12,6 +12,9 @@
                                 <div class="messages__avatar-wrapper">
                                     <img class="messages__avatar" src="<?= $contact['picture'] ?>"
                                          alt="Аватар пользователя">
+                                    <?php if (isset($contact['unread_count']) && $contact['unread_count'] !== 0): ?>
+                                        <i class="messages__indicator"><?= $contact['unread_count'] ?></i>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="messages__info">
                                     <span class="messages__contact-name"><?= $contact['login'] ?></span>
@@ -21,8 +24,8 @@
                                                 20)) : '' ?>
                                         </p>
                                         <time class="messages__preview-time"
-                                              datetime="<?= $contact['last_message']['date'] ?? '' ?>">
-                                            14:40
+                                              datetime="<?= !empty($contact['last_message']) ?  $contact['last_message']['date'] : '' ?>">
+                                            <?= !empty($contact['last_message']) ? get_relative_date($contact['last_message']['date']) : '' ?>
                                         </time>
                                     </div>
                                 </div>
@@ -62,8 +65,8 @@
                             <?php endforeach; ?>
                         </ul>
                     <?php endforeach; ?>
-                <?php endif; ?>
             </div>
+            <?php endif; ?>
             <div class="comments">
                 <form class="comments__form form" action="/messages.php" method="post">
                     <div class="comments__my-avatar">

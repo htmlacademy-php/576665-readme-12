@@ -8,57 +8,74 @@ check_page_access();
 
 $current_user = $_SESSION['user'];
 $current_user_id = (int)$current_user['id'];
-$messages = get_messages($link, $current_user['id']);
-$contacts = [];
-$contacts_messages = [];
+$messages = get_messages($link, $current_user['id']); //массив всех сообщений, где получателем или отправителем является текущий пользователь
+$contacts = []; //список всех собеседников
+$contacts_messages = []; //массив, где ключ - айди собеседника, значение - массив сообщений (переписка)
 
-$current_contact = isset($_GET['contact_id'])
+$current_contact = isset($_GET['contact_id']) //текущий собеседник
     ? filter_input(INPUT_GET, 'contact_id', FILTER_VALIDATE_INT)
     : filter_input(INPUT_POST, 'recipient_id', FILTER_VALIDATE_INT);
 
-    if ($current_contact !== null && !is_user_exist($link, $current_contact, 'id')) {
-       header('HTTP/1.0 404 Not Found');
-       exit();
-   }
 
-foreach ($messages as $message) {
-    if ($message['user_sender_id'] !== $current_user['id']) {
-        if (!isset($contacts[$message['user_sender_id']])) {
-            $contacts[$message['user_sender_id']] = array(
-                'login' => $message['sender_name'],
-                'picture' => $message['sender_picture'],
-            );
-        }
-        $contacts_messages[$message['user_sender_id']][] = $message;
-    }
-
-    if ($message['user_recipient_id'] !== $current_user['id']) {
-        if (!isset($contacts[$message['user_recipient_id']])) {
-            $contacts[$message['user_recipient_id']] = array(
-                'login' => $message['recipient_name'],
-                'picture' => $message['recipient_picture'],
-            );
-        }
-        $contacts_messages[$message['user_recipient_id']][] = $message;
-    }
+if ($current_contact !== null && !is_user_exist($link, $current_contact, 'id')) {
+    header('HTTP/1.0 404 Not Found');
+    exit();
 }
 
-foreach ($contacts as $contact_id => $contact) {
-    $contact['last_message'] = '';
-    if (!empty($contacts_messages[$contact_id])) {
-        $last_message_key = array_key_last($contacts_messages[$contact_id]);
-        $contacts[$contact_id]['last_message'] = $contacts_messages[$contact_id][$last_message_key];
-    }
-}
-
-if (empty($current_contact)) {
-    $current_contact = array_key_first($contacts);
-}
-
-if (!in_array($current_contact, $contacts)) {
+if (!empty($current_contact)) {
     $contacts[$current_contact] = get_user_data($link, $current_contact);
 }
+//если открыта вкладка собеседника, то все входящие сообщения обретают статус просмотреных
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $sql = 'UPDATE messages SET viewed = 1 WHERE user_recipient_id = ? AND user_sender_id = ?';
+    $stmt = db_get_prepare_stmt($link, $sql, [$current_user_id, $current_contact]);
+    $result = mysqli_stmt_execute($stmt);
+    if (!$result) {
+        exit ('error'.mysqli_error($link));
+    }
+}
 
+//создает массив собеседников $contacts, где ключ - айди собеседника, значение - массив данных собеседника
+// и массив сообщений $contacts_messages, где ключ - айди собеседника, значение - массив сообщений (переписка с собеседником)
+if (!empty($messages)) {
+    foreach ($messages as $message) {
+        if ($message['user_sender_id'] !== $current_user['id']) {
+            if (!isset($contacts[$message['user_sender_id']])) {
+                $contacts[$message['user_sender_id']] = array(
+                    'login' => $message['sender_name'],
+                    'picture' => $message['sender_picture'],
+                );
+            }
+            $contacts_messages[$message['user_sender_id']][] = $message;
+        }
+
+        if ($message['user_recipient_id'] !== $current_user['id']) {
+            if (!isset($contacts[$message['user_recipient_id']])) {
+                $contacts[$message['user_recipient_id']] = array(
+                    'login' => $message['recipient_name'],
+                    'picture' => $message['recipient_picture'],
+                );
+            }
+            $contacts_messages[$message['user_recipient_id']][] = $message;
+        }
+    }
+    //добавляет каждому элементу массива собеседника данные последнего сообщения в переписке (для вывода на вкладку собеседника)
+    //и количество непрочитанных сообщений
+    foreach ($contacts as $contact_id => $contact) {
+        $contact['last_message'] = '';
+        if (!empty($contacts_messages[$contact_id])) {
+            $last_message_key = array_key_last($contacts_messages[$contact_id]);
+            $contacts[$contact_id]['last_message'] = $contacts_messages[$contact_id][$last_message_key];
+            $contacts[$contact_id]['unread_count'] = get_unread_messages_count($link, $contact_id, $current_user_id);
+        }
+    }
+    //получает общее количество непрочинанных сообщений
+    $total_unread_messages = array_sum(array_column($contacts, 'unread_count'));
+    //если нет активного собеседника (перешли по ссылке в меню, например), то активной окажется первая первая вкладка
+    if (!empty($contacts) && empty($current_contact)) {
+        $current_contact = array_key_first($contacts);
+    }
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_message['content'] = trim(filter_input(INPUT_POST, 'content', FILTER_DEFAULT));
@@ -97,7 +114,8 @@ $page_content = include_template('messages.php', [
 $layout = include_template('layout.php', [
     'current_user' => $current_user,
     'content' => $page_content,
-    'title' =>  'readme: мой профиль'
+    'title' =>  'readme: мой профиль',
+    'total_unread_messages' => $total_unread_messages ?? ''
 ]);
 
 print $layout;

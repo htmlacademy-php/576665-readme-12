@@ -763,3 +763,15 @@ function comment_validate (string $comment)
     return '';
 }
 
+function get_unread_messages_count($link, int $sender_id, int $current_user_id)
+{
+   $sql = "SELECT messages.* FROM messages WHERE user_sender_id = ? AND user_recipient_id = ? AND viewed = 0";
+    $stmt = db_get_prepare_stmt($link, $sql, [$sender_id, $current_user_id]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+    return mysqli_num_rows($result);
+}
+
