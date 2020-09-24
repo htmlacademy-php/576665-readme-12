@@ -21,7 +21,7 @@ if ($current_contact !== null && !is_user_exist($link, $current_contact, 'id')) 
     header('HTTP/1.0 404 Not Found');
     exit();
 }
-
+//если линк не содержит запрос (переход на страницу из меню юзера)
 if (!empty($current_contact)) {
     $contacts[$current_contact] = get_user_data($link, $current_contact);
 }
@@ -59,7 +59,7 @@ if (!empty($messages)) {
             $contacts_messages[$message['user_recipient_id']][] = $message;
         }
     }
-    //добавляет каждому элементу массива собеседника данные последнего сообщения в переписке (для вывода на вкладку собеседника)
+    //добавляет каждому элементу массива собеседников $contacts данные последнего сообщения в переписке (для вывода на вкладку собеседника)
     //и количество непрочитанных сообщений
     foreach ($contacts as $contact_id => $contact) {
         $contact['last_message'] = '';
@@ -71,9 +71,11 @@ if (!empty($messages)) {
     }
     //получает общее количество непрочинанных сообщений
     $total_unread_messages = array_sum(array_column($contacts, 'unread_count'));
-    //если нет активного собеседника (перешли по ссылке в меню, например), то активной окажется первая первая вкладка
+
+    //если нет активного собеседника (перешли по ссылке в меню, например), то активной окажется первая вкладка
     if (!empty($contacts) && empty($current_contact)) {
         $current_contact = array_key_first($contacts);
+        header('Location:messages.php?contact_id=' .  $current_contact);
     }
 }
 

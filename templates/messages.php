@@ -67,29 +67,33 @@
                     <?php endforeach; ?>
             </div>
             <?php endif; ?>
-            <div class="comments">
-                <form class="comments__form form" action="/messages.php" method="post">
-                    <div class="comments__my-avatar">
-                        <img class="comments__picture" src="<?= $current_user['picture']?>" alt="Аватар пользователя">
-                    </div>
-                    <div class="form__input-section <?= !empty($errors) ? 'form__input-section--error' : '' ?> ">
+            <?php if (!empty($contacts)): ?>
+                <div class="comments">
+                    <form class="comments__form form" action="/messages.php" method="post">
+                        <div class="comments__my-avatar">
+                            <img class="comments__picture" src="<?= $current_user['picture'] ?>"
+                                 alt="Аватар пользователя">
+                        </div>
+                        <div class="form__input-section <?= !empty($errors) ? 'form__input-section--error' : '' ?> ">
                         <textarea class="comments__textarea form__textarea form__input"
-                          placeholder="Ваше сообщение" name="content"><?= $new_message['content'] ?? ''?></textarea>
-                        <input type="hidden" name="recipient_id" value="<?= $current_contact ?? '' ?>">
-                        <label class="visually-hidden">Ваше сообщение</label>
-                        <button class="form__error-button button" type="button">!</button>
-                        <?php if (!empty($errors)): ?>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title">Ошибка валидации</h3>
-                                <?php foreach ($errors as $error): ?>
-                                    <p class="form__error-desc"><?= $error ?></p>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                    <button class="comments__submit button button--green" type="submit">Отправить</button>
-                </form>
-            </div>
+                                  placeholder="Ваше сообщение"
+                                  name="content"><?= $new_message['content'] ?? '' ?></textarea>
+                            <input type="hidden" name="recipient_id" value="<?= $current_contact ?? '' ?>">
+                            <label class="visually-hidden">Ваше сообщение</label>
+                            <button class="form__error-button button" type="button">!</button>
+                            <?php if (!empty($errors)): ?>
+                                <div class="form__error-text">
+                                    <h3 class="form__error-title">Ошибка валидации</h3>
+                                    <?php foreach ($errors as $error): ?>
+                                        <p class="form__error-desc"><?= $error ?></p>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        <button class="comments__submit button button--green" type="submit">Отправить</button>
+                    </form>
+                </div>
+            <?php endif; ?>
         </div>
     </section>
 </main>
