@@ -23,7 +23,6 @@ if (is_following($link, $current_user['id'], $author_id)) {
         ->setFrom(['keks@phpdemo.ru' => 'readme'])
         ->setTo([$author['email'] => $author['login']])
         ->setBody('Здравствуйте, ' . $author['login'] . '. На вас подписался новый пользователь ' . $current_user['login'] . '. Вот ссылка на его профиль: http://576665-readme-12/profile.php?user_id=' . $current_user['id']);
-    ;
     $result = $mailer->send($message);
 
 }
@@ -32,3 +31,4 @@ mysqli_stmt_execute($stmt);
 
 header("Location: {$_SERVER['HTTP_REFERER']}");
 exit();
+

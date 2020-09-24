@@ -193,6 +193,7 @@ function link_validate(string $link_value)
     } elseif (!filter_var($link_value, FILTER_VALIDATE_URL)) {
         return "Значение не является ссылкой";
     }
+    return '';
 }
 
 /**
@@ -344,6 +345,7 @@ function get_tag_id(mysqli $link, string $tag, array $tags)
  */
 function create_post_tag_sql(mysqli $link, int $post_id, array $tags_id)
 {
+    $request_values = [];
     foreach ($tags_id as $item) {
         $request_values[] = "({$post_id}, {$item})";
     }
@@ -485,6 +487,7 @@ function get_user_data(mysqli $link,  int $user_id)
  * Select posts by values of parameters
  * @param mysqli $link The MySQL connection
  * @param array $params The array as keys is parameters and values is string of required values
+ * @param int $current_user_id User's ID
  * @param string $order_by The field on which the sorting is to be performed, the default is 'date'
  * @param string $order The sorting order, the default is 'DESC'
  * @param int|null $limit The number of posts to be returned, the default is null
@@ -537,8 +540,6 @@ function get_posts_by_parameters (mysqli $link, array $params, int $current_user
  */
 function get_posts_count (mysqli $link, array $params)
 {
-
-    $foo = count($params);
     $sql = "SELECT posts.* FROM posts ";
 
     $conditions = [];
@@ -587,7 +588,7 @@ function check_page_access()
 /**
  * Returns the data of users who follow the user by user_id
  * @param mysqli $link The MySQL connection
- * @param string $user_id User ID
+ * @param string $user_id User's ID
  *
  * @return array The array data of users who follow the user
  */
@@ -631,18 +632,25 @@ function get_comments(mysqli $link, int $post_id)
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
+/**
+ * Returns array of messages
+ * @param mysqli $link The MySQL connection
+ * @param int $user_id The user's ID
+ *
+ * @return array The array of messages where user is sender or recipient
+ */
 function get_messages(mysqli $link, int $user_id)
 {
     $sql = "SELECT messages.*,
-       sender.login as sender_name,
-       sender.picture as sender_picture,
-       recipient.login as recipient_name,
-       recipient.picture as recipient_picture
-FROM messages
-JOIN users sender ON user_sender_id = sender.id
-JOIN users recipient ON user_recipient_id = recipient.id
-WHERE messages.user_sender_id = ? || messages.user_recipient_id = ?
-ORDER BY date ASC ";
+        sender.login as sender_name,
+        sender.picture as sender_picture,
+        recipient.login as recipient_name,
+        recipient.picture as recipient_picture FROM messages
+        JOIN users sender ON user_sender_id = sender.id
+        JOIN users recipient ON user_recipient_id = recipient.id
+        WHERE messages.user_sender_id = ? || messages.user_recipient_id = ?
+        ORDER BY messages.date";
+
     $stmt = db_get_prepare_stmt($link, $sql, [$user_id, $user_id]);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
@@ -763,7 +771,13 @@ function comment_validate (string $comment)
     return '';
 }
 
-function get_unread_messages_count($link, int $sender_id, int $current_user_id)
+/**
+ * @param mysqli $link The MySQL connection
+ * @param int $sender_id The sender's ID
+ * @param int $current_user_id The recipient's ID
+ * @return int The unread messages count
+ */
+function get_unread_messages_count(mysqli $link, int $sender_id, int $current_user_id)
 {
    $sql = "SELECT messages.* FROM messages WHERE user_sender_id = ? AND user_recipient_id = ? AND viewed = 0";
     $stmt = db_get_prepare_stmt($link, $sql, [$sender_id, $current_user_id]);

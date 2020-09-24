@@ -22,7 +22,7 @@ if (isset($_GET['post_id'])) {
     $post = call_user_func_array('array_merge', $post);
 
     $view_count = ++$post['view_count'];
-    mysqli_query($link, "UPDATE posts SET posts.view_count = {$view_count}");
+    mysqli_query($link, "UPDATE posts SET posts.view_count = {$view_count} WHERE posts.post_id = {$post_id}");
 
     $author_data = get_user_data($link, $post['user_id']);
     $author_data['is_following'] = is_following($link, $current_user['id'], $author_data['id']);
@@ -65,7 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: /profile.php?user_id=' . $author_data['id']);
         exit();
     }
-
 }
 
 $comments = get_comments($link, $post_id);

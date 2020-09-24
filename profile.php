@@ -13,7 +13,7 @@ $profile_id = filter_input(INPUT_GET, 'user_id', FILTER_VALIDATE_INT);
 if (empty($profile_id)) {
     header("HTTP/1.0 404 Not Found");
     exit ();
-};
+}
 
 $current_tab = isset($_GET['tab']) ? filter_input(INPUT_GET, 'tab', FILTER_DEFAULT) : 'posts';
 
@@ -22,7 +22,7 @@ $profile_data = get_user_data($link, (int)$profile_id);
 if (empty($profile_data)) {
     header("HTTP/1.0 404 Not Found");
     exit ();
-};
+}
 
 $posts = get_posts_by_parameters($link, ['user_id' => $profile_data['id']], $current_user['id']);
 

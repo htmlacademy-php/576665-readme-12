@@ -75,11 +75,12 @@
                                  alt="Аватар пользователя">
                         </div>
                         <div class="form__input-section <?= !empty($errors) ? 'form__input-section--error' : '' ?> ">
-                        <textarea class="comments__textarea form__textarea form__input"
+                            <textarea class="comments__textarea form__textarea form__input" id="comment"
                                   placeholder="Ваше сообщение"
-                                  name="content"><?= $new_message['content'] ?? '' ?></textarea>
+                                  name="content"><?= $new_message['content'] ?? '' ?>
+                            </textarea>
+                            <label for="comment" class="visually-hidden">Ваше сообщение</label>
                             <input type="hidden" name="recipient_id" value="<?= $current_contact ?? '' ?>">
-                            <label class="visually-hidden">Ваше сообщение</label>
                             <button class="form__error-button button" type="button">!</button>
                             <?php if (!empty($errors)): ?>
                                 <div class="form__error-text">
