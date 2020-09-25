@@ -37,10 +37,10 @@
         </div>
         <div class="messages__chat">
             <div class="messages__chat-wrapper">
-                <?php if (!empty($contacts_messages)): ?>
-                    <?php foreach ($contacts_messages as $contact_id => $chat): ?>
+                <?php if (!empty($conversations)): ?>
+                    <?php foreach ($conversations as $contact_id => $conversation): ?>
                         <ul class="messages__list tabs__content <?= $current_contact === $contact_id ? 'tabs__content--active' : '' ?>">
-                            <?php foreach ($chat as $key => $message): ?>
+                            <?php foreach ($conversation as $key => $message): ?>
                                 <li class="messages__item <?= $message['user_sender_id'] === $current_user['id'] ? 'messages__item--my' : '' ?>">
                                     <div class="messages__info-wrapper">
                                         <div class="messages__item-avatar">
