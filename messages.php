@@ -12,7 +12,7 @@ $current_user = $_SESSION['user'];
 $current_user_id = (int)$current_user['id'];
 $messages = get_messages($link, $current_user['id']); //массив всех сообщений, где получателем или отправителем является текущий пользователь
 $contacts = []; //список всех собеседников
-$conversations = []; //массив, где ключ - айди собеседника, значение - массив сообщений (переписка)
+$conversations = []; //массив диалогов, где ключ - айди собеседника
 
 $current_contact = isset($_GET['contact_id']) //текущий собеседник
     ? filter_input(INPUT_GET, 'contact_id', FILTER_VALIDATE_INT)
@@ -61,6 +61,7 @@ if (!empty($messages)) {
             $conversations[$message['user_recipient_id']][] = $message;
         }
     }
+
     //добавляет каждому элементу массива собеседников $contacts данные последнего сообщения в переписке (для вывода на вкладку собеседника)
     //и количество непрочитанных сообщений
     foreach ($contacts as $contact_id => $contact) {
@@ -68,10 +69,7 @@ if (!empty($messages)) {
         if (!empty($conversations[$contact_id])) {
             $last_message_key = array_key_last($conversations[$contact_id]);
             $contacts[$contact_id]['last_message'] = $conversations[$contact_id][$last_message_key];
-//            $contacts[$contact_id]['unread_count'] = get_unread_messages_count($link, $contact_id, $current_user_id);
-            $contacts[$contact_id]['unread_count'] = array_count_values(array_column($conversations[$contact_id], 'viewed'))['0'] ?? 0;
-            var_dump(array_column($conversations[$contact_id], 'viewed'));
-            var_dump($contacts[$contact_id]['unread_count']);
+            $contacts[$contact_id]['unread_count'] = get_unread_messages_count($link, $contact_id, $current_user_id);
         }
     }
     //получает общее количество непрочинанных сообщений
@@ -126,3 +124,4 @@ $layout = include_template('layout.php', [
 ]);
 
 print $layout;
+
