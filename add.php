@@ -3,6 +3,8 @@
 require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
+require_once 'db_requests.php';
+require_once 'validation.php';
 require_once 'mail.php';
 require_once 'vendor/autoload.php';
 
