@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ->setFrom(['keks@phpdemo.ru' => 'readme'])
                 ->setTo([$follower['email'] => $follower['login']])
                 ->setBody("Здравствуйте, {$follower['login']}. Пользователь {$current_user['login']} только что опубликовал новую запись: {$new_post['title']}. Посмотрите её на странице пользователя: http://576665-readme-12/profile.php?user_id={$current_user['id']}");
-            $result = $mailer->send($message);
+            $mailer->send($message);
         }
 
         header('Location: /post.php?post_id=' . $post_id);
