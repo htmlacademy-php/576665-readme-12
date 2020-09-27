@@ -128,10 +128,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $followers = get_followers($link, $current_user['id']);
 
         foreach ($followers as $follower) {
-            $message = (new Swift_Message('Новая публикация от пользователя ' . $current_user['id']))
+            $message = (new Swift_Message("Новая публикация от пользователя {$current_user['login']}"))
                 ->setFrom(['keks@phpdemo.ru' => 'readme'])
                 ->setTo([$follower['email'] => $follower['login']])
-                ->setBody('Здравствуйте, ' . $follower['login'] . '. Пользователь ' . $current_user['login'] . ' только что опубликовал новую запись: "' . $new_post['title'] .  '". Посмотрите её на странице пользователя: http://576665-readme-12/profile.php?user_id=' . $current_user['id']);
+                ->setBody("Здравствуйте, {$follower['login']}. Пользователь {$current_user['login']} только что опубликовал новую запись: {$new_post['title']}. Посмотрите её на странице пользователя: http://576665-readme-12/profile.php?user_id={$current_user['id']}");
             $result = $mailer->send($message);
         }
 
