@@ -67,8 +67,7 @@ if (!empty($messages)) {
     foreach ($contacts as $contact_id => $contact) {
         $contact['last_message'] = '';
         if (!empty($conversations[$contact_id])) {
-            $last_message_key = array_key_last($conversations[$contact_id]);
-            $contacts[$contact_id]['last_message'] = $conversations[$contact_id][$last_message_key];
+            $contacts[$contact_id]['last_message'] = $conversations[$contact_id][count($conversations[$contact_id]) - 1];
             $contacts[$contact_id]['unread_count'] = get_unread_messages_count($link, $contact_id, $current_user_id);
         }
     }
