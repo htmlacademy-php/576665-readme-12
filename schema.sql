@@ -48,12 +48,14 @@ CREATE TABLE subscriptions (
     follower_id INT REFERENCES users (id)
 );
 
-CREATE TABLE massages (
+CREATE TABLE messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     content TEXT,
+    viewed BOOLEAN DEFAULT FALSE,
     user_sender_id INT REFERENCES users (id),
     user_recipient_id INT REFERENCES users (id)
+
 );
 
 CREATE TABLE tags (

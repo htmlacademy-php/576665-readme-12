@@ -4,6 +4,7 @@
 require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
+require_once 'db_requests.php';
 
 $current_user_id = $_SESSION['user']['id'];
 

@@ -3,6 +3,7 @@
 require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
+require_once 'validation.php';
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -28,14 +28,16 @@
                     <a class="header__user-button header__authorization-button button" href="/index.php">Вход</a>
                 </li>
                 <li>
-                    <a class="header__user-button header__user-button--active header__register-button button" href="/registration.php">Регистрация</a>
+                    <a class="header__user-button header__user-button--active header__register-button button"
+                       href="/registration.php">Регистрация</a>
                 </li>
             </ul>
         <?php else: ?>
         <form class="header__search-form form" action="/search.php" method="get">
             <div class="header__search">
                 <label class="visually-hidden">Поиск</label>
-                <input class="header__search-input form__input" type="search" name="q" value="<?= !empty($search_query) ? esc($search_query) : ''?>">
+                <input class="header__search-input form__input" type="search" name="q"
+                       value="<?= !empty($search_query) ? esc($search_query) : '' ?>">
                 <button class="header__search-button button" type="submit">
                     <svg class="header__search-icon" width="18" height="18">
                         <use xlink:href="#icon-search"></use>
@@ -45,75 +47,83 @@
             </div>
         </form>
         <div class="header__nav-wrapper">
-                <nav class="header__nav">
-                    <ul class="header__my-nav">
-                        <li class="header__my-page header__my-page--popular">
-                            <a class="header__page-link header__page-link--active" href="/popular.php" title="Популярный контент">
-                                <span class="visually-hidden">Популярный контент</span>
-                            </a>
-                        </li>
-                        <li class="header__my-page header__my-page--feed">
-                            <a class="header__page-link" href="/feed.php" title="Моя лента">
-                                <span class="visually-hidden">Моя лента</span>
-                            </a>
-                        </li>
-                        <li class="header__my-page header__my-page--messages">
-                            <a class="header__page-link" href="messages.html" title="Личные сообщения">
-                                <span class="visually-hidden">Личные сообщения</span>
-                            </a>
-                        </li>
-                    </ul>
-                    <!-- здесь должен быть PHP код, который показывает следующий тег по условию -->
-                    <ul class="header__user-nav">
-                        <li class="header__profile">
-                            <a class="header__profile-link" href="/profile.php?user_id=<?= $current_user['id'] ? $current_user['id'] : '' ?>">
-                                <div class="header__avatar-wrapper">
-                                    <img class="header__profile-avatar" src="<?= $current_user['picture'] ? $current_user['picture'] : 'img/icon-input-user.svg' ?>" alt="Аватар профиля">
-                                </div>
-                                <div class="header__profile-name">
+            <nav class="header__nav">
+                <ul class="header__my-nav">
+                    <li class="header__my-page header__my-page--popular">
+                        <a class="header__page-link <?= $_SERVER['PHP_SELF'] === '/popular.php' ? 'header__page-link--active' : ''; ?>"
+                           href="/popular.php" title="Популярный контент">
+                            <span class="visually-hidden">Популярный контент</span>
+                        </a>
+                    </li>
+                    <li class="header__my-page header__my-page--feed">
+                        <a class="header__page-link <?= $_SERVER['PHP_SELF'] === '/feed.php' ?
+                            'header__page-link--active' : ''; ?>" href="/feed.php" title="Моя лента">
+                            <span class="visually-hidden">Моя лента</span>
+                        </a>
+                    </li>
+                    <li class="header__my-page header__my-page--messages">
+                        <a class="header__page-link <?= $_SERVER['PHP_SELF'] === '/messages.php' ?
+                            'header__page-link--active' : ''; ?>" href="/messages.php" title="Личные сообщения">
+                            <span class="visually-hidden">Личные сообщения</span>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="header__user-nav">
+                    <li class="header__profile">
+                        <a class="header__profile-link"
+                           href="/profile.php?user_id=<?= $current_user['id'] ? $current_user['id'] : '' ?>">
+                            <div class="header__avatar-wrapper">
+                                <img class="header__profile-avatar"
+                                     src="<?= $current_user['picture'] ? $current_user['picture'] : 'img/icon-input-user.svg' ?>"
+                                     alt="Аватар профиля">
+                            </div>
+                            <div class="header__profile-name">
                                 <span>
                                     <?= $current_user['login'] ?>
                                 </span>
-                                    <svg class="header__link-arrow" width="10" height="6">
-                                        <use xlink:href="#icon-arrow-right-ad"></use>
-                                    </svg>
-                                </div>
-                            </a>
-                            <div class="header__tooltip-wrapper">
-                                <div class="header__profile-tooltip">
-                                    <ul class="header__profile-nav">
-                                        <li class="header__profile-nav-item">
-                                            <a class="header__profile-nav-link" href="/profile.php?user_id=<?= $current_user['id'] ? $current_user['id'] : '' ?>">
-                          <span class="header__profile-nav-text">
-                            Мой профиль
-                          </span>
-                                            </a>
-                                        </li>
-                                        <li class="header__profile-nav-item">
-                                            <a class="header__profile-nav-link" href="#">
-                          <span class="header__profile-nav-text">
-                            Сообщения
-                            <i class="header__profile-indicator">2</i>
-                          </span>
-                                            </a>
-                                        </li>
-
-                                        <li class="header__profile-nav-item">
-                                            <a class="header__profile-nav-link" href="/logout.php">
-                          <span class="header__profile-nav-text">
-                            Выход
-                          </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
+                                <svg class="header__link-arrow" width="10" height="6">
+                                    <use xlink:href="#icon-arrow-right-ad"></use>
+                                </svg>
                             </div>
-                        </li>
-                        <li>
-                            <a class="header__post-button button button--transparent" href="/add.php?post_type=1">Пост</a>
-                        </li>
-                    </ul>
-                </nav>
+                        </a>
+                        <div class="header__tooltip-wrapper">
+                            <div class="header__profile-tooltip">
+                                <ul class="header__profile-nav">
+                                    <li class="header__profile-nav-item">
+                                        <a class="header__profile-nav-link"
+                                           href="/profile.php?user_id=<?= $current_user['id'] ? $current_user['id'] : '' ?>">
+                                                <span class="header__profile-nav-text">
+                                                    Мой профиль
+                                                </span>
+                                        </a>
+                                    </li>
+                                    <li class="header__profile-nav-item">
+                                        <a class="header__profile-nav-link" href="/messages.php">
+                                                <span class="header__profile-nav-text">
+                                                    Сообщения
+                                                    <?php if (!empty($total_unread_messages)): ?>
+                                                        <i class="header__profile-indicator"><?= $total_unread_messages ?></i>
+                                                    <?php endif; ?>
+                                                </span>
+                                        </a>
+                                    </li>
+
+                                    <li class="header__profile-nav-item">
+                                        <a class="header__profile-nav-link" href="/logout.php">
+                                                <span class="header__profile-nav-text">
+                                                    Выход
+                                                </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a class="header__post-button button button--transparent" href="/add.php?post_type=1">Пост</a>
+                    </li>
+                </ul>
+            </nav>
             <?php endif; ?>
         </div>
     </div>
@@ -156,13 +166,13 @@
             <div class="footer__my-info">
                 <ul class="footer__my-pages">
                     <li class="footer__my-page footer__my-page--feed">
-                        <a class="footer__page-link" href="feed.html">Моя лента</a>
+                        <a class="footer__page-link" href="/feed.php">Моя лента</a>
                     </li>
                     <li class="footer__my-page footer__my-page--popular">
-                        <a class="footer__page-link" href="popular.html">Популярный контент</a>
+                        <a class="footer__page-link" href="/popular.php">Популярный контент</a>
                     </li>
                     <li class="footer__my-page footer__my-page--messages">
-                        <a class="footer__page-link" href="messages.html">Личные сообщения</a>
+                        <a class="footer__page-link" href="/messages.php">Личные сообщения</a>
                     </li>
                 </ul>
                 <div class="footer__copyright">

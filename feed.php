@@ -3,10 +3,9 @@
 require_once ('init.php');
 require_once ('helpers.php');
 require_once ('functions.php');
+require_once ('db_requests.php');
 
 check_page_access();
-
-$post_types = get_post_types($link);
 
 $active_post_type = isset($_GET['post_type']) ? filter_input(INPUT_GET, 'post_type') : '';
 
@@ -43,7 +42,7 @@ if (!empty($posts)) {
 $page_content = include_template('feed.php', [
     'posts' => $posts ?? '',
     'active_post_type' => $active_post_type,
-    'post_types' => $post_types
+    'post_types' => get_post_types($link)
 ]);
 
 $layout_content = include_template('layout.php', [

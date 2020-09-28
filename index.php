@@ -2,6 +2,8 @@
 require_once ('init.php');
 require_once ('helpers.php');
 require_once ('functions.php');
+require_once ('db_requests.php');
+require_once ('validation.php');
 
 if (isset($_SESSION['user'])) {
     header('Location: /feed.php');

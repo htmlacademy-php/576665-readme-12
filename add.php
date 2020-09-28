@@ -3,6 +3,10 @@
 require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
+require_once 'db_requests.php';
+require_once 'validation.php';
+require_once 'mail.php';
+require_once 'vendor/autoload.php';
 
 check_page_access();
 
@@ -120,6 +124,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!empty($tags_id)) {
             create_post_tag_sql($link, $post_id, $tags_id);
         }
+
+        $followers = get_followers($link, $current_user['id']);
+
+        foreach ($followers as $follower) {
+            $message = (new Swift_Message("Новая публикация от пользователя {$current_user['login']}"))
+                ->setFrom(['keks@phpdemo.ru' => 'readme'])
+                ->setTo([$follower['email'] => $follower['login']])
+                ->setBody("Здравствуйте, {$follower['login']}. Пользователь {$current_user['login']} только что опубликовал новую запись: {$new_post['title']}. Посмотрите её на странице пользователя: http://576665-readme-12/profile.php?user_id={$current_user['id']}");
+            $mailer->send($message);
+        }
+
         header('Location: /post.php?post_id=' . $post_id);
         exit();
     }

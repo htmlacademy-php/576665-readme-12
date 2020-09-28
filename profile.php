@@ -3,6 +3,7 @@
 require_once 'init.php';
 require_once 'helpers.php';
 require_once 'functions.php';
+require_once 'db_requests.php';
 
 check_page_access();
 
@@ -13,7 +14,7 @@ $profile_id = filter_input(INPUT_GET, 'user_id', FILTER_VALIDATE_INT);
 if (empty($profile_id)) {
     header("HTTP/1.0 404 Not Found");
     exit ();
-};
+}
 
 $current_tab = isset($_GET['tab']) ? filter_input(INPUT_GET, 'tab', FILTER_DEFAULT) : 'posts';
 
@@ -22,23 +23,21 @@ $profile_data = get_user_data($link, (int)$profile_id);
 if (empty($profile_data)) {
     header("HTTP/1.0 404 Not Found");
     exit ();
-};
+}
 
 $posts = get_posts_by_parameters($link, ['user_id' => $profile_data['id']], $current_user['id']);
 
 $profile_followers = get_followers($link, $profile_id);
 
-
-
 if (!empty($profile_followers)) {
     foreach ($profile_followers as $key => $follower) {
         $profile_followers[$key]['is_following'] = is_following($link, $current_user['id'], $follower['id']);
-        $profile_followers[$key]['is_current_user'] = ($current_user['id'] === $follower['id']) ? true : false;
+        $profile_followers[$key]['is_current_user'] = ($current_user['id'] === $follower['id']);
     }
 }
 
 $profile_data['is_following'] = is_following($link, $current_user['id'], $profile_id);
-$profile_data['is_current_user'] = ($current_user['id'] === $profile_id) ? true : false;
+$profile_data['is_current_user'] = ($current_user['id'] === $profile_id);
 
 if (!empty($posts)) {
     $posts_id = array_column($posts, 'post_id');
@@ -69,3 +68,4 @@ $layout = include_template('layout.php', [
 ]);
 
 print $layout;
+

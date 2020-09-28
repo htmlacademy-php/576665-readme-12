@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>readme: блог, каким он должен быть</title>
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 
 <body class="page page--main">
@@ -17,7 +17,7 @@
     <div class="header__wrapper page__header-wrapper container">
         <div class="header__logo-wrapper page__logo-wrapper">
             <a class="header__logo-link header__logo-link--active">
-                <img class="header__logo" src="img/logo.svg" alt="Логотип readme" width="172" height="32">
+                <img class="header__logo" src="/img/logo.svg" alt="Логотип readme" width="172" height="32">
             </a>
             <p class="header__topic page__header-topic">
                 micro blogging
@@ -62,25 +62,25 @@
             <form class="authorization__form form" action="/index.php" method="post">
                 <div class="authorization__input-wrapper form__input-wrapper">
                     <div class="form__input-section <?= !empty($errors['login']) ? 'form__input-section--error' : '' ?>">
-                        <input class="authorization__input authorization__input--login form__input" type="text"
+                        <input class="authorization__input authorization__input--login form__input" id="authorization_login" type="text"
                                name="login" placeholder="Логин"
                                value="<?= !empty($authorization_data['login']) ? $authorization_data['login'] : '' ?>">
                         <svg class="form__input-icon" width="19" height="18">
                             <use xlink:href="#icon-input-user"></use>
                         </svg>
-                        <label class="visually-hidden">Логин</label>
+                        <label for="authorization_login" class="visually-hidden">Логин</label>
                     </div>
                     <span
                         class="form__error-label form__error-label--login"><?= !empty($errors['login']) ? $errors['login'] : '' ?></span>
                 </div>
                 <div class="authorization__input-wrapper form__input-wrapper">
                     <div class="form__input-section <?= !empty($errors['password']) ? 'form__input-section--error' : '' ?>">
-                        <input class="authorization__input authorization__input--password form__input" type="password"
+                        <input class="authorization__input authorization__input--password form__input" id="authorization_password" type="password"
                                name="password" placeholder="Пароль">
                         <svg class="form__input-icon" width="16" height="20">
                             <use xlink:href="#icon-input-password"></use>
                         </svg>
-                        <label class="visually-hidden">Пароль</label>
+                        <label for="authorization_password" class="visually-hidden">Пароль</label>
                     </div>
                     <span class="form__error-label"><?= !empty($errors['password']) ? $errors['password'] : '' ?></span>
                 </div>
@@ -124,13 +124,13 @@
             <div class="footer__my-info">
                 <ul class="footer__my-pages">
                     <li class="footer__my-page footer__my-page--feed">
-                        <a class="footer__page-link" href="feed.html">Моя лента</a>
+                        <a class="footer__page-link" href="/feed.php">Моя лента</a>
                     </li>
                     <li class="footer__my-page footer__my-page--popular">
-                        <a class="footer__page-link" href="popular.html">Популярный контент</a>
+                        <a class="footer__page-link" href="/popular.php">Популярный контент</a>
                     </li>
                     <li class="footer__my-page footer__my-page--messages">
-                        <a class="footer__page-link" href="messages.html">Личные сообщения</a>
+                        <a class="footer__page-link" href="/messages.php">Личные сообщения</a>
                     </li>
                 </ul>
                 <div class="footer__copyright">

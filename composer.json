@@ -1,0 +1,17 @@
+{
+  "name": "vendor_name/576665-readme-12",
+  "description": "project",
+  "minimum-stability": "stable",
+  "license": "",
+  "authors": [
+    {
+      "name": "Nadiia",
+      "email": "nadiiaderevyanchenko@gmail.com"
+    }
+  ],
+  "require": {
+    "swiftmailer/swiftmailer": "^6.0",
+    "php": "^5.5 || ^7.0",
+    "ext-mysqli": "*"
+  }
+}

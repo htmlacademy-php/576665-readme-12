@@ -33,8 +33,8 @@
                title="Перейти по ссылке">
                 <div class="post-link__icon-wrapper">
                     <img
-                        src="https://www.google.com/s2/favicons?domain=<?= esc($post['link']) ?>"
-                        alt="Иконка">
+                            src="https://www.google.com/s2/favicons?domain=<?= esc($post['link']) ?>"
+                            alt="Иконка">
                 </div>
                 <div class="post-link__info">
                     <h3><?= esc($post['title']) ?></h3>
@@ -53,3 +53,4 @@
         </div>
         <?php break; ?>
     <?php endswitch; ?>
+

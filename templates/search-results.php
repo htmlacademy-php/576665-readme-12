@@ -15,7 +15,8 @@
                         <?php foreach ($posts as $post): ?>
                             <article class="search__post post post-<?= $post['class'] ?>">
                                 <header class="post__header post__author">
-                                    <a class="post__author-link" href="/profile.php?user_id=<?= $post['user_id']?>" title="Автор">
+                                    <a class="post__author-link" href="/profile.php?user_id=<?= $post['user_id'] ?>"
+                                       title="Автор">
                                         <div class="post__avatar-wrapper">
                                             <img class="post__author-avatar" src="<?= $post['picture'] ?>"
                                                  alt="Аватар пользователя" width="60" height="60">
@@ -34,8 +35,10 @@
                                 <footer class="post__footer">
                                     <div class="post__indicators">
                                         <div class="post__buttons">
-                                            <a class="post__indicator post__indicator--likes <?= $post['is_liked'] ? 'post__indicator--likes-active' : '' ?> button" href="/like.php?post_id=<?= $post['post_id'] ?>" title="Лайк">
-                                                <svg class="post__indicator-icon <?= $post['is_liked'] ? 'post__indicator-icon--like-active' : '' ?>" width="20" height="17">
+                                            <a class="post__indicator post__indicator--likes <?= $post['is_liked'] ? 'post__indicator--likes-active' : '' ?> button"
+                                               href="/like.php?post_id=<?= $post['post_id'] ?>" title="Лайк">
+                                                <svg class="post__indicator-icon <?= $post['is_liked'] ? 'post__indicator-icon--like-active' : '' ?>"
+                                                     width="20" height="17">
                                                     <use xlink:href="<?= $post['is_liked'] ? '#icon-heart-active' : '#icon-heart' ?>"></use>
                                                 </svg>
                                                 <span><?= $post['likes_count'] ?></span>
@@ -70,7 +73,8 @@
                                     там живет самый крутой контент.
                                 </p>
                                 <div class="search__links">
-                                    <a class="search__popular-link button button--main" href="/popular.php">Популярное</a>
+                                    <a class="search__popular-link button button--main"
+                                       href="/popular.php">Популярное</a>
                                     <a class="search__back-link" href="#">Вернуться назад</a>
                                 </div>
                             </div>
