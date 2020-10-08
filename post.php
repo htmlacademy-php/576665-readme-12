@@ -22,6 +22,8 @@ if (isset($_GET['post_id'])) {
         exit ();
     }
     $post = call_user_func_array('array_merge', $post);
+    $original_id = $post['original_id'] ?? $post['post_id'];
+    $post['reposts_count'] = get_posts_count($link, ['original_id' => $original_id]);
 
     $view_count = ++$post['view_count'];
     mysqli_query($link, "UPDATE posts SET posts.view_count = {$view_count} WHERE posts.post_id = {$post_id}");

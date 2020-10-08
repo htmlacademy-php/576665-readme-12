@@ -52,7 +52,7 @@ function get_posts_by_parameters (mysqli $link, array $params, int $current_user
     $sql = "SELECT posts.*, post_types.class, users.login, users.picture,
         (SELECT COUNT(likes.id) FROM likes WHERE likes.post_id = posts.post_id) as likes_count,
         (SELECT COUNT(comments.id) FROM comments WHERE comments.post_id = posts.post_id) as comments_count,
-       (SELECT likes.user_id FROM likes WHERE posts.post_id = likes.post_id AND likes.user_id = {$current_user_id}) as is_liked
+        (SELECT likes.user_id FROM likes WHERE posts.post_id = likes.post_id AND likes.user_id = {$current_user_id}) as is_liked
         FROM posts
         JOIN post_types ON posts.post_type_id = post_types.id
         JOIN users ON users.id = posts.user_id ";
@@ -110,6 +110,34 @@ function get_posts_count (mysqli $link, array $params)
         exit ('error' . mysqli_error($link));
     }
     return mysqli_num_rows($result);
+}
+
+function get_reposts_count($link, $post_id)
+{
+    $sql = "SELECT posts.post_id FROM posts WHERE posts.original_id = ?";
+    $stmt = db_get_prepare_stmt($link, $sql, [$post_id]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+    return mysqli_num_rows($result) ?? 0;
+}
+
+function get_repost_data($link, $original_post_id)
+{
+    $sql = "SELECT posts.user_id, users.login, users.picture FROM posts 
+        JOIN users ON users.id = posts.user_id
+        WHERE posts.post_id = ?";
+    $stmt = db_get_prepare_stmt($link, $sql, [$original_post_id]);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+    return mysqli_fetch_assoc($result);
 }
 
 /**
@@ -383,5 +411,37 @@ function get_posts_tags(mysqli $link, array $posts_id)
         $post_tags[$value['post_id']][] = $value['tag'];
     }
     return $post_tags;
+}
+
+/**
+ * Adds a new post to the database and returns its ID
+ * @param mysqli $link The MySQL connection
+ * @param array $new_post Array of the post data
+ *
+ * @return int The post's ID
+ */
+function create_post_sql(mysqli $link, array $new_post)
+{
+    $sql = 'INSERT INTO posts (title, content, author_quote, img, video, link, view_count, user_id, post_type_id, original_id)
+    VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    $stmt = db_get_prepare_stmt($link, $sql, [
+        $new_post['title'],
+        $new_post ['content'],
+        $new_post['author_quote'],
+        $new_post['img'],
+        $new_post['video'],
+        $new_post['link'],
+        $new_post['view_count'],
+        $new_post['user_id'],
+        $new_post['post_type_id'],
+        $new_post['original_id']
+    ]);
+
+    $result = mysqli_stmt_execute($stmt);
+
+    if (!$result) {
+        exit ('error' . mysqli_error($link));
+    }
+    return mysqli_insert_id($link);
 }
 

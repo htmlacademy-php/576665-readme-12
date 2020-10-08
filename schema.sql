@@ -27,6 +27,9 @@ CREATE TABLE posts (
     post_type_id INT REFERENCES post_types (id)
 );
 
+ALTER TABLE posts
+ADD column original_id INT DEFAULT null;
+
 CREATE TABLE comments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

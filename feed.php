@@ -36,6 +36,8 @@ if (!empty($posts)) {
 
     foreach ($posts as $key => $post) {
         $posts[$key]['tags'] = $posts_tags[$posts[$key]['post_id']] ?? '';
+        $original_id = $posts[$key]['original_id'] ?? $posts[$key]['post_id'];
+        $posts[$key]['reposts_count'] = get_posts_count($link, ['original_id' => $posts[$key]['post_id']]);
     }
 }
 

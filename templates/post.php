@@ -24,11 +24,11 @@
                                 <span><?= $post['comments_count'] ?></span>
                                 <span class="visually-hidden">количество комментариев</span>
                             </a>
-                            <a class="post__indicator post__indicator--repost button" href="#" title="Репост">
+                            <a class="post__indicator post__indicator--repost button" href="/repost.php?post_id=<?= $post['post_id']?>" title="Репост">
                                 <svg class="post__indicator-icon" width="19" height="17">
                                     <use xlink:href="#icon-repost"></use>
                                 </svg>
-                                <span>5</span>
+                                <span><?= $post['reposts_count']?></span>
                                 <span class="visually-hidden">количество репостов</span>
                             </a>
                         </div>
@@ -130,7 +130,9 @@
                                href="/subscription.php?author_id=<?= $author_data['id'] ?>">
                                 <?= $author_data['is_following'] ? 'Отписаться' : 'Подписаться' ?>
                             </a>
-                            <a class="user__button user__button--writing button button--green" href="#">Сообщение</a>
+                            <?php if ($author_data['is_following']): ?>
+                            <a class="user__button user__button--writing button button--green" href="/messages.php?contact_id=<?= $author_data['id'] ?> ">Сообщение</a>
+                            <?php endif; ?>
                         </div>
                     <?php endif; ?>
                 </div>

@@ -26,7 +26,6 @@ if (empty($profile_data)) {
 }
 
 $posts = get_posts_by_parameters($link, ['user_id' => $profile_data['id']], $current_user['id']);
-
 $profile_followers = get_followers($link, $profile_id);
 
 if (!empty($profile_followers)) {
@@ -44,6 +43,11 @@ if (!empty($posts)) {
     $posts_tags = get_posts_tags($link, $posts_id);
     foreach ($posts as $key => $post) {
         $posts[$key]['tags'] = $posts_tags[$posts[$key]['post_id']] ?? '';
+        $original_id = $posts[$key]['original_id'] ?? $posts[$key]['post_id'];
+        $posts[$key]['reposts_count'] = get_posts_count($link, ['original_id' => $original_id]);
+        if ($original_id !==  $posts[$key]['post_id']) {
+            $posts[$key]['original_post_data'] = get_repost_data($link, $original_id);
+        }
     }
     $posts_likes = get_posts_likes($link, $posts_id);
 }
@@ -64,7 +68,7 @@ $page_content = include_template('profile.php', [
 $layout = include_template('layout.php', [
     'current_user' => $current_user,
     'content' => $page_content,
-    'title' =>  'readme: мой профиль'
+    'title' => 'readme: мой профиль'
 ]);
 
 print $layout;

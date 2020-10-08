@@ -168,7 +168,7 @@
                                 <span><?= $post['likes_count'] ?></span>
                                 <span class="visually-hidden">количество лайков</span>
                             </a>
-                            <a class="post__indicator post__indicator--comments button" href="#" title="Комментарии">
+                            <a class="post__indicator post__indicator--comments button" href="/post.php?post_id=<?= $post['post_id'] ?>" title="Комментарии">
                                 <svg class="post__indicator-icon" width="19" height="17">
                                     <use xlink:href="#icon-comment"></use>
                                 </svg>
@@ -182,20 +182,24 @@
             <?php endforeach; ?>
         </div>
         <?php if ($pages_count > 1): ?>
-        <div class="popular__page-links">
-            <a class="popular__page-link popular__page-link--prev button button--gray"
-                <?php if ($prev_page): ?>
-                    href="/popular.php?<?= get_query_string($_GET, ['page' => $prev_page]) ?>"
-                <?php endif; ?>
-            >Предыдущая страница
-            </a>
-            <a class="popular__page-link popular__page-link--next button button--gray"
-                <?php if ($next_page): ?>
-                    href="/popular.php?<?= get_query_string($_GET, ['page' => $next_page]) ?>"
-                <?php endif; ?>
-            >Следующая страница
-            </a>
-        </div>
+            <div class="popular__page-links">
+                <a class="popular__page-link popular__page-link--prev button button--gray"
+                    <?php
+                    if ($prev_page): ?>
+                        href="/popular.php?<?= get_query_string($_GET, ['page' => $prev_page]) ?>"
+                    <?php
+                    endif; ?>
+                >Предыдущая страница
+                </a>
+                <a class="popular__page-link popular__page-link--next button button--gray"
+                    <?php
+                    if ($next_page): ?>
+                        href="/popular.php?<?= get_query_string($_GET, ['page' => $next_page]) ?>"
+                    <?php
+                    endif; ?>
+                >Следующая страница
+                </a>
+            </div>
         <?php endif; ?>
     <?php endif; ?>
 </div>

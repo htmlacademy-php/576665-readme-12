@@ -4,34 +4,32 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "713a53ab44a25f4387429a355b7a343d",
+    "content-hash": "3e08295323eb4e9fb9edde46f8b2af14",
     "packages": [
         {
             "name": "doctrine/lexer",
-            "version": "1.2.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/lexer.git",
-                "reference": "e864bbf5904cb8f5bb334f99209b48018522f042"
+                "reference": "1febd6c3ef84253d7c815bed85fc622ad207a9f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/lexer/zipball/e864bbf5904cb8f5bb334f99209b48018522f042",
-                "reference": "e864bbf5904cb8f5bb334f99209b48018522f042",
+                "url": "https://api.github.com/repos/doctrine/lexer/zipball/1febd6c3ef84253d7c815bed85fc622ad207a9f8",
+                "reference": "1febd6c3ef84253d7c815bed85fc622ad207a9f8",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2 || ^8.0"
+                "php": ">=5.3.2"
             },
             "require-dev": {
-                "doctrine/coding-standard": "^6.0",
-                "phpstan/phpstan": "^0.11.8",
-                "phpunit/phpunit": "^8.2"
+                "phpunit/phpunit": "^4.5"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.2.x-dev"
+                    "dev-master": "1.0.x-dev"
                 }
             },
             "autoload": {
@@ -45,12 +43,12 @@
             ],
             "authors": [
                 {
-                    "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@gmail.com"
-                },
-                {
                     "name": "Roman Borschel",
                     "email": "roman@code-factory.org"
+                },
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
                 },
                 {
                     "name": "Johannes Schmitt",
@@ -66,34 +64,20 @@
                 "parser",
                 "php"
             ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Flexer",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2020-05-25T17:44:05+00:00"
+            "time": "2019-06-08T11:03:04+00:00"
         },
         {
             "name": "egulias/email-validator",
-            "version": "2.1.20",
+            "version": "2.1.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "f46887bc48db66c7f38f668eb7d6ae54583617ff"
+                "reference": "68e418ec08fbfc6f58f6fd2eea70ca8efc8cc7d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/f46887bc48db66c7f38f668eb7d6ae54583617ff",
-                "reference": "f46887bc48db66c7f38f668eb7d6ae54583617ff",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/68e418ec08fbfc6f58f6fd2eea70ca8efc8cc7d5",
+                "reference": "68e418ec08fbfc6f58f6fd2eea70ca8efc8cc7d5",
                 "shasum": ""
             },
             "require": {
@@ -138,7 +122,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2020-09-06T13:44:32+00:00"
+            "time": "2020-09-26T15:48:38+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -724,7 +708,10 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": "^5.5 || ^7.0",
+        "ext-mysqli": "*"
+    },
     "platform-dev": [],
     "plugin-api-version": "1.1.0"
 }

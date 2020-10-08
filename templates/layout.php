@@ -74,7 +74,7 @@
                            href="/profile.php?user_id=<?= $current_user['id'] ? $current_user['id'] : '' ?>">
                             <div class="header__avatar-wrapper">
                                 <img class="header__profile-avatar"
-                                     src="<?= $current_user['picture'] ? $current_user['picture'] : 'img/icon-input-user.svg' ?>"
+                                     src="<?= $current_user['picture'] ? $current_user['picture'] : '/img/icon-input-user.svg' ?>"
                                      alt="Аватар профиля">
                             </div>
                             <div class="header__profile-name">

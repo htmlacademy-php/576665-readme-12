@@ -45,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_post['post_type'] = $active_post_type;
     $new_post['user_id'] = $_SESSION['user']['id'];
     $new_post['view_count'] = 0;
+    $new_post['original_id'] = null;
 
     if ($new_post['post_type'] === PHOTO) {
         if (empty($new_post['img']) && empty($_FILES['upload_photo']['name'])) {
@@ -100,26 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         }
 
-    $sql = 'INSERT INTO posts (title, content, author_quote, img, video, link, view_count, user_id, post_type_id)
-    VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        $stmt = db_get_prepare_stmt($link, $sql, [
-            $new_post['title'],
-            $new_post ['content'],
-            $new_post['author_quote'],
-            $new_post['img'],
-            $new_post['video'],
-            $new_post['link'],
-            $new_post['view_count'],
-            $new_post['user_id'],
-            $new_post['post_type_id']
-        ]);
-
-        $result = mysqli_stmt_execute($stmt);
-
-        if (!$result) {
-            exit ('error' . mysqli_error($link));
-        }
-        $post_id = mysqli_insert_id($link);
+        $post_id = create_post_sql($link, $new_post);
 
         if (!empty($tags_id)) {
             create_post_tag_sql($link, $post_id, $tags_id);
