@@ -44,7 +44,7 @@
                                 <li class="messages__item <?= $message['user_sender_id'] === $current_user['id'] ? 'messages__item--my' : '' ?>">
                                     <div class="messages__info-wrapper">
                                         <div class="messages__item-avatar">
-                                            <a class="messages__author-link" href="/profile.php?user_id=<?= $message['user_sender_id']?>"
+                                            <a class="messages__author-link" href="/profile.php?user_id=<?= $message['user_sender_id']?>">
                                                 <img class="messages__avatar" src="<?= esc($message['sender_picture'])?>"
                                                      alt="Аватар пользователя">
                                             </a>

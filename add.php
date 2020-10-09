@@ -15,8 +15,8 @@ $current_user = $_SESSION['user'];
 $post_types = get_post_types($link);
 
 $active_post_type_id = isset($_GET['post_type'])
-    ? filter_input(INPUT_GET, 'post_type', FILTER_DEFAULT)
-    : filter_input(INPUT_POST, 'post_type_id', FILTER_DEFAULT);
+    ? filter_input(INPUT_GET, 'post_type', FILTER_VALIDATE_INT)
+    : filter_input(INPUT_POST, 'post_type_id', FILTER_VALIDATE_INT);
 
 $active_post_type = get_active_post_type($link, (string)$active_post_type_id);
 
@@ -45,7 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_post['post_type'] = $active_post_type;
     $new_post['user_id'] = $_SESSION['user']['id'];
     $new_post['view_count'] = 0;
-
+    $new_post['original_id'] = null;
+    $rules = validate_post_rules($new_post['post_type'], $new_post['tags']);
+    $errors = check_data_by_rules($new_post, $rules);
     if ($new_post['post_type'] === PHOTO) {
         if (empty($new_post['img']) && empty($_FILES['upload_photo']['name'])) {
             $errors['photo_post'] = 'Загрузите файл или заполните поле "ссылка из интернета"';
@@ -53,10 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $new_post['photo'] = $_FILES['upload_photo'];
         }
     }
-
-    $rules = validate_post_rules($new_post['post_type'], $new_post['tags']);
-
-    $errors = check_data_by_rules($new_post, $rules);
 
     if (!empty($errors)) {
         $error_titles = [
@@ -70,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
     }
 
-    if (!count($errors)) {
+    if (empty($errors)) {
         if ($new_post['post_type'] === PHOTO && !empty($new_post['photo']['name'])) {
             $new_post['img'] = upload_photo($new_post['photo']);
         } elseif ($new_post['post_type'] === PHOTO && !empty($new_post['img'])) {
@@ -97,29 +95,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $tags_id[] = get_tag_id($link, $tag, $exists_tags);
                 }
             }
-
         }
 
-    $sql = 'INSERT INTO posts (title, content, author_quote, img, video, link, view_count, user_id, post_type_id)
-    VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        $stmt = db_get_prepare_stmt($link, $sql, [
-            $new_post['title'],
-            $new_post ['content'],
-            $new_post['author_quote'],
-            $new_post['img'],
-            $new_post['video'],
-            $new_post['link'],
-            $new_post['view_count'],
-            $new_post['user_id'],
-            $new_post['post_type_id']
-        ]);
-
-        $result = mysqli_stmt_execute($stmt);
-
-        if (!$result) {
-            exit ('error' . mysqli_error($link));
-        }
-        $post_id = mysqli_insert_id($link);
+        $post_id = create_post_sql($link, $new_post);
 
         if (!empty($tags_id)) {
             create_post_tag_sql($link, $post_id, $tags_id);
@@ -134,7 +112,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ->setBody("Здравствуйте, {$follower['login']}. Пользователь {$current_user['login']} только что опубликовал новую запись: {$new_post['title']}. Посмотрите её на странице пользователя: http://576665-readme-12/profile.php?user_id={$current_user['id']}");
             $mailer->send($message);
         }
-
         header('Location: /post.php?post_id=' . $post_id);
         exit();
     }
@@ -145,7 +122,6 @@ $adding_post_content = include_template("/adding-post/adding-post-{$active_post_
     'new_post' => !empty($new_post) ? $new_post : '',
     'errors' => !empty($errors) ? $errors : ''
 ]);
-
 
 $page_content = include_template('adding-post.php', [
     'post_types' => $post_types,

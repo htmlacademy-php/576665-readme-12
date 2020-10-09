@@ -10,11 +10,11 @@ check_page_access();
 
 $current_user = $_SESSION['user'];
 $current_user_id = (int)$current_user['id'];
-$messages = get_messages($link, $current_user['id']); //массив всех сообщений, где получателем или отправителем является текущий пользователь
-$contacts = []; //список всех собеседников
-$conversations = []; //массив диалогов, где ключ - айди собеседника
+$messages = get_messages($link, $current_user['id']);
+$contacts = [];
+$conversations = [];
 
-$current_contact = isset($_GET['contact_id']) //текущий собеседник
+$current_contact = isset($_GET['contact_id'])
     ? filter_input(INPUT_GET, 'contact_id', FILTER_VALIDATE_INT)
     : filter_input(INPUT_POST, 'recipient_id', FILTER_VALIDATE_INT);
 
@@ -23,11 +23,11 @@ if ($current_contact !== null && !is_user_exist($link, $current_contact, 'id')) 
     header('HTTP/1.0 404 Not Found');
     exit();
 }
-//если линк не содержит запрос (переход на страницу из меню юзера)
+
 if (!empty($current_contact)) {
     $contacts[$current_contact] = get_user_data($link, $current_contact);
 }
-//если открыта вкладка собеседника, то все входящие сообщения обретают статус просмотреных
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $sql = 'UPDATE messages SET viewed = 1 WHERE user_recipient_id = ? AND user_sender_id = ?';
     $stmt = db_get_prepare_stmt($link, $sql, [$current_user_id, $current_contact]);
@@ -37,8 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 }
 
-//создает массив собеседников $contacts, где ключ - айди собеседника, значение - массив данных собеседника
-// и массив сообщений $contacts_messages, где ключ - айди собеседника, значение - массив сообщений (переписка с собеседником)
 if (!empty($messages)) {
     foreach ($messages as $message) {
         if ($message['user_sender_id'] !== $current_user['id']) {
@@ -62,8 +60,6 @@ if (!empty($messages)) {
         }
     }
 
-    //добавляет каждому элементу массива собеседников $contacts данные последнего сообщения в переписке (для вывода на вкладку собеседника)
-    //и количество непрочитанных сообщений
     foreach ($contacts as $contact_id => $contact) {
         $contact['last_message'] = '';
         if (!empty($conversations[$contact_id])) {
@@ -71,12 +67,12 @@ if (!empty($messages)) {
             $contacts[$contact_id]['unread_count'] = get_unread_messages_count($link, $contact_id, $current_user_id);
         }
     }
-    //получает общее количество непрочинанных сообщений
+
     $total_unread_messages = array_sum(array_column($contacts, 'unread_count'));
 
-    //если нет активного собеседника (перешли по ссылке в меню, например), то активной окажется первая вкладка
     if (!empty($contacts) && empty($current_contact)) {
-        $current_contact = array_key_first($contacts);
+        reset($contacts);
+        $current_contact = key($contacts);
         header('Location:messages.php?contact_id=' .  $current_contact);
     }
 }

@@ -43,7 +43,7 @@
                                                 <span><?= $post['likes_count'] ?></span>
                                                 <span class="visually-hidden">количество лайков</span>
                                             </a>
-                                            <a class="post__indicator post__indicator--comments button" href="#"
+                                            <a class="post__indicator post__indicator--comments button" href="/post.php?post_id=<?= $post['post_id'] ?>"
                                                title="Комментарии">
                                                 <svg class="post__indicator-icon" width="19" height="17">
                                                     <use xlink:href="#icon-comment"></use>
@@ -51,12 +51,12 @@
                                                 <span><?= $post['comments_count'] ?></span>
                                                 <span class="visually-hidden">количество комментариев</span>
                                             </a>
-                                            <a class="post__indicator post__indicator--repost button" href="#"
+                                            <a class="post__indicator post__indicator--repost button" href="/repost.php?post_id=<?= $post['post_id'] ?>"
                                                title="Репост">
                                                 <svg class="post__indicator-icon" width="19" height="17">
                                                     <use xlink:href="#icon-repost"></use>
                                                 </svg>
-                                                <span>5</span>
+                                                <span><?= $post['reposts_count'] ?></span>
                                                 <span class="visually-hidden">количество репостов</span>
                                             </a>
                                         </div>

@@ -19,13 +19,12 @@ $order = !empty($_GET['order']) ? $_GET['order'] : 'DESC';
 $params = [
   'post_type_id' => $post_type
 ];
-
 $posts_counts = get_posts_count($link, $params);
 if ($posts_counts) {
     $current_page = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?? 1;
     $pages_count = ceil($posts_counts / POST_PER_PAGE);
-    $prev_page = ($current_page-1) > 0 ? $current_page-1 : '';
-    $next_page = ($current_page+1) < $pages_count ? $current_page+1 : '';
+    $prev_page = ($current_page - 1) > 0 ? $current_page - 1 : '';
+    $next_page = ($current_page + 1) <= $pages_count ? $current_page + 1 : '';
     $offset = ($current_page - 1) * POST_PER_PAGE;
     $limit = POST_PER_PAGE;
     $popular_posts = get_posts_by_parameters($link, $params, $current_user['id'], $sorting, $order, $limit, $offset);

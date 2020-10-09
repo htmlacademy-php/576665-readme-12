@@ -5,7 +5,7 @@
             <div class="profile__user user container">
                 <div class="profile__user-info user__info">
                     <div class="profile__avatar user__avatar">
-                        <img class="profile__picture user__picture" src="<?= $profile_data['picture'] ? $profile_data['picture'] : 'img/icon-input-user.svg'?>" alt="Аватар пользователя">
+                        <img class="profile__picture user__picture" src="<?= $profile_data['picture'] ? $profile_data['picture'] : '/img/icon-input-user.svg'?>" alt="Аватар пользователя">
                     </div>
                     <div class="profile__name-wrapper user__name-wrapper">
                         <span class="profile__name user__name"><?= $profile_data['login'] ?></span>
