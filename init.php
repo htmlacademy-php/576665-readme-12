@@ -23,5 +23,5 @@ define("VIDEO", 'video');
 define("TEXT", 'text');
 define("QUOTE", 'quote');
 define("LINK", 'link');
-define("POST_PER_PAGE", 9);
+define("POST_PER_PAGE", 6);
 define("MIN_COMMENT", 4);

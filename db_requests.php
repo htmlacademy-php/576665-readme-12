@@ -112,19 +112,6 @@ function get_posts_count (mysqli $link, array $params)
     return mysqli_num_rows($result);
 }
 
-function get_reposts_count($link, $post_id)
-{
-    $sql = "SELECT posts.post_id FROM posts WHERE posts.original_id = ?";
-    $stmt = db_get_prepare_stmt($link, $sql, [$post_id]);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-
-    if (!$result) {
-        exit ('error' . mysqli_error($link));
-    }
-    return mysqli_num_rows($result) ?? 0;
-}
-
 function get_repost_data($link, $original_post_id)
 {
     $sql = "SELECT posts.user_id, users.login, users.picture FROM posts 

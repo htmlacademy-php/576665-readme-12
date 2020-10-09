@@ -1,14 +1,11 @@
 <section class="profile__posts tabs__content tabs__content--active">
     <h2 class="visually-hidden">Публикации</h2>
-    <?php
-    if (!empty($posts)) : ?>
-        <?php
-        foreach ($posts as $key => $post) : ?>
+    <?php if (!empty($posts)) : ?>
+        <?php foreach ($posts as $key => $post) : ?>
             <article class="profile__post post post-<?= $post['class'] ?>">
                 <header class="post__header">
                     <div class="post__author">
-                        <?php
-                        if (!empty($post['original_id'])): ?>
+                        <?php if (!empty($post['original_id'])): ?>
                             <a class="post__author-link"
                                href="/profile.php?user_id=<?= $post['original_post_data']['user_id'] ?>" title="Автор">
                                 <div class="post__avatar-wrapper post__avatar-wrapper--repost">
@@ -21,14 +18,12 @@
                                           datetime="<?= $post['date'] ?>"><?= get_relative_date($post['date']) ?></time>
                                 </div>
                             </a>
-                        <?php
-                        elseif (empty($post['original_id']) && $post['class'] === 'text'): ?>
+                        <?php elseif (empty($post['original_id']) && $post['class'] === 'text'): ?>
                         <h2>
                             <a href="/post.php?post_id=<?= $post['post_id'] ?>"><?= esc($post['title']) ?></a>
                         </h2>
                     </div>
-                    <?php
-                    endif; ?>
+                    <?php endif; ?>
                 </header>
                 <div class="post__main">
                     <?= include_template('post-card-main.php', [
@@ -60,23 +55,17 @@
                               datetime="<?= $post['date'] ?>"><?= get_relative_date($post['date']) ?></time>
                     </div>
                     <ul class="post__tags">
-                        <?php
-                        if (!empty($post['tags'])) : ?>
-                            <?php
-                            foreach ($post['tags'] as $tag): ?>
+                        <?php if (!empty($post['tags'])) : ?>
+                            <?php foreach ($post['tags'] as $tag): ?>
                                 <li><a href="/search.php?q=%23<?= $tag ?>">#<?= $tag ?></a></li>
-                            <?php
-                            endforeach; ?>
-                        <?php
-                        endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </ul>
                 </footer>
                 <div class="comments">
                     <a class="comments__button button" href="/post.php?post_id=<?= $post['post_id'] ?>">Показать комментарии</a>
                 </div>
             </article>
-        <?php
-        endforeach; ?>
-    <?php
-    endif; ?>
+        <?php endforeach; ?>
+    <?php endif; ?>
 </section>

@@ -35,8 +35,8 @@
         <?php else: ?>
         <form class="header__search-form form" action="/search.php" method="get">
             <div class="header__search">
-                <label class="visually-hidden">Поиск</label>
-                <input class="header__search-input form__input" type="search" name="q"
+                <label for="search" class="visually-hidden">Поиск</label>
+                <input class="header__search-input form__input" id="search" type="search" name="q"
                        value="<?= !empty($search_query) ? esc($search_query) : '' ?>">
                 <button class="header__search-button button" type="submit">
                     <svg class="header__search-icon" width="18" height="18">
@@ -187,8 +187,6 @@
         </div>
     </div>
 </footer>
-<!--<script src="/libs/dropzone.js"></script>-->
-<!--<script src="/js/dropzone-settings.js"></script>-->
-<script src="/js/main_updated.js"></script>
+<script src="/js/main.js"></script>
 </body>
 </html>
