@@ -25,7 +25,7 @@ CREATE TABLE posts
 (
     post_id      INT AUTO_INCREMENT PRIMARY KEY,
     date         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    title        VARCHAR(60),
+    title        VARCHAR(160),
     content      TEXT,
     author_quote VARCHAR(160),
     img          VARCHAR(160),

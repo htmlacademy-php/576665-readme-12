@@ -25,3 +25,7 @@ define("QUOTE", 'quote');
 define("LINK", 'link');
 define("POST_PER_PAGE", 6);
 define("MIN_COMMENT", 4);
+define("MIN_LENGTH_PASSWORD", 6);
+define("MAX_LENGTH_PASSWORD", 60);
+define("MAX_LENGTH_TAG", 30);
+define("MAX_DATABASE_VARCHAR", 160);
