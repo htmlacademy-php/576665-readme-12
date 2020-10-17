@@ -49,13 +49,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors['login'] = 'Неверный логин';
         } else {
             $password_verify = password_verify($authorization_data['password'], $current_user['password']);
-            if ($password_verify) {
-                $_SESSION['user'] = $current_user;
-                header('Location: /feed.php');
-                exit();
-            } else {
-                $errors['password'] = 'Неверный пароль';
-            }
+        }
+
+        if ($current_user && $password_verify) {
+            $_SESSION['user'] = $current_user;
+            header('Location: /feed.php');
+            exit();
+        } else {
+            $errors['password'] = 'Неверный пароль';
         }
     }
 }

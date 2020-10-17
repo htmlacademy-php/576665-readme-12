@@ -1,32 +1,11 @@
 <?php
-/**
- * Проверяет переданную дату на соответствие формату 'ГГГГ-ММ-ДД'
- *
- * Примеры использования:
- * is_date_valid('2019-01-01'); // true
- * is_date_valid('2016-02-29'); // true
- * is_date_valid('2019-04-31'); // false
- * is_date_valid('10.10.2010'); // false
- * is_date_valid('10/10/2010'); // false
- *
- * @param string $date Дата в виде строки
- *
- * @return bool true при совпадении с форматом 'ГГГГ-ММ-ДД', иначе false
- */
-function is_date_valid(string $date): bool
-{
-    $format_to_check = 'Y-m-d';
-    $dateTimeObj = date_create_from_format($format_to_check, $date);
-
-    return $dateTimeObj !== false && array_sum(date_get_last_errors()) === 0;
-}
 
 /**
  * Создает подготовленное выражение на основе готового SQL запроса и переданных данных
  *
- * @param mysqli $link  Ресурс соединения
- * @param string $sql  SQL запрос с плейсхолдерами вместо значений
- * @param array $data Данные для вставки на место плейсхолдеров
+ * @param  mysqli  $link  Ресурс соединения
+ * @param  string  $sql  SQL запрос с плейсхолдерами вместо значений
+ * @param  array  $data  Данные для вставки на место плейсхолдеров
  *
  * @return mysqli_stmt Подготовленное выражение
  */
@@ -35,7 +14,7 @@ function db_get_prepare_stmt(mysqli $link, string $sql, array $data = [])
     $stmt = mysqli_prepare($link, $sql);
 
     if ($stmt === false) {
-        $errorMsg = 'Не удалось инициализировать подготовленное выражение: ' . mysqli_error($link);
+        $errorMsg = 'Не удалось инициализировать подготовленное выражение: '.mysqli_error($link);
         die($errorMsg);
     }
 
@@ -70,7 +49,7 @@ function db_get_prepare_stmt(mysqli $link, string $sql, array $data = [])
         $func(...$values);
 
         if (mysqli_errno($link) > 0) {
-            $errorMsg = 'Не удалось связать подготовленное выражение с параметрами: ' . mysqli_error($link);
+            $errorMsg = 'Не удалось связать подготовленное выражение с параметрами: '.mysqli_error($link);
             die($errorMsg);
         }
     }
@@ -93,10 +72,10 @@ function db_get_prepare_stmt(mysqli $link, string $sql, array $data = [])
  *     );
  * Результат: "Я поставил таймер на 5 минут"
  *
- * @param int $number Число, по которому вычисляем форму множественного числа
- * @param string $one Форма единственного числа: яблоко, час, минута
- * @param string $two Форма множественного числа для 2, 3, 4: яблока, часа, минуты
- * @param string $many Форма множественного числа для остальных чисел
+ * @param  int  $number  Число, по которому вычисляем форму множественного числа
+ * @param  string  $one  Форма единственного числа: яблоко, час, минута
+ * @param  string  $two  Форма множественного числа для 2, 3, 4: яблока, часа, минуты
+ * @param  string  $many  Форма множественного числа для остальных чисел
  *
  * @return string Рассчитанная форма множественнго числа
  */
@@ -126,13 +105,13 @@ function get_noun_plural_form(int $number, string $one, string $two, string $man
 
 /**
  * Подключает шаблон, передает туда данные и возвращает итоговый HTML контент
- * @param string $name Путь к файлу шаблона относительно папки templates
- * @param array $data Ассоциативный массив с данными для шаблона
+ * @param  string  $name  Путь к файлу шаблона относительно папки templates
+ * @param  array  $data  Ассоциативный массив с данными для шаблона
  * @return string Итоговый HTML
  */
-function include_template($name, array $data = [])
+function include_template(string $name, array $data = [])
 {
-    $name = 'templates/' . $name;
+    $name = 'templates/'.$name;
     $result = '';
 
     if (!is_readable($name)) {
@@ -150,14 +129,14 @@ function include_template($name, array $data = [])
 
 /**
  * Функция проверяет доступно ли видео по ссылке на youtube
- * @param string $url ссылка на видео
+ * @param  string  $url  ссылка на видео
  *
  * @return string Ошибку если валидация не прошла
  */
 function check_youtube_url(string $url)
 {
     $id = extract_youtube_id($url);
-    $headers = get_headers('https://www.youtube.com/oembed?format=json&url=http://www.youtube.com/watch?v=' . $id);
+    $headers = get_headers('https://www.youtube.com/oembed?format=json&url=http://www.youtube.com/watch?v='.$id);
 
     if (!is_array($headers)) {
         return "Видео по такой ссылке не найдено. Проверьте ссылку на видео";
@@ -174,7 +153,7 @@ function check_youtube_url(string $url)
 
 /**
  * Возвращает код iframe для вставки youtube видео на страницу
- * @param string $youtube_url Ссылка на youtube видео
+ * @param  string  $youtube_url  Ссылка на youtube видео
  * @return string
  */
 function embed_youtube_video(string $youtube_url)
@@ -183,8 +162,8 @@ function embed_youtube_video(string $youtube_url)
     $id = extract_youtube_id($youtube_url);
 
     if ($id) {
-        $src = "https://www.youtube.com/embed/" . $id;
-        $res = '<iframe width="760" height="400" src="' . $src . '" frameborder="0"></iframe>';
+        $src = "https://www.youtube.com/embed/".$id;
+        $res = '<iframe width="760" height="400" src="'.$src.'" frameborder="0"></iframe>';
     }
 
     return $res;
@@ -192,7 +171,7 @@ function embed_youtube_video(string $youtube_url)
 
 /**
  * Возвращает img-тег с обложкой видео для вставки на страницу
- * @param string $youtube_url Ссылка на youtube видео
+ * @param  string  $youtube_url  Ссылка на youtube видео
  * @return string
  */
 function embed_youtube_cover(string $youtube_url)
@@ -202,7 +181,7 @@ function embed_youtube_cover(string $youtube_url)
 
     if ($id) {
         $src = sprintf("https://img.youtube.com/vi/%s/mqdefault.jpg", $id);
-        $res = '<img alt="youtube cover" width="320" height="120" src="' . $src . '" />';
+        $res = '<img alt="youtube cover" width="320" height="120" src="'.$src.'" />';
     }
 
     return $res;
@@ -210,7 +189,7 @@ function embed_youtube_cover(string $youtube_url)
 
 /**
  * Извлекает из ссылки на youtube видео его уникальный ID
- * @param string $youtube_url Ссылка на youtube видео
+ * @param  string  $youtube_url  Ссылка на youtube видео
  * @return array
  */
 function extract_youtube_id(string $youtube_url)
@@ -220,11 +199,11 @@ function extract_youtube_id(string $youtube_url)
     $parts = parse_url($youtube_url);
 
     if ($parts) {
-        if ($parts['path'] == '/watch') {
+        if ($parts['path'] === '/watch') {
             parse_str($parts['query'], $vars);
             $id = $vars['v'] ?? null;
         } else {
-            if ($parts['host'] == 'youtu.be') {
+            if ($parts['host'] === 'youtu.be') {
                 $id = substr($parts['path'], 1);
             }
         }

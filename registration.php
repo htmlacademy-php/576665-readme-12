@@ -5,6 +5,10 @@ require_once 'helpers.php';
 require_once 'functions.php';
 require_once 'validation.php';
 
+if (isset($_SESSION['user'])) {
+    header("Location: /feed.php");
+    exit();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = [];
@@ -14,11 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'email' => FILTER_DEFAULT,
         'login' => FILTER_DEFAULT,
         'password' => FILTER_DEFAULT,
-        'password_repeat' => FILTER_DEFAULT
+        'password_repeat' => FILTER_DEFAULT,
     ], true);
 
     foreach ($registration_data as $key => $value) {
-        $registration_data[$key] = !empty($value) ? trim ($value) : '';
+        $registration_data[$key] = !empty($value) ? trim($value) : '';
     }
 
     $registration_data['avatar'] = !empty($_FILES['userpic-file']) ? $_FILES['userpic-file'] : '';
@@ -28,14 +32,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return email_validate($value);
         },
         'login' => function ($value) {
-            return check_emptiness($value);
+            return login_validate($value);
         },
         'password' => function ($value) {
-            return check_emptiness($value);
+            return password_validate($value);
         },
         'password_repeat' => function ($value) {
             return check_emptiness($value);
-        }
+        },
     ];
 
     $errors = [];
@@ -52,10 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors['password_repeat'])) {
-        $errors['password_repeat'] = check_password_repeat($registration_data['password_repeat'], $registration_data['password']);
+        $errors['password_repeat'] = check_password_repeat($registration_data['password_repeat'],
+            $registration_data['password']);
     }
 
-    $errors = array_filter ($errors);
+    $errors = array_filter($errors);
 
     if (!empty($errors)) {
         $error_titles = [
@@ -63,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'login' => 'Логин',
             'password' => 'Пароль',
             'password_repeat' => 'Повтор пароля',
-            'avatar' => 'Аватар'
+            'avatar' => 'Аватар',
         ];
     }
 
@@ -76,13 +81,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $registration_data['email'],
             $registration_data['login'],
             $registration_data['password'],
-            $registration_data['avatar']
+            $registration_data['avatar'],
         ]);
 
         $result = mysqli_stmt_execute($stmt);
 
-        if(!$result) {
-            exit('error' . mysqli_error($link));
+        if (!$result) {
+            exit('error'.mysqli_error($link));
         }
         header('Location: /');
     }
@@ -91,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $page_content = include_template('registration.php', [
     'registration_data' => !empty($registration_data) ? $registration_data : '',
     'errors' => !empty($errors) ? $errors : '',
-    'error_titles' => !empty($error_titles) ? $error_titles : ''
+    'error_titles' => !empty($error_titles) ? $error_titles : '',
 
 ]);
 
